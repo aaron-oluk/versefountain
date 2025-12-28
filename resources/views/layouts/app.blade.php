@@ -6,8 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name', 'VerseFountain'))</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Box Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     @yield('head')
 </head>
@@ -15,7 +17,7 @@
     <!-- Desktop Sidebar Navigation -->
     <div class="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 md:bg-white md:border-r md:border-gray-200 md:z-30">
             <!-- Logo -->
-        <div class="px-6 py-6 border-b border-gray-200">
+        <div class="px-6 py-6">
             <a href="/" class="flex items-center space-x-3">
                 <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                     <i class="bx bx-book text-white text-xl"></i>
@@ -102,23 +104,8 @@
     </div>
 
     <!-- Top Header Bar -->
-    <header class="md:pl-64 bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div class="px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-            <!-- Page Title -->
-            <div class="flex-1">
-                <h1 class="text-xl font-semibold text-gray-900">@yield('page-title', auth()->check() ? 'Dashboard' : 'Home')</h1>
-            </div>
-            
-            <!-- Search Bar -->
-            <div class="hidden md:flex flex-1 max-w-md mx-8">
-                <div class="relative w-full">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="bx bx-search text-gray-400"></i>
-                    </div>
-                    <input type="text" placeholder="Search here..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-600">
-                </div>
-            </div>
-            
+    <header class="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 md:left-64 z-40">
+        <div class="px-4 sm:px-6 lg:px-8 flex items-center justify-end h-16">
             <!-- Right Side Actions -->
             <div class="flex items-center space-x-4">
                 @auth
@@ -183,7 +170,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="md:pl-64 min-h-screen pb-20 md:pb-0 bg-gray-100">
+    <main class="md:pl-64 pt-16 min-h-screen pb-20 md:pb-0 bg-gray-100">
         <div class="px-4 sm:px-6 lg:px-8 py-6">
         @yield('content')
         </div>
