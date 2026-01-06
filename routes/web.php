@@ -63,6 +63,10 @@ Route::get('/academics/{resource}/download', [App\Http\Controllers\AcademicResou
 
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 
+Route::get('/refund-cancellation-policies', function () {
+    return view('refund-cancellation-policies');
+})->name('refund-cancellation-policies');
+
 // API-style routes (returning JSON) - Public routes
 Route::get('/api/user', function () {
     $user = Auth::user();
