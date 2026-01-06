@@ -21,7 +21,7 @@ class PoemController extends Controller
             ->latest()
             ->paginate(12);
 
-        return view('poetry.index', compact('poems'));
+        return view('poetry', compact('poems'));
     }
 
     /**
@@ -154,17 +154,22 @@ class PoemController extends Controller
         } else {
             // Load relationships for real poems
             if ($poem->id > 0) {
-                $poem->load(['author', 'comments.user', 'userInteractions']);
+                $userId = Auth::id();
+                // Eager load user interactions and check like status in single query
+                $poem->load(['author', 'comments.user', 'userInteractions' => function ($query) use ($userId) {
+                    if ($userId) {
+                        $query->where('user_id', $userId);
+                    }
+                }]);
             }
         }
         
-        // Check if current user has liked this poem
+        // Check if current user has liked this poem using eager loaded relationship
         $isLiked = false;
-        if (Auth::check() && isset($poem->id) && $poem->id > 0) {
-            $isLiked = $poem->userInteractions()
-                ->where('user_id', Auth::id())
-                ->where('type', 'like')
-                ->exists();
+        if (Auth::check() && isset($poem->id) && $poem->id > 0 && $poem->userInteractions) {
+            $isLiked = $poem->userInteractions->contains(function ($interaction) {
+                return $interaction->type === 'like';
+            });
         }
 
         return view('poetry.show', compact('poem', 'isLiked'));
@@ -227,7 +232,7 @@ class PoemController extends Controller
             ->with('success', 'Poem deleted successfully!');
     }
 
-    // API Methods (for Alpine.js interactions)
+    // API Methods (for JavaScript interactions)
 
     /**
      * Like or unlike a poem (API)
@@ -252,12 +257,38 @@ class PoemController extends Controller
             $liked = true;
         }
 
+        // Get likes count using withCount would be better, but since we just modified, refresh count
         $likesCount = UserPoem::where('poem_id', $poem->id)
             ->where('type', 'like')
             ->count();
 
         return response()->json([
             'liked' => $liked,
+            'likes_count' => $likesCount,
+        ]);
+    }
+
+    /**
+     * Unlike a poem (API)
+     */
+    public function unlike(Poem $poem)
+    {
+        $user = Auth::user();
+        $existingLike = UserPoem::where('user_id', $user->id)
+            ->where('poem_id', $poem->id)
+            ->where('type', 'like')
+            ->first();
+
+        if ($existingLike) {
+            $existingLike->delete();
+        }
+
+        $likesCount = UserPoem::where('poem_id', $poem->id)
+            ->where('type', 'like')
+            ->count();
+
+        return response()->json([
+            'liked' => false,
             'likes_count' => $likesCount,
         ]);
     }
@@ -285,13 +316,16 @@ class PoemController extends Controller
             ]
         );
 
-        $avgRating = UserPoem::where('poem_id', $poem->id)
+        // Get rating stats in a single query using aggregation
+        $ratingStats = UserPoem::where('poem_id', $poem->id)
             ->where('type', 'rating')
-            ->avg('rating');
+            ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as rating_count')
+            ->first();
 
         return response()->json([
             'rating' => $validated['rating'],
-            'average_rating' => round($avgRating, 1),
+            'average_rating' => round($ratingStats->avg_rating ?? 0, 1),
+            'rating_count' => $ratingStats->rating_count ?? 0,
         ]);
     }
 
@@ -311,11 +345,26 @@ class PoemController extends Controller
     public function userPoems()
     {
         $poems = Poem::where('author_id', Auth::id())
-            ->with(['comments', 'userInteractions'])
+            ->select('id', 'title', 'content', 'author_id', 'is_video', 'video_url', 'approved', 'created_at')
+            ->with(['comments:id,poem_id,user_id,content,created_at', 'userInteractions'])
             ->latest()
             ->get();
 
         return response()->json($poems);
+    }
+
+    /**
+     * Get like count for a poem (API)
+     */
+    public function getLikeCount(Poem $poem)
+    {
+        $likesCount = UserPoem::where('poem_id', $poem->id)
+            ->where('type', 'like')
+            ->count();
+
+        return response()->json([
+            'likes_count' => $likesCount,
+        ]);
     }
 
     /**
@@ -324,13 +373,26 @@ class PoemController extends Controller
     public function getUserStatus(Poem $poem)
     {
         $user = Auth::user();
-        $userInteraction = UserPoem::where('user_id', $user->id)
+        
+        // Get all user interactions for this poem in a single query
+        $userInteractions = UserPoem::where('user_id', $user->id)
             ->where('poem_id', $poem->id)
+            ->get()
+            ->keyBy('type');
+        
+        // Get rating stats in a single query
+        $ratingStats = UserPoem::where('poem_id', $poem->id)
+            ->where('type', 'rating')
+            ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as rating_count')
             ->first();
 
+        $userRating = $userInteractions->get('rating');
+        
         return response()->json([
-            'liked' => $userInteraction && $userInteraction->type === 'like',
-            'rating' => $userInteraction && $userInteraction->type === 'rating' ? $userInteraction->rating : null,
+            'liked' => $userInteractions->has('like'),
+            'rating' => $userRating ? $userRating->rating : 0,
+            'average_rating' => round($ratingStats->avg_rating ?? 0, 1),
+            'rating_count' => $ratingStats->rating_count ?? 0,
         ]);
     }
 }

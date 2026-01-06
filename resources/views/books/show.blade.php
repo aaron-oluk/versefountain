@@ -9,15 +9,13 @@
         <div class="mb-6">
             <a href="{{ route('books.index') }}" 
                class="inline-flex items-center text-gray-600 hover:text-gray-900 text-sm font-normal">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
+                <i class="bx bx-arrow-back text-base mr-1"></i>
                 Back to books
             </a>
         </div>
 
         <div class="max-w-4xl mx-auto">
-            <div class="bg-white border border-gray-200">
+            <div class="bg-white shadow-sm rounded-md">
                 <!-- Header -->
                 <div class="p-6 sm:p-8 border-b border-gray-200">
                     <div class="flex items-start justify-between">

@@ -6,63 +6,162 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name', 'VerseFountain'))</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Alpine.js for dropdown functionality -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     @yield('head')
 </head>
-<body class="antialiased bg-stone-50 overflow-x-hidden">
-    <!-- Top Navigation Bar -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 flex justify-between items-center h-14 sm:h-16">
+<body class="antialiased bg-gray-100 overflow-x-hidden">
+    <!-- Desktop Sidebar Navigation -->
+    <div class="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 md:bg-white md:border-r md:border-gray-200 md:z-30">
             <!-- Logo -->
-            <div class="flex items-center space-x-2">
-                <a href="/" class="text-gray-800 text-lg sm:text-xl md:text-2xl font-light hover:text-gray-900 transition-colors tracking-wide">VerseFountain</a>
+        <div class="px-6 py-6">
+            <a href="/" class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <i class="bx bx-book text-white text-xl"></i>
             </div>
+                <span class="text-xl font-semibold text-gray-900">VerseFountain</span>
+            </a>
+        </div>
 
-            <!-- User Avatar / Auth Buttons -->
-            <div class="flex items-center space-x-2 sm:space-x-4">
+        <!-- Navigation Menu -->
+        <div class="flex-1 flex flex-col min-h-0 overflow-y-auto sidebar-scroll">
+            <nav class="flex-1 px-4 py-6 space-y-1">
+                <div class="space-y-1">
+                    @auth
+                        <a href="/dashboard" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('dashboard*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                            <i class="bx bx-grid-alt mr-3 text-lg {{ request()->is('dashboard*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                            Dashboard
+                        </a>
+                    @endauth
+                    
+                    <a href="/" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('/') && !request()->is('dashboard*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                        <i class="bx bx-home mr-3 text-lg {{ request()->is('/') && !request()->is('dashboard*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                        Home
+                    </a>
+                    
+                    <a href="/poetry" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('poetry*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                        <i class="bx bx-file mr-3 text-lg {{ request()->is('poetry*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                        Poetry
+                    </a>
+                    
+                    <a href="/books" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('books*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                        <i class="bx bx-book mr-3 text-lg {{ request()->is('books*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                        Books
+                    </a>
+                    
+                    <a href="/academics" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('academics*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                        <i class="bx bx-book-reader mr-3 text-lg {{ request()->is('academics*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                        Academics
+                    </a>
+                    
+                    @auth
+                        <a href="{{ route('chatrooms.index') }}" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('chat*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                            <i class="bx bx-chat mr-3 text-lg {{ request()->is('chat*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                            Chatrooms
+                        </a>
+                    @endauth
+                    
+                    <a href="/events" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('events*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                        <i class="bx bx-calendar mr-3 text-lg {{ request()->is('events*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                        Events
+                    </a>
+                    
+                    @auth
+                        <a href="/tickets" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('tickets*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                            <i class="bx bx-receipt mr-3 text-lg {{ request()->is('tickets*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                            Tickets
+                        </a>
+                        
+                        <a href="/profile" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->is('profile*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                            <i class="bx bx-user mr-3 text-lg {{ request()->is('profile*') ? 'text-blue-600' : 'text-gray-500' }}"></i>
+                            Profile
+                        </a>
+                    @else
+                        <a href="/login" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i class="bx bx-log-in mr-3 text-lg text-gray-500"></i>
+                            Login
+                        </a>
+                    @endauth
+                </div>
+            </nav>
+            
+            @auth
+                <!-- Upgrade Card -->
+                <div class="px-4 pb-6">
+                    <div class="bg-blue-600 rounded-lg p-4 text-white">
+                        <h3 class="font-semibold mb-1">VerseFountain Pro</h3>
+                        <p class="text-xs text-blue-100 mb-3">Get access to all features</p>
+                        <a href="/subscriptions" class="block w-full bg-white text-blue-600 text-xs font-medium text-center py-2 rounded-lg hover:bg-blue-50 transition-colors">
+                            Get Pro
+                        </a>
+                    </div>
+                </div>
+            @endauth
+        </div>
+    </div>
+
+    <!-- Top Header Bar -->
+    <header class="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 md:left-64 z-40">
+        <div class="px-4 sm:px-6 lg:px-8 flex items-center justify-end h-16">
+            <!-- Right Side Actions -->
+            <div class="flex items-center space-x-4">
                 @auth
-                    <!-- Profile Avatar with Dropdown -->
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false" @scroll.window="open = false">
-                        <button @click="open = !open" class="w-7 h-7 sm:w-8 sm:h-8 bg-gray-800 text-white rounded-full flex items-center justify-center text-xs sm:text-sm font-normal cursor-pointer hover:bg-gray-700 transition-colors">
-                            {{ strtoupper(substr(auth()->user()->first_name ?? auth()->user()->username ?? 'A', 0, 1)) }}
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="bx bx-bell text-xl"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    
+                    <!-- User Profile -->
+                    <div class="relative" id="user-dropdown-container">
+                        <button id="user-dropdown-toggle" class="flex items-center space-x-2 px-2 py-1 hover:bg-gray-50 rounded-lg transition-colors">
+                            <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                                {{ strtoupper(substr(auth()->user()->first_name ?? auth()->user()->username ?? 'A', 0, 1)) }}
+                            </div>
+                            <div class="hidden lg:block text-left">
+                                <p class="text-sm font-medium text-gray-900">{{ auth()->user()->first_name ?? auth()->user()->username ?? 'User' }}</p>
+                                <p class="text-xs text-gray-500">{{ auth()->user()->role ?? 'User' }}</p>
+                            </div>
+                            <i class="bx bx-chevron-down text-gray-500 hidden lg:block"></i>
                         </button>
                         
                         <!-- Dropdown Menu -->
-                        <div x-show="open" 
-                             x-transition:enter="transition ease-out duration-100" 
-                             x-transition:enter-start="transform opacity-0 scale-95" 
-                             x-transition:enter-end="transform opacity-100 scale-100" 
-                             x-transition:leave="transition ease-in duration-75" 
-                             x-transition:leave-start="transform opacity-100 scale-100" 
-                             x-transition:leave-end="transform opacity-0 scale-95" 
-                             class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 py-1 z-50">
-                            <div class="px-4 py-2 border-b border-gray-200">
-                                <p class="text-sm font-normal text-gray-900">{{ auth()->user()->first_name ?? auth()->user()->username ?? 'User' }}</p>
-                                <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
-                            </div>
-                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
-                            <a href="/profile/edit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</a>
+                        <div id="user-dropdown-menu" 
+                             class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 hidden transition-all duration-200"
+                             style="transform: scale(0.95); opacity: 0;">
+                            <a href="/dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="bx bx-grid-alt mr-2"></i>Dashboard
+                            </a>
+                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="bx bx-user mr-2"></i>Profile
+                            </a>
+                            <a href="/profile/edit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="bx bx-cog mr-2"></i>Settings
+                            </a>
                             @if(auth()->user()->role === 'admin')
-                                <a href="/admin-dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Admin Dashboard</a>
+                                <a href="/admin-dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="bx bx-shield-quarter mr-2"></i>Admin Dashboard
+                                </a>
                             @endif
-                            <div class="border-t border-gray-200">
+                            <div class="border-t border-gray-200 mt-1">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                        Log Out
+                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                        <i class="bx bx-log-out mr-2"></i>Sign Out
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 @else
-                    <!-- Login/Signup Buttons - Only show when not authenticated -->
-                    <a href="/login" class="hidden sm:block text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                    <!-- Login/Signup Buttons -->
+                    <a href="/login" class="text-sm font-medium text-gray-700 hover:text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
                         Log In
                     </a>
-                    <a href="/register" class="hidden sm:block bg-gray-800 text-white px-3 sm:px-4 py-2 text-sm font-normal hover:bg-gray-700 transition-colors">
+                    <a href="/register" class="bg-blue-600 text-white px-5 py-2 text-sm font-medium hover:bg-blue-700 rounded-lg transition-colors">
                         Sign Up
                     </a>
                 @endauth
@@ -70,146 +169,114 @@
         </div>
     </header>
 
-    <!-- Desktop Sidebar Navigation -->
-    <div class="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:pt-16 lg:pb-0 lg:bg-white lg:border-r lg:border-gray-200">
-        <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
-            <nav class="flex-1 px-4 py-6 space-y-2">
-                <div class="space-y-1">
-                    <a href="/" class="flex items-center px-3 py-2 text-sm font-normal {{ request()->is('/') ? 'text-gray-900 border-l-2 border-gray-800' : 'text-gray-600 hover:text-gray-900' }}">
-                        <svg class="mr-3 h-5 w-5 {{ request()->is('/') ? 'text-gray-800' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                        </svg>
-                        Home
-                    </a>
-                    
-                    <a href="/poetry" class="flex items-center px-3 py-2 text-sm font-normal {{ request()->is('poetry*') ? 'text-gray-900 border-l-2 border-gray-800' : 'text-gray-600 hover:text-gray-900' }}">
-                        <svg class="mr-3 h-5 w-5 {{ request()->is('poetry*') ? 'text-gray-800' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Poetry
-                    </a>
-                    
-                    <a href="/books" class="flex items-center px-3 py-2 text-sm font-normal {{ request()->is('books*') ? 'text-gray-900 border-l-2 border-gray-800' : 'text-gray-600 hover:text-gray-900' }}">
-                        <svg class="mr-3 h-5 w-5 {{ request()->is('books*') ? 'text-gray-800' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                        Books
-                    </a>
-                    
-                    <a href="/academics" class="flex items-center px-3 py-2 text-sm font-normal {{ request()->is('academics*') ? 'text-gray-900 border-l-2 border-gray-800' : 'text-gray-600 hover:text-gray-900' }}">
-                        <svg class="mr-3 h-5 w-5 {{ request()->is('academics*') ? 'text-gray-800' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                        Academics
-                    </a>
-                    
-                    @auth
-                        <a href="{{ route('chatrooms.index') }}" class="flex items-center px-3 py-2 text-sm font-normal {{ request()->is('chat*') ? 'text-gray-900 border-l-2 border-gray-800' : 'text-gray-600 hover:text-gray-900' }}">
-                            <svg class="mr-3 h-5 w-5 {{ request()->is('chat*') ? 'text-gray-800' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                            </svg>
-                            Chatrooms
-                        </a>
-                    @endauth
-                    
-                    <a href="/events" class="flex items-center px-3 py-2 text-sm font-normal {{ request()->is('events*') ? 'text-gray-900 border-l-2 border-gray-800' : 'text-gray-600 hover:text-gray-900' }}">
-                        <svg class="mr-3 h-5 w-5 {{ request()->is('events*') ? 'text-gray-800' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        Events
-                    </a>
-                    
-                    @auth
-                        <a href="/tickets" class="flex items-center px-3 py-2 text-sm font-normal {{ request()->is('tickets*') ? 'text-gray-900 border-l-2 border-gray-800' : 'text-gray-600 hover:text-gray-900' }}">
-                            <svg class="mr-3 h-5 w-5 {{ request()->is('tickets*') ? 'text-gray-800' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
-                            </svg>
-                            Tickets
-                        </a>
-                        
-                        <a href="/profile" class="flex items-center px-3 py-2 text-sm font-normal {{ request()->is('profile*') ? 'text-gray-900 border-l-2 border-gray-800' : 'text-gray-600 hover:text-gray-900' }}">
-                            <svg class="mr-3 h-5 w-5 {{ request()->is('profile*') ? 'text-gray-800' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                            Profile
-                        </a>
-                    @else
-                        <a href="/login" class="flex items-center px-3 py-2 text-sm font-normal text-gray-600 hover:text-gray-900">
-                            <svg class="mr-3 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                            </svg>
-                            Login
-                        </a>
-                    @endauth
-                </div>
-            </nav>
-        </div>
-    </div>
-
     <!-- Main Content -->
-    <main class="lg:pl-64 min-h-screen pb-20 md:pb-0">
+    <main class="md:pl-64 pt-16 min-h-screen pb-20 md:pb-0 bg-gray-100">
+        <div class="px-4 sm:px-6 lg:px-8 py-6">
         @yield('content')
+        </div>
     </main>
 
     <!-- Mobile Bottom Navigation -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div class="flex justify-around py-1 px-1">
-            <a href="/" class="flex flex-col items-center py-1 px-1 {{ request()->is('/') ? 'text-gray-900' : 'text-gray-600' }}">
-                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                <span class="text-xs leading-tight">Home</span>
-            </a>
-            <a href="/poetry" class="flex flex-col items-center py-1 px-1 {{ request()->is('poetry*') ? 'text-gray-900' : 'text-gray-600' }}">
-                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                <span class="text-xs leading-tight">Poetry</span>
-            </a>
-            <a href="/books" class="flex flex-col items-center py-1 px-1 {{ request()->is('books*') ? 'text-gray-900' : 'text-gray-600' }}">
-                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                </svg>
-                <span class="text-xs leading-tight">Books</span>
-            </a>
-            <a href="/academics" class="flex flex-col items-center py-1 px-1 {{ request()->is('academics*') ? 'text-gray-900' : 'text-gray-600' }}">
-                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                </svg>
-                <span class="text-xs leading-tight">Academics</span>
+        <div class="flex justify-around py-2 px-1">
+            <a href="/" class="flex flex-col items-center py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-all duration-200 {{ request()->is('/') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                <i class="bx bx-home text-xl mb-1"></i>
+                <span class="text-xs font-medium leading-tight">Home</span>
             </a>
             @auth
-                <a href="{{ route('chatrooms.index') }}" class="flex flex-col items-center py-1 px-1 {{ request()->is('chat*') ? 'text-gray-900' : 'text-gray-600' }}">
-                    <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                    </svg>
-                    <span class="text-xs leading-tight">Chat</span>
+                <a href="/dashboard" class="flex flex-col items-center py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-all duration-200 {{ request()->is('dashboard*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                    <i class="bx bx-grid-alt text-xl mb-1"></i>
+                    <span class="text-xs font-medium leading-tight">Dashboard</span>
                 </a>
             @endauth
-            <a href="/events" class="flex flex-col items-center py-1 px-1 {{ request()->is('events*') ? 'text-gray-900' : 'text-gray-600' }}">
-                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                <span class="text-xs leading-tight">Events</span>
+            <a href="/poetry" class="flex flex-col items-center py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-all duration-200 {{ request()->is('poetry*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                <i class="bx bx-file text-xl mb-1"></i>
+                <span class="text-xs font-medium leading-tight">Poetry</span>
+            </a>
+            <a href="/books" class="flex flex-col items-center py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-all duration-200 {{ request()->is('books*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                <i class="bx bx-book text-xl mb-1"></i>
+                <span class="text-xs font-medium leading-tight">Books</span>
             </a>
             @auth
-                <a href="/profile" class="flex flex-col items-center py-1 px-1 {{ request()->is('profile*') ? 'text-gray-900' : 'text-gray-600' }}">
-                    <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                    <span class="text-xs leading-tight">Profile</span>
+                <a href="/profile" class="flex flex-col items-center py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-all duration-200 {{ request()->is('profile*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900' }}">
+                    <i class="bx bx-user text-xl mb-1"></i>
+                    <span class="text-xs font-medium leading-tight">Profile</span>
                 </a>
             @else
-                <a href="/login" class="flex flex-col items-center py-1 px-1 text-gray-600">
-                    <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                    </svg>
-                    <span class="text-xs leading-tight">Login</span>
+                <a href="/login" class="flex flex-col items-center py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-all duration-200 text-gray-600 hover:text-gray-900">
+                    <i class="bx bx-log-in text-xl mb-1"></i>
+                    <span class="text-xs font-medium leading-tight">Login</span>
                 </a>
             @endauth
         </div>
     </nav>
 
+    <!-- Footer -->
+    <footer class="hidden md:block bg-white border-t border-gray-200 mt-auto">
+        <div class="md:pl-64">
+            <div class="px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                    <div class="text-sm text-gray-600">
+                        <p>&copy; {{ date('Y') }} VerseFountain. All rights reserved.</p>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <a href="{{ route('refund-cancellation-policies') }}" class="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                            Refund & Cancellation Policies
+                        </a>
+                        <span class="text-gray-300">|</span>
+                        <a href="#" class="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                            Terms of Service
+                        </a>
+                        <span class="text-gray-300">|</span>
+                        <a href="#" class="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                            Privacy Policy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     @yield('scripts')
+    
+    <script>
+        // User dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('user-dropdown-toggle');
+            const dropdownMenu = document.getElementById('user-dropdown-menu');
+            
+            if (dropdownToggle && dropdownMenu) {
+                dropdownToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isHidden = dropdownMenu.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        dropdownMenu.classList.remove('hidden');
+                        setTimeout(() => {
+                            dropdownMenu.style.transform = 'scale(1)';
+                            dropdownMenu.style.opacity = '1';
+                        }, 10);
+                    } else {
+                        dropdownMenu.style.transform = 'scale(0.95)';
+                        dropdownMenu.style.opacity = '0';
+                        setTimeout(() => {
+                            dropdownMenu.classList.add('hidden');
+                        }, 100);
+                    }
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                        dropdownMenu.style.transform = 'scale(0.95)';
+                        dropdownMenu.style.opacity = '0';
+                        setTimeout(() => {
+                            dropdownMenu.classList.add('hidden');
+                        }, 100);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

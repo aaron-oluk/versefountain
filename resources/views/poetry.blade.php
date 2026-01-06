@@ -3,27 +3,24 @@
 @section('title', 'Poetry - VerseFountain')
 
 @section('content')
-    <div class="min-h-screen bg-stone-50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div class="min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <!-- Page Header -->
-            <div class="mb-10 sm:mb-12">
+            <div class="mb-8">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div class="mb-6 sm:mb-0">
-                        <h1 class="text-3xl sm:text-4xl font-light text-gray-800 mb-2 tracking-wide">
+                        <h1 class="text-3xl sm:text-4xl font-semibold text-gray-900 mb-2">
                             Poetry
                         </h1>
-                        <p class="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl">
+                        <p class="text-base text-gray-600 leading-relaxed max-w-2xl">
                             Discover beautiful poems from classic and contemporary poets
                         </p>
                     </div>
                     @auth
                         <div class="mt-4 sm:mt-0">
-                            <a href="/poetry/create"
-                                class="inline-flex items-center px-5 py-2.5 bg-gray-800 text-white text-sm font-normal rounded-sm hover:bg-gray-700 transition-colors">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
-                                    </path>
-                                </svg>
+                            <a href="{{ route('poetry.create') }}"
+                                class="inline-flex items-center px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                <i class="bx bx-plus text-base mr-2"></i>
                                 Create Poem
                             </a>
                         </div>
@@ -32,19 +29,16 @@
             </div>
 
             <!-- Search and Filter Section -->
-            <div class="bg-white border border-gray-200 p-5 sm:p-6 mb-8 sm:mb-10">
+            <div class="bg-white rounded-lg p-5 shadow-sm mb-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Search -->
                     <div class="sm:col-span-2 lg:col-span-1">
                         <label for="search" class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Search Poems</label>
                         <div class="relative">
                             <input type="text" id="search" placeholder="Search by title, author, or content..."
-                                class="w-full pl-9 pr-3 py-2 border border-gray-300 focus:border-gray-500 text-sm bg-white focus:outline-none">
+                                class="w-full pl-9 pr-3 py-2 shadow-sm focus:border-blue-600 text-sm bg-white focus:outline-none">
                             <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
+                                <i class="bx bx-search text-base text-gray-400"></i>
                             </div>
                         </div>
                     </div>
@@ -53,7 +47,7 @@
                     <div>
                         <label for="category" class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Category</label>
                         <select id="category"
-                            class="w-full px-3 py-2 border border-gray-300 focus:border-gray-500 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
+                            class="w-full px-3 py-2 shadow-sm focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
                             <option value="">All Categories</option>
                             <option value="love">Love</option>
                             <option value="nature">Nature</option>
@@ -68,7 +62,7 @@
                     <div>
                         <label for="sort" class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Sort By</label>
                         <select id="sort"
-                            class="w-full px-3 py-2 border border-gray-300 focus:border-gray-500 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
+                            class="w-full px-3 py-2 shadow-sm focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
                             <option value="newest">Newest First</option>
                             <option value="oldest">Oldest First</option>
                             <option value="popular">Most Popular</option>
@@ -78,131 +72,217 @@
                 </div>
             </div>
 
-            @php
-                $poems = [
-                    [
-                        'title' => 'The Road Not Taken',
-                        'author' => 'Robert Frost',
-                        'year' => '1916',
-                        'excerpt' => 'Two roads diverged in a yellow wood, And sorry I could not travel both And be one traveler, long I stood And looked down one as far as I could...',
-                        'likes' => '1.2k',
-                        'comments' => '45',
-                        'slug' => 'road-not-taken'
-                    ],
-                    [
-                        'title' => 'Sonnet 18',
-                        'author' => 'William Shakespeare',
-                        'year' => '1609',
-                        'excerpt' => 'Shall I compare thee to a summer\'s day? Thou art more lovely and more temperate: Rough winds do shake the darling buds of May...',
-                        'likes' => '2.1k',
-                        'comments' => '78',
-                        'slug' => 'sonnet-18'
-                    ],
-                    [
-                        'title' => 'Still I Rise',
-                        'author' => 'Maya Angelou',
-                        'year' => '1978',
-                        'excerpt' => 'You may write me down in history With your bitter, twisted lies, You may trod me in the very dirt But still, like dust, I\'ll rise...',
-                        'likes' => '3.4k',
-                        'comments' => '156',
-                        'slug' => 'still-i-rise'
-                    ],
-                    [
-                        'title' => 'Do Not Go Gentle',
-                        'author' => 'Dylan Thomas',
-                        'year' => '1951',
-                        'excerpt' => 'Do not go gentle into that good night, Old age should burn and rave at close of day; Rage, rage against the dying of the light...',
-                        'likes' => '892',
-                        'comments' => '23',
-                        'slug' => 'do-not-go-gentle'
-                    ],
-                    [
-                        'title' => 'The Waste Land',
-                        'author' => 'T.S. Eliot',
-                        'year' => '1922',
-                        'excerpt' => 'April is the cruellest month, breeding Lilacs out of the dead land, mixing Memory and desire, stirring Dull roots with spring rain...',
-                        'likes' => '567',
-                        'comments' => '34',
-                        'slug' => 'waste-land'
-                    ],
-                    [
-                        'title' => 'Howl',
-                        'author' => 'Allen Ginsberg',
-                        'year' => '1956',
-                        'excerpt' => 'I saw the best minds of my generation destroyed by madness, starving hysterical naked, dragging themselves through the negro streets...',
-                        'likes' => '1.8k',
-                        'comments' => '67',
-                        'slug' => 'howl'
-                    ]
-                ];
-            @endphp
-
             <!-- Poems Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
-                @foreach($poems as $poem)
-                    <div class="bg-white border border-gray-200 hover:border-gray-300 transition-colors">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                @forelse($poems as $poem)
+                    <div class="bg-white rounded-lg shadow-sm  focus-within:border-blue-400 transition-colors"
+                         data-poem-card
+                         data-poem-id="{{ $poem->id }}"
+                         data-initial-liked="{{ auth()->check() && $poem->userInteractions->where('user_id', auth()->id())->where('type', 'like')->count() > 0 ? 'true' : 'false' }}"
+                         data-initial-rating="{{ auth()->check() ? ($poem->userInteractions->where('user_id', auth()->id())->where('type', 'rating')->first()?->rating ?? 0) : 0 }}">
                         <div class="p-6 sm:p-8">
                             <!-- Title -->
                             <h3 class="text-lg font-normal text-gray-900 mb-4 leading-snug">
-                                {{ $poem['title'] }}
+                                <a href="{{ route('poetry.show', $poem) }}" class="hover:text-gray-700">
+                                    {{ $poem->title }}
+                                </a>
                             </h3>
                             
                             <!-- Poem Excerpt -->
                             <p class="text-sm text-gray-700 mb-6 line-clamp-4 leading-relaxed font-light">
-                                {{ $poem['excerpt'] }}
+                                {{ Str::limit($poem->content, 150) }}
                             </p>
                             
                             <!-- Author and Year -->
                             <div class="mb-6 pb-6 border-b border-gray-200">
-                                <p class="text-xs text-gray-600 font-normal">{{ $poem['author'] }}</p>
-                                <p class="text-xs text-gray-500 mt-0.5">{{ $poem['year'] }}</p>
+                                <p class="text-xs text-gray-600 font-normal">{{ $poem->author->first_name ?? 'Anonymous' }} {{ $poem->author->last_name ?? '' }}</p>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ $poem->created_at->format('Y') }}</p>
                             </div>
                             
                             <!-- Engagement Metrics and Read More -->
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-4 text-xs text-gray-500">
                                     <!-- Likes -->
-                                    <div class="flex items-center space-x-1">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                        </svg>
-                                        <span>{{ $poem['likes'] }}</span>
-                                    </div>
+                                    <button data-like-button
+                                            class="flex items-center space-x-1 transition-colors {{ auth()->check() && $poem->userInteractions->where('user_id', auth()->id())->where('type', 'like')->count() > 0 ? 'text-red-500' : 'text-gray-500 hover:text-red-500' }}">
+                                        <i class="{{ auth()->check() && $poem->userInteractions->where('user_id', auth()->id())->where('type', 'like')->count() > 0 ? 'bx bxs-heart' : 'bx bx-heart' }} text-sm"></i>
+                                        <span data-likes-count>{{ $poem->userInteractions->where('type', 'like')->count() }}</span>
+                                    </button>
                                     
                                     <!-- Comments -->
+                                    <a href="{{ route('poetry.show', $poem) }}" class="flex items-center space-x-1 hover:text-gray-700 transition-colors">
+                                        <i class="bx bx-comment text-sm"></i>
+                                        <span>{{ $poem->comments->count() }}</span>
+                                    </a>
+                                    
+                                    <!-- Rating -->
                                     <div class="flex items-center space-x-1">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                        </svg>
-                                        <span>{{ $poem['comments'] }}</span>
+                                        @for($i = 1; $i <= 5; $i++)
+                                            @php
+                                                $userRating = auth()->check() ? ($poem->userInteractions->where('user_id', auth()->id())->where('type', 'rating')->first()?->rating ?? 0) : 0;
+                                                $isActive = $userRating >= $i;
+                                            @endphp
+                                            <button data-rating="{{ $i }}"
+                                                    class="transition-colors cursor-pointer {{ $isActive ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-400' }}">
+                                                <i class="{{ $isActive ? 'bx bxs-star' : 'bx bx-star' }} text-xs"></i>
+                                            </button>
+                                        @endfor
                                     </div>
                                 </div>
                                 
                                 <!-- Read More Link -->
-                                <a href="/poetry/{{ $poem['slug'] }}" class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">
+                                <a href="{{ route('poetry.show', $poem) }}" class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">
                                     Read →
                                 </a>
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-span-full text-center py-20">
+                        <div class="max-w-md mx-auto">
+                            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="bx bx-file text-5xl text-blue-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-3">No poems yet</h3>
+                            <p class="text-base text-gray-600 mb-8">Be the first to share your poetry with the community.</p>
+                            @auth
+                                <a href="{{ route('poetry.create') }}" 
+                                   class="inline-flex items-center px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                    <i class="bx bx-plus text-base mr-2"></i>
+                                    Create Your First Poem
+                                </a>
+                            @else
+                                <a href="{{ route('register') }}" 
+                                   class="inline-flex items-center px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                    <i class="bx bx-user-plus text-base mr-2"></i>
+                                    Sign Up to Get Started
+                                </a>
+                            @endauth
+                        </div>
+                    </div>
+                @endforelse
             </div>
 
-            <!-- Load More Button -->
-            <div class="text-center mt-10 sm:mt-12">
-                <button class="px-6 py-2.5 bg-gray-800 text-white text-sm font-normal hover:bg-gray-700 transition-colors">
-                    Load More Poems
-                </button>
-            </div>
+            <!-- Pagination -->
+            @if($poems->hasPages())
+                <div class="text-center mt-10 sm:mt-12">
+                    {{ $poems->links() }}
+                </div>
+            @endif
         </div>
     </div>
 
-    <style>
-        .line-clamp-4 {
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-    </style>
+    <script>
+    // Poem card functionality (vanilla JavaScript)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-poem-card]').forEach(card => {
+            const poemId = card.getAttribute('data-poem-id');
+            const initialLiked = card.getAttribute('data-initial-liked') === 'true';
+            const initialRating = parseInt(card.getAttribute('data-initial-rating') || '0');
+            
+            let isLiked = initialLiked;
+            let likesCount = parseInt(card.querySelector('[data-likes-count]')?.textContent || '0');
+            let currentRating = initialRating;
+            let hoverRating = 0;
+            
+            // Like button
+            const likeButton = card.querySelector('[data-like-button]');
+            if (likeButton) {
+                likeButton.addEventListener('click', async function() {
+                    @guest
+                        window.location.href = '/login';
+                        return;
+                    @endguest
+                    
+                    try {
+                        const response = await fetch(`/api/poems/${poemId}/like`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
+                            },
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            isLiked = data.liked;
+                            likesCount = data.likes_count;
+                            
+                            const icon = likeButton.querySelector('i');
+                            const countSpan = card.querySelector('[data-likes-count]');
+                            
+                            if (icon) {
+                                icon.className = isLiked ? 'bx bxs-heart text-sm' : 'bx bx-heart text-sm';
+                            }
+                            if (countSpan) {
+                                countSpan.textContent = likesCount;
+                            }
+                            likeButton.className = likeButton.className.replace(/text-(red|gray)-500/g, '') + (isLiked ? ' text-red-500' : ' text-gray-500 hover:text-red-500');
+                        }
+                    } catch (error) {
+                        console.error('Error toggling like:', error);
+                    }
+                });
+            }
+            
+            // Rating buttons
+            for (let i = 1; i <= 5; i++) {
+                const ratingButton = card.querySelector(`[data-rating="${i}"]`);
+                if (ratingButton) {
+                    ratingButton.addEventListener('click', async function() {
+                        @guest
+                            window.location.href = '/login';
+                            return;
+                        @endguest
+                        
+                        try {
+                            const response = await fetch(`/api/poems/${poemId}/rate`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({ rating: i }),
+                                credentials: 'same-origin'
+                            });
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                currentRating = parseInt(data.rating);
+                                updateRatingDisplay();
+                            }
+                        } catch (error) {
+                            console.error('Error rating poem:', error);
+                        }
+                    });
+                    
+                    ratingButton.addEventListener('mouseenter', function() {
+                        hoverRating = i;
+                        updateRatingDisplay();
+                    });
+                    
+                    ratingButton.addEventListener('mouseleave', function() {
+                        hoverRating = 0;
+                        updateRatingDisplay();
+                    });
+                }
+            }
+            
+            function updateRatingDisplay() {
+                for (let i = 1; i <= 5; i++) {
+                    const btn = card.querySelector(`[data-rating="${i}"]`);
+                    const icon = btn?.querySelector('i');
+                    if (btn && icon) {
+                        const isActive = hoverRating >= i || currentRating >= i;
+                        icon.className = isActive ? 'bx bxs-star text-xs' : 'bx bx-star text-xs';
+                        btn.className = btn.className.replace(/text-(yellow|gray)-[0-9]+/g, '') + (isActive ? ' text-yellow-500' : ' text-gray-400 hover:text-yellow-400');
+                    }
+                }
+            }
+        });
+    });
+    </script>
 @endsection

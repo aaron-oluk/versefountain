@@ -57,7 +57,7 @@ VerseFountain addresses the need for a dedicated digital space where:
 ## 🛠️ Technical Stack
 
 - **Backend**: Laravel 12.x (PHP 8.2+)
-- **Frontend**: Blade templates with Alpine.js
+- **Frontend**: Blade templates with vanilla JavaScript
 - **Styling**: Tailwind CSS
 - **Database**: PostgreSQL/MySQL with comprehensive schema
 - **Authentication**: Laravel's session-based authentication
@@ -159,6 +159,6 @@ VerseFountain aims to become the premier digital platform for poetry communities
 
 ---
 
-**VerseFountain** - Where poetry flows freely and communities flourish! 🌊✨
+**Slogan:** VerseFountain: Where words flow freely and creatives flourish.
 
-*Building bridges between poets, readers, and the timeless art of verse.*
+**Tagline:** Connecting writers, readers, authors, and every creative soul through the power of words.

@@ -1,12 +1,18 @@
-@extends('layouts.auth')
+@extends('layouts.auth-card')
+
+@php
+    $activeTab = 'login';
+@endphp
 
 @section('title', 'Login - VerseFountain')
 
-@section('auth-content')
-    <x-auth-card title="Welcome to VerseFountain" description="Sign in to your account to continue" activeTab="login">
+@section('auth-card-title', 'Welcome to VerseFountain')
+@section('auth-card-description', 'Sign in to your account to continue')
+
+@section('auth-card-content')
         <!-- Session Status -->
         @if (session('status'))
-            <div class="mb-4 p-4 bg-gray-50 border border-gray-200">
+            <div class="mb-4 p-4 bg-gray-50">
                 <p class="text-sm text-gray-700 font-light">{{ session('status') }}</p>
             </div>
         @endif
@@ -18,7 +24,7 @@
             <div class="space-y-2">
                 <label for="email" class="block text-xs font-normal text-gray-600 uppercase tracking-wide">Email</label>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" 
-                       class="w-full px-3 py-2 border border-gray-300 focus:border-gray-500 bg-white focus:outline-none placeholder-gray-400 text-sm"
+                       class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 bg-white focus:outline-none placeholder-gray-400 text-sm rounded-md transition-colors"
                        placeholder="Enter your email">
                 @error('email')
                     <p class="text-sm text-gray-600">{{ $message }}</p>
@@ -29,7 +35,7 @@
             <div class="space-y-2">
                 <label for="password" class="block text-xs font-normal text-gray-600 uppercase tracking-wide">Password</label>
                 <input id="password" type="password" name="password" required autocomplete="current-password"
-                       class="w-full px-3 py-2 border border-gray-300 focus:border-gray-500 bg-white focus:outline-none placeholder-gray-400 text-sm"
+                       class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 bg-white focus:outline-none placeholder-gray-400 text-sm rounded-md transition-colors"
                        placeholder="Enter your password">
                 @error('password')
                     <p class="text-sm text-gray-600">{{ $message }}</p>
@@ -39,7 +45,7 @@
             <!-- Remember Me -->
             <div class="flex items-center">
                 <input id="remember_me" type="checkbox" name="remember" 
-                       class="h-4 w-4 text-gray-800 focus:ring-gray-500 border-gray-300">
+                       class="h-4 w-4 text-blue-600 focus:ring-0 focus:ring-offset-0 border-gray-300 rounded-md">
                 <label for="remember_me" class="ml-2 block text-sm text-gray-600 font-light">
                     Remember me
                 </label>
@@ -47,7 +53,7 @@
 
             <!-- Submit Button -->
             <button type="submit" 
-                    class="w-full bg-gray-800 text-white py-2.5 px-4 font-normal hover:bg-gray-700 transition-colors text-sm">
+                    class="w-full bg-blue-600 text-white py-2.5 px-4 font-normal hover:bg-blue-700 transition-colors text-sm rounded-md">
                 Sign In
             </button>
 
@@ -61,5 +67,4 @@
                 </div>
             @endif
         </form>
-    </x-auth-card>
 @endsection
