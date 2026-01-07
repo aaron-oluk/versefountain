@@ -10,10 +10,15 @@
 @section('content')
 <div class="min-h-screen bg-gray-50">
     <!-- Banner -->
-    <div class="h-64 bg-gradient-to-r from-blue-900 via-purple-900 to-blue-800 relative mb-20">
-        <div class="absolute bottom-0 left-8 transform translate-y-1/2">
-            <div class="w-32 h-32 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center text-4xl font-semibold text-blue-600">
-                {{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}
+    <div class="h-64 bg-gradient-to-r from-blue-900 via-purple-900 to-blue-800 relative mb-20 overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center opacity-50" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80');"></div>
+        <div class="absolute bottom-0 left-8 transform translate-y-1/2 z-10">
+            <div class="w-32 h-32 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center overflow-hidden">
+                @if($creator->profile_photo_path ?? false)
+                    <img src="{{ $creator->profile_photo_path }}" alt="{{ $creator->username }}" class="w-full h-full object-cover">
+                @else
+                    <span class="text-4xl font-semibold text-blue-600">{{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}</span>
+                @endif
             </div>
         </div>
     </div>
@@ -22,8 +27,12 @@
         <!-- Profile Header -->
         <div class="flex items-start justify-between mb-6">
             <div class="flex items-start gap-4">
-                <div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold -mt-12 ml-4">
-                    {{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}
+                <div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold -mt-12 ml-4 border-4 border-white shadow-lg">
+                    @if($creator->profile_photo_path ?? false)
+                        <img src="{{ $creator->profile_photo_path }}" alt="{{ $creator->username }}" class="w-full h-full object-cover rounded-full">
+                    @else
+                        {{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}
+                    @endif
                 </div>
                 <div class="pt-4">
                     <div class="flex items-center gap-2 mb-2">
@@ -36,6 +45,14 @@
                         <span class="text-gray-600">Followers</span>
                         <span class="text-gray-900 font-semibold">48</span>
                         <span class="text-gray-600">Works</span>
+                    </div>
+                    <div class="flex items-center gap-3 mt-2">
+                        <a href="#" class="text-gray-600 hover:text-gray-900">
+                            <i class="bx bx-link text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900">
+                            <i class="bx bx-envelope text-lg"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -78,19 +95,27 @@
                         <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View all</a>
                     </div>
                     <div class="flex gap-4 overflow-x-auto pb-2">
-                        @foreach($publishedWorks->take(4) as $work)
+                        @foreach($publishedWorks->take(4) as $index => $work)
                         <div class="flex-shrink-0 w-40">
-                            <div class="w-40 h-56 bg-gray-200 rounded mb-2 flex items-center justify-center">
+                            <div class="w-40 h-56 bg-gray-200 rounded mb-2 flex items-center justify-center overflow-hidden relative">
                                 @if($work->coverImage)
-                                    <img src="{{ $work->coverImage }}" alt="{{ $work->title }}" class="w-full h-full object-cover rounded">
+                                    <img src="{{ $work->coverImage }}" alt="{{ $work->title }}" class="w-full h-full object-cover">
                                 @else
                                     <i class="bx bx-book text-4xl text-gray-400"></i>
                                 @endif
                             </div>
                             <h3 class="text-sm font-semibold text-gray-900 truncate">{{ $work->title }}</h3>
-                            <p class="text-xs text-gray-600">{{ $work->created_at->format('Y') }} • Poetry Collection</p>
+                            <p class="text-xs text-gray-600">{{ $work->created_at->format('Y') }} • {{ $work->genre ?? 'Poetry Collection' }}</p>
                         </div>
                         @endforeach
+                        @if($publishedWorks->count() === 0)
+                        <div class="flex-shrink-0 w-40">
+                            <div class="w-40 h-56 bg-gray-100 rounded mb-2 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i class="bx bx-book text-4xl text-gray-400"></i>
+                            </div>
+                            <p class="text-xs text-gray-500">No works yet</p>
+                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -118,21 +143,48 @@
                             </div>
                             <span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full mb-2">Announcement</span>
                             <p class="text-sm text-gray-700 mb-3">Thrilled to announce that the pre-order for my next collection, 'Whispers in the Glass,' will be available starting next Friday! Here is a sneak peek at the cover art. 🌙✨</p>
-                            <div class="w-full h-48 bg-gray-200 rounded-lg mb-3 flex items-center justify-center">
+                            <div class="w-full h-48 bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                                 <i class="bx bx-image text-4xl text-gray-400"></i>
                             </div>
                             <div class="flex items-center gap-4 text-sm text-gray-600">
-                                <button class="flex items-center gap-1 hover:text-red-600">
+                                <button class="flex items-center gap-1 hover:text-red-600 transition-colors">
                                     <i class="bx bx-heart"></i>
                                     <span>842</span>
                                 </button>
-                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                <button class="flex items-center gap-1 hover:text-blue-600 transition-colors">
                                     <i class="bx bx-message-dots"></i>
                                     <span>56</span>
                                 </button>
-                                <button class="flex items-center gap-1 hover:text-gray-900">
+                                <button class="flex items-center gap-1 hover:text-gray-900 transition-colors">
                                     <span>Share</span>
                                     <i class="bx bx-right-arrow-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Update Card 2 -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                    {{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-medium text-gray-900">{{ $creator->username }}</span>
+                                        <span class="text-xs text-gray-500">2 days ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full mb-2">Snippet</span>
+                            <p class="text-sm text-gray-700 italic mb-3">"The morning comes, not with a roar, but with the softest sigh of light against the floor."</p>
+                            <div class="flex items-center gap-4 text-sm text-gray-600">
+                                <button class="flex items-center gap-1 hover:text-red-600 transition-colors">
+                                    <i class="bx bx-heart"></i>
+                                    <span>1.2k</span>
+                                </button>
+                                <button class="flex items-center gap-1 hover:text-blue-600 transition-colors">
+                                    <i class="bx bx-message-dots"></i>
+                                    <span>124</span>
                                 </button>
                             </div>
                         </div>

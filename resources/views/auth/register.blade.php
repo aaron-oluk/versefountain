@@ -59,9 +59,12 @@
                 <label for="password" class="block text-xs font-medium text-gray-700 uppercase tracking-wide">Password</label>
                 <div class="relative">
                     <input id="password" type="password" name="password" required autocomplete="new-password"
-                           class="w-full pl-10 pr-3 py-2.5 border border-gray-300 focus:border-blue-600 bg-white focus:outline-none placeholder-gray-400 text-sm rounded-lg transition-colors"
+                           class="w-full pl-10 pr-10 py-2.5 border border-gray-300 focus:border-blue-600 bg-white focus:outline-none placeholder-gray-400 text-sm rounded-lg transition-colors"
                            placeholder="Create a password">
-                    <i class="bx bx-hide absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer" onclick="togglePassword('password', this)"></i>
+                    <i class="bx bx-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <button type="button" onclick="togglePassword('password', this)" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <i class="bx bx-hide"></i>
+                    </button>
                 </div>
                 @error('password')
                     <p class="text-sm text-red-500">{{ $message }}</p>
@@ -73,9 +76,12 @@
                 <label for="password_confirmation" class="block text-xs font-medium text-gray-700 uppercase tracking-wide">Confirm Password</label>
                 <div class="relative">
                     <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
-                           class="w-full pl-10 pr-3 py-2.5 border border-gray-300 focus:border-blue-600 bg-white focus:outline-none placeholder-gray-400 text-sm rounded-lg transition-colors"
+                           class="w-full pl-10 pr-10 py-2.5 border border-gray-300 focus:border-blue-600 bg-white focus:outline-none placeholder-gray-400 text-sm rounded-lg transition-colors"
                            placeholder="Confirm your password">
-                    <i class="bx bx-hide absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer" onclick="togglePassword('password_confirmation', this)"></i>
+                    <i class="bx bx-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <button type="button" onclick="togglePassword('password_confirmation', this)" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <i class="bx bx-hide"></i>
+                    </button>
                 </div>
                 @error('password_confirmation')
                     <p class="text-sm text-red-500">{{ $message }}</p>
@@ -137,8 +143,9 @@
 </div>
 
 <script>
-function togglePassword(fieldId, icon) {
+function togglePassword(fieldId, button) {
     const field = document.getElementById(fieldId);
+    const icon = button.querySelector('i');
     if (field.type === 'password') {
         field.type = 'text';
         icon.classList.remove('bx-hide');

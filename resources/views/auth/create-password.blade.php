@@ -40,7 +40,7 @@
                     <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                         <div id="strength-bar" class="h-full transition-all duration-300" style="width: 0%"></div>
                     </div>
-                    <p id="strength-text" class="text-xs mt-1 text-gray-500">Strength: <span id="strength-level">-</span></p>
+                    <p id="strength-text" class="text-xs mt-1 text-gray-500">Strength: <span id="strength-level" class="text-blue-600">-</span></p>
                 </div>
                 
                 @error('password')
@@ -50,18 +50,18 @@
 
             <!-- Password Requirements -->
             <div class="space-y-2">
-                <p class="text-xs font-medium text-gray-700 uppercase">Password Requirements:</p>
-                <div class="space-y-1.5">
+                <p class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Password Requirements:</p>
+                <div class="space-y-2">
                     <div class="flex items-center">
-                        <input type="checkbox" id="req-length" disabled class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                        <input type="checkbox" id="req-length" disabled class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-0">
                         <label for="req-length" class="ml-2 text-sm text-gray-600">At least 8 characters long</label>
                     </div>
                     <div class="flex items-center">
-                        <input type="checkbox" id="req-number" disabled class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                        <input type="checkbox" id="req-number" disabled class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-0">
                         <label for="req-number" class="ml-2 text-sm text-gray-600">Contains at least one number</label>
                     </div>
                     <div class="flex items-center">
-                        <input type="checkbox" id="req-special" disabled class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                        <input type="checkbox" id="req-special" disabled class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-0">
                         <label for="req-special" class="ml-2 text-sm text-gray-600">Contains at least one special symbol</label>
                     </div>
                 </div>
@@ -124,53 +124,72 @@ function checkPasswordStrength(password) {
     const reqSpecial = document.getElementById('req-special');
     
     let strength = 0;
-    let level = 'Weak';
-    let color = 'bg-red-500';
+    let level = '-';
+    let color = 'bg-gray-200';
+    let textColor = 'text-gray-500';
     
     // Check length
-    if (password.length >= 8) {
+    const hasLength = password.length >= 8;
+    if (hasLength) {
         strength += 33;
         reqLength.checked = true;
+        reqLength.classList.add('text-blue-600');
     } else {
         reqLength.checked = false;
+        reqLength.classList.remove('text-blue-600');
     }
     
     // Check for number
-    if (/\d/.test(password)) {
+    const hasNumber = /\d/.test(password);
+    if (hasNumber) {
         strength += 33;
         reqNumber.checked = true;
+        reqNumber.classList.add('text-blue-600');
     } else {
         reqNumber.checked = false;
+        reqNumber.classList.remove('text-blue-600');
     }
     
     // Check for special character
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    if (hasSpecial) {
         strength += 34;
         reqSpecial.checked = true;
+        reqSpecial.classList.add('text-blue-600');
     } else {
         reqSpecial.checked = false;
+        reqSpecial.classList.remove('text-blue-600');
     }
     
     // Determine level
     if (strength >= 100) {
         level = 'Strong';
         color = 'bg-green-500';
+        textColor = 'text-green-600';
     } else if (strength >= 66) {
         level = 'Medium';
         color = 'bg-blue-500';
+        textColor = 'text-blue-600';
     } else if (strength >= 33) {
         level = 'Weak';
         color = 'bg-yellow-500';
+        textColor = 'text-yellow-600';
     } else {
         level = '-';
-        color = 'bg-gray-300';
+        color = 'bg-gray-200';
+        textColor = 'text-gray-500';
     }
     
     strengthBar.style.width = strength + '%';
     strengthBar.className = 'h-full transition-all duration-300 ' + color;
     strengthLevel.textContent = level;
-    if (level !== '-') {
-        strengthLevel.className = level === 'Strong' ? 'text-green-600' : level === 'Medium' ? 'text-blue-600' : 'text-yellow-600';
+    strengthLevel.className = textColor;
+    
+    if (password.length === 0) {
+        strengthBar.style.width = '0%';
+        strengthBar.className = 'h-full transition-all duration-300 bg-gray-200';
+        strengthLevel.textContent = '-';
+        strengthLevel.className = 'text-gray-500';
     }
 }
 </script>

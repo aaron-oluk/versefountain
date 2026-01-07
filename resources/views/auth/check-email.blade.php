@@ -2,15 +2,22 @@
 
 @section('title', 'Check Your Email - VerseFountain')
 
+@php
+    $email = $email ?? old('email', '');
+    $maskedEmail = $email ? substr($email, 0, 1) . str_repeat('*', max(0, strpos($email, '@') - 1)) . substr($email, strpos($email, '@')) : 'your email address';
+@endphp
+
 @section('auth-content')
 <div class="bg-white rounded-lg shadow-sm">
     <div class="p-8">
         <!-- Icon -->
         <div class="flex justify-center mb-6">
-            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
+            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center relative">
                 <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
                     <i class="bx bx-envelope text-2xl text-white"></i>
-                    <i class="bx bx-check absolute text-white text-sm"></i>
+                </div>
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                    <i class="bx bx-check text-white text-sm"></i>
                 </div>
             </div>
         </div>
@@ -19,7 +26,7 @@
         <div class="text-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-900 mb-2">Check your mail</h2>
             <p class="text-sm text-gray-600 mb-2">We have sent password recovery instructions to</p>
-            <p class="text-sm font-semibold text-gray-900">{{ $email ?? old('email', 'your email address') }}</p>
+            <p class="text-sm font-semibold text-gray-900">{{ $maskedEmail }}</p>
         </div>
 
         <!-- Primary Action Button -->
@@ -37,7 +44,7 @@
             </p>
             <form method="POST" action="{{ route('password.email') }}" class="inline">
                 @csrf
-                <input type="hidden" name="email" value="{{ $email ?? old('email') }}">
+                <input type="hidden" name="email" value="{{ $email }}">
                 <button type="submit" class="text-sm text-blue-600 hover:underline font-medium">
                     Click to resend email
                 </button>

@@ -24,7 +24,7 @@
         </div>
 
         <!-- Right Section - Feature Promotion -->
-        @if(request()->routeIs('login') || request()->routeIs('register'))
+        @if(request()->routeIs('login'))
         <div class="hidden lg:flex lg:flex-1 bg-white items-center justify-center px-12">
             <div class="max-w-md">
                 <h2 class="text-3xl font-semibold text-gray-900 mb-4">Discover the World of Poetry</h2>
@@ -65,6 +65,32 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        @elseif(request()->routeIs('register'))
+        <!-- Register page - Dark blue background with buttons -->
+        <div class="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800 relative overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1920&q=80');"></div>
+            <div class="absolute inset-0 bg-black opacity-20"></div>
+            <div class="relative z-10 flex flex-col justify-center px-12 text-white">
+                <h2 class="text-4xl font-semibold mb-4">Discover. Discuss. Connect.</h2>
+                <p class="text-lg mb-8 opacity-90">
+                    Access thousands of poems, join exclusive chatrooms, and support your favorite creators directly. Your next favorite verse is waiting.
+                </p>
+                <div class="flex gap-3">
+                    <a href="/books" class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-book"></i>
+                        E-Library
+                    </a>
+                    <a href="{{ route('chatrooms.index') }}" class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-message-dots"></i>
+                        Community
+                    </a>
+                    <a href="/poetry" class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-check-circle"></i>
+                        Creators
+                    </a>
                 </div>
             </div>
         </div>
