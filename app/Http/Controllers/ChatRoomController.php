@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatRoomController extends Controller
 {
+    /**
+     * Display the chatrooms listing page.
+     */
+    public function indexWeb()
+    {
+        return view('chatrooms');
+    }
+
     public function index(Request $request)
     {
         $query = ChatRoom::query()->withCount('members');

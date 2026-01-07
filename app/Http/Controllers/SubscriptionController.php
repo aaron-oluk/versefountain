@@ -12,6 +12,14 @@ use Illuminate\Validation\Rule;
 class SubscriptionController extends Controller
 {
     /**
+     * Display the subscription page.
+     */
+    public function indexWeb()
+    {
+        return view('subscription');
+    }
+
+    /**
      * Get available subscription plans.
      */
     public function getPlans()

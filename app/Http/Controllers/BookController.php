@@ -8,6 +8,7 @@ use App\Models\Book;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 class BookController extends Controller
 {
@@ -151,6 +152,14 @@ class BookController extends Controller
         }
 
         return view('books.show', compact('book'));
+    }
+
+    /**
+     * Display book reading interface.
+     */
+    public function read(Book $book)
+    {
+        return view('books.read', ['book' => $book]);
     }
 
     /**

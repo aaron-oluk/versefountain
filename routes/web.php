@@ -1,29 +1,30 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PoemController;
-use App\Http\Controllers\PoemCommentController;
-use App\Http\Controllers\CommentReactionController;
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\ChatRoomController;
-use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\AcademicResourceController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\TicketController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\PaddleWebhookController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\ChatMessageController;
+use App\Http\Controllers\ChatRoomController;
+use App\Http\Controllers\CommentReactionController;
+use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\PaddleWebhookController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PoemCommentController;
+use App\Http\Controllers\PoemController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,51 +37,36 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+// Public pages
+Route::get('/', [PageController::class, 'home'])->name('index');
+Route::get('/refund-cancellation-policies', [PageController::class, 'refundPolicies'])->name('refund-cancellation-policies');
 
+// Search
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+// Creators
+Route::get('/creators', [UserController::class, 'index'])->name('creators.index');
+
+// Poetry
 Route::get('/poetry', [PoemController::class, 'index'])->name('poetry.index');
+Route::get('/poetry/create', [PoemController::class, 'create'])->middleware('auth')->name('poetry.create');
+Route::get('/poetry/{poem}', [PoemController::class, 'show'])->name('poetry.show');
+Route::get('/poetry/{poem}/edit', [PoemController::class, 'edit'])->middleware('auth')->name('poetry.edit');
 
-Route::get('/poetry/create', function () {
-    return view('poetry.create');
-})->middleware('auth')->name('poetry.create');
-
-Route::get('/poetry/{poem}', [App\Http\Controllers\PoemController::class, 'show'])->name('poetry.show');
-
-Route::get('/poetry/{poem}/edit', function ($poem) {
-    return view('poetry.edit', compact('poem'));
-})->middleware('auth')->name('poetry.edit');
-
+// Books
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{book}', [BookController::class, 'showWeb'])->name('books.show');
 
-Route::get('/books/{book}', [App\Http\Controllers\BookController::class, 'showWeb'])->name('books.show');
-
+// Academics
 Route::get('/academics', [AcademicResourceController::class, 'index'])->name('academics.index');
+Route::get('/academics/{resource}', [AcademicResourceController::class, 'show'])->name('academics.show');
+Route::get('/academics/{resource}/download', [AcademicResourceController::class, 'download'])->name('academics.download');
 
-Route::get('/academics/{resource}', [App\Http\Controllers\AcademicResourceController::class, 'show'])->name('academics.show');
-Route::get('/academics/{resource}/download', [App\Http\Controllers\AcademicResourceController::class, 'download'])->name('academics.download');
-
+// Events
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 
-Route::get('/refund-cancellation-policies', function () {
-    return view('refund-cancellation-policies');
-})->name('refund-cancellation-policies');
-
-// API-style routes (returning JSON) - Public routes
-Route::get('/api/user', function () {
-    $user = Auth::user();
-    if (!$user) {
-        return response()->json(['message' => 'Unauthenticated.'], 401);
-    }
-
-    return response()->json([
-        'user_id' => $user->id,
-        'username' => $user->username,
-        'email' => $user->email,
-        'role' => $user->role,
-    ]);
-})->middleware('auth')->name('api.user');
+// API - Current user
+Route::get('/api/user', [UserController::class, 'currentUser'])->middleware('auth')->name('api.user');
 
 // Public API routes (no auth required)
 Route::get('/api/config/frontend', [ConfigController::class, 'getFrontendConfig'])->name('api.config.frontend');
@@ -105,58 +91,45 @@ Route::post('/api/logout', [AuthenticatedSessionController::class, 'destroy'])->
 
 // Protected Routes (require authentication)
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Dashboard
+    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
 
+    // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Password update route
-    Route::put('/password', function () {
-        return redirect()->route('profile.edit')->with('status', 'password-updated');
-    })->name('password.update');
+    // Chat
+    Route::get('/chat/rooms', [ChatRoomController::class, 'indexWeb'])->name('chatrooms.index');
+    Route::get('/chat/rooms/{chatroom}', [ChatRoomController::class, 'show'])->name('chatroom.show');
+    Route::post('/chat/rooms/{chatroom}/join', [ChatRoomController::class, 'joinRoom']);
+    Route::post('/chat/rooms/{chatroom}/leave', [ChatRoomController::class, 'leaveRoom']);
+    Route::post('/chat/rooms/{chatroom}/messages', [ChatMessageController::class, 'store']);
+    Route::get('/chat/rooms/{chatroom}/messages', [ChatMessageController::class, 'index']);
 
-    // Chat functionality
-    Route::get('/chat/rooms', function () {
-        return view('chatrooms');
-    })->name('chatrooms.index');
-    Route::get('/chat/rooms/{chatroom}', [App\Http\Controllers\ChatRoomController::class, 'show'])->name('chatroom.show');
-    Route::post('/chat/rooms/{chatroom}/join', [App\Http\Controllers\ChatRoomController::class, 'joinRoom']);
-    Route::post('/chat/rooms/{chatroom}/leave', [App\Http\Controllers\ChatRoomController::class, 'leaveRoom']);
-    Route::post('/chat/rooms/{chatroom}/messages', [App\Http\Controllers\ChatMessageController::class, 'store']);
-    Route::get('/chat/rooms/{chatroom}/messages', [App\Http\Controllers\ChatMessageController::class, 'index']);
+    // Tickets
+    Route::get('/tickets', [TicketController::class, 'indexWeb'])->name('tickets.index');
 
-    Route::get('/tickets', function () {
-        return view('tickets');
-    })->name('tickets.index');
-
-    // Admin Dashboard Route
+    // Admin
     Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     // Creator Studio
-    Route::get('/creator-studio/submit', function () {
-        return view('poetry.submit');
-    })->name('poetry.submit');
+    Route::get('/creator-studio/submit', [PoemController::class, 'submit'])->name('poetry.submit');
 
-    // Reading Interface
-    Route::get('/books/{book}/read', function ($book) {
-        $bookModel = \App\Models\Book::findOrFail($book);
-        return view('books.read', ['book' => $bookModel]);
-    })->name('books.read');
+    // Books - Reading
+    Route::get('/books/{book}/read', [BookController::class, 'read'])->name('books.read');
 
     // Subscription
-    Route::get('/subscription', function () {
-        return view('subscription');
-    })->name('subscription');
+    Route::get('/subscription', [SubscriptionController::class, 'indexWeb'])->name('subscription');
 
     // Creator Profile
-    Route::get('/creators/{user}', function ($user) {
-        $userModel = \App\Models\User::findOrFail($user);
-        return view('profile.creator', ['creator' => $userModel]);
-    })->name('profile.creator');
+    Route::get('/creators/{user}', [UserController::class, 'showCreator'])->name('profile.creator');
+
+    // Settings
+    Route::get('/settings', [ProfileController::class, 'settings'])->name('settings.index');
+    Route::patch('/settings/profile', [ProfileController::class, 'update'])->name('settings.profile.update');
+    Route::patch('/settings/password', [ProfileController::class, 'updatePassword'])->name('settings.password.update');
 
     // API-style routes (returning JSON) - Authenticated routes
     // Poems
@@ -262,4 +235,4 @@ Route::middleware(['auth'])->prefix('api/admin')->group(function () {
 Route::post('/api/paddle/webhook', [PaddleWebhookController::class, 'handleWebhook'])->name('api.paddle.webhook');
 
 // Auth Routes
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

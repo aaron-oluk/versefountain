@@ -1,255 +1,312 @@
 @extends('layouts.app')
 
-@section('title', $creator->username . ' - Creator Profile - VerseFountain')
+@section('title', ($creator->first_name ?? $creator->username) . ' - Creator Profile - VerseFountain')
 
 @php
-    $publishedWorks = \App\Models\Book::where('uploadedById', $creator->id)->where('approved', true)->get();
-    $latestUpdates = []; // Mock data for updates
+    $pageTitle = 'Creator Profile';
+    $publishedBooks = \App\Models\Book::where('uploadedById', $creator->id)->where('approved', true)->get();
+    $creatorPoems = $poems ?? $creator->poems()->where('approved', true)->latest()->paginate(12);
+    $followerCount = $creator->followers_count ?? $creator->followers()->count();
+    $followingCount = $creator->following()->count();
+    $isFollowing = $isFollowing ?? (auth()->check() ? auth()->user()->following()->where('poet_id', $creator->id)->exists() : false);
 @endphp
 
 @section('content')
 <div class="min-h-screen bg-gray-50">
     <!-- Banner -->
-    <div class="h-64 bg-gradient-to-r from-blue-900 via-purple-900 to-blue-800 relative mb-20 overflow-hidden">
-        <div class="absolute inset-0 bg-cover bg-center opacity-50" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80');"></div>
-        <div class="absolute bottom-0 left-8 transform translate-y-1/2 z-10">
-            <div class="w-32 h-32 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center overflow-hidden">
-                @if($creator->profile_photo_path ?? false)
-                    <img src="{{ $creator->profile_photo_path }}" alt="{{ $creator->username }}" class="w-full h-full object-cover">
-                @else
-                    <span class="text-4xl font-semibold text-blue-600">{{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}</span>
-                @endif
-            </div>
-        </div>
+    <div class="h-48 sm:h-64 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 relative">
+        <div class="absolute inset-0 bg-black/20"></div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <!-- Profile Header -->
-        <div class="flex items-start justify-between mb-6">
-            <div class="flex items-start gap-4">
-                <div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold -mt-12 ml-4 border-4 border-white shadow-lg">
+        <div class="relative -mt-16 sm:-mt-20 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+                <!-- Avatar -->
+                <div class="w-28 h-28 sm:w-36 sm:h-36 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center overflow-hidden">
                     @if($creator->profile_photo_path ?? false)
-                        <img src="{{ $creator->profile_photo_path }}" alt="{{ $creator->username }}" class="w-full h-full object-cover rounded-full">
+                        <img src="{{ asset('storage/' . $creator->profile_photo_path) }}" alt="{{ $creator->username }}" class="w-full h-full object-cover">
                     @else
-                        {{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}
+                        <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span class="text-4xl sm:text-5xl font-bold text-white">{{ strtoupper(substr($creator->first_name ?? $creator->username ?? 'U', 0, 1)) }}</span>
+                        </div>
                     @endif
                 </div>
-                <div class="pt-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <h1 class="text-3xl font-semibold text-gray-900">{{ $creator->username }}</h1>
-                        <i class="bx bx-check-circle text-blue-600 text-xl"></i>
-                    </div>
-                    <p class="text-sm text-gray-600 mb-2">Weaving shadows into verse. Best-selling author of 'The Midnight Garden'. Exploring the quiet spaces between words.</p>
-                    <div class="flex items-center gap-4 text-sm">
-                        <span class="text-gray-900 font-semibold">12.5k</span>
-                        <span class="text-gray-600">Followers</span>
-                        <span class="text-gray-900 font-semibold">48</span>
-                        <span class="text-gray-600">Works</span>
-                    </div>
-                    <div class="flex items-center gap-3 mt-2">
-                        <a href="#" class="text-gray-600 hover:text-gray-900">
-                            <i class="bx bx-link text-lg"></i>
-                        </a>
-                        <a href="#" class="text-gray-600 hover:text-gray-900">
-                            <i class="bx bx-envelope text-lg"></i>
-                        </a>
+
+                <!-- Name and Actions -->
+                <div class="flex-1 sm:pb-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                                {{ $creator->first_name ?? $creator->username }}
+                                @if($creator->last_name) {{ $creator->last_name }} @endif
+                            </h1>
+                            <p class="text-gray-500">{{ '@' . $creator->username }}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            @auth
+                                @if(auth()->id() !== $creator->id)
+                                    <button onclick="toggleFollow({{ $creator->id }}, this)"
+                                            class="px-5 py-2 rounded-lg text-sm font-medium transition-colors {{ $isFollowing ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700' }}"
+                                            data-following="{{ $isFollowing ? 'true' : 'false' }}">
+                                        {{ $isFollowing ? 'Following' : 'Follow' }}
+                                    </button>
+                                    <a href="{{ route('chatrooms.index') }}" class="px-5 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                                        Message
+                                    </a>
+                                @else
+                                    <a href="{{ route('profile.edit') }}" class="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                        Edit Profile
+                                    </a>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                    Follow
+                                </a>
+                            @endauth
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="flex gap-2">
-                <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                    Follow
-                </button>
-                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                    Subscribe
-                </button>
             </div>
         </div>
 
+        <!-- Stats -->
+        <div class="flex items-center gap-6 mb-6 text-sm">
+            <div>
+                <span class="font-bold text-gray-900" id="followerCount">{{ number_format($followerCount) }}</span>
+                <span class="text-gray-500">Followers</span>
+            </div>
+            <div>
+                <span class="font-bold text-gray-900">{{ number_format($followingCount) }}</span>
+                <span class="text-gray-500">Following</span>
+            </div>
+            <div>
+                <span class="font-bold text-gray-900">{{ $creatorPoems->total() }}</span>
+                <span class="text-gray-500">Poems</span>
+            </div>
+            <div>
+                <span class="font-bold text-gray-900">{{ $publishedBooks->count() }}</span>
+                <span class="text-gray-500">Books</span>
+            </div>
+        </div>
+
+        <!-- Bio -->
+        @if($creator->bio ?? false)
+        <div class="mb-6">
+            <p class="text-gray-700">{{ $creator->bio }}</p>
+        </div>
+        @endif
+
+        <!-- Tabs -->
+        <div class="border-b border-gray-200 mb-6">
+            <nav class="flex -mb-px">
+                <button class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 transition-colors" data-tab="poems">
+                    Poems
+                </button>
+                <button class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 transition-colors" data-tab="books">
+                    Books
+                </button>
+            </nav>
+        </div>
+
+        <!-- Content -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Content -->
-            <main class="lg:col-span-2">
-                <!-- Tabs -->
-                <div class="border-b border-gray-200 mb-6">
-                    <nav class="flex -mb-px">
-                        <button class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600">
-                            Portfolio
-                        </button>
-                        <button class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300">
-                            Timeline
-                        </button>
-                        <button class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300">
-                            Reviews
-                        </button>
-                        <button class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 flex items-center gap-1">
-                            Community
-                            <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded">Pro</span>
-                        </button>
-                    </nav>
+            <div class="lg:col-span-2">
+                <!-- Poems Tab -->
+                <div id="poems-tab">
+                    @if($creatorPoems->count() > 0)
+                        <div class="space-y-4">
+                            @foreach($creatorPoems as $poem)
+                            <a href="{{ route('poetry.show', $poem->id) }}" class="block bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $poem->title }}</h3>
+                                <p class="text-gray-600 text-sm mb-3 line-clamp-3">{{ Str::limit(strip_tags($poem->content), 200) }}</p>
+                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                    <span class="flex items-center gap-1">
+                                        <i class="bx bx-heart"></i>
+                                        {{ $poem->userInteractions()->where('type', 'like')->count() }} likes
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <i class="bx bx-comment"></i>
+                                        {{ $poem->comments()->count() }} comments
+                                    </span>
+                                    <span>{{ $poem->created_at->diffForHumans() }}</span>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="mt-6">
+                            {{ $creatorPoems->links() }}
+                        </div>
+                    @else
+                        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                            <i class="bx bx-pen text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">No poems yet</h3>
+                            <p class="text-gray-500">This creator hasn't published any poems.</p>
+                        </div>
+                    @endif
                 </div>
 
-                <!-- Published Works -->
-                <div class="mb-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Published Works</h2>
-                        <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View all</a>
-                    </div>
-                    <div class="flex gap-4 overflow-x-auto pb-2">
-                        @foreach($publishedWorks->take(4) as $index => $work)
-                        <div class="flex-shrink-0 w-40">
-                            <div class="w-40 h-56 bg-gray-200 rounded mb-2 flex items-center justify-center overflow-hidden relative">
-                                @if($work->coverImage)
-                                    <img src="{{ $work->coverImage }}" alt="{{ $work->title }}" class="w-full h-full object-cover">
-                                @else
-                                    <i class="bx bx-book text-4xl text-gray-400"></i>
-                                @endif
-                            </div>
-                            <h3 class="text-sm font-semibold text-gray-900 truncate">{{ $work->title }}</h3>
-                            <p class="text-xs text-gray-600">{{ $work->created_at->format('Y') }} • {{ $work->genre ?? 'Poetry Collection' }}</p>
+                <!-- Books Tab (hidden by default) -->
+                <div id="books-tab" class="hidden">
+                    @if($publishedBooks->count() > 0)
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            @foreach($publishedBooks as $book)
+                            <a href="{{ route('books.show', $book->id) }}" class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                                <div class="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                    @if($book->coverImage)
+                                        <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
+                                    @else
+                                        <i class="bx bx-book text-4xl text-gray-400"></i>
+                                    @endif
+                                </div>
+                                <div class="p-3">
+                                    <h3 class="font-medium text-gray-900 text-sm truncate">{{ $book->title }}</h3>
+                                    <p class="text-xs text-gray-500">{{ $book->genre ?? 'Poetry' }}</p>
+                                </div>
+                            </a>
+                            @endforeach
                         </div>
-                        @endforeach
-                        @if($publishedWorks->count() === 0)
-                        <div class="flex-shrink-0 w-40">
-                            <div class="w-40 h-56 bg-gray-100 rounded mb-2 flex items-center justify-center border-2 border-dashed border-gray-300">
-                                <i class="bx bx-book text-4xl text-gray-400"></i>
-                            </div>
-                            <p class="text-xs text-gray-500">No works yet</p>
+                    @else
+                        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                            <i class="bx bx-book text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">No books yet</h3>
+                            <p class="text-gray-500">This creator hasn't published any books.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="space-y-6">
+                <!-- About -->
+                <div class="bg-white rounded-xl border border-gray-200 p-5">
+                    <h2 class="text-base font-semibold text-gray-900 mb-4">About</h2>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center gap-3 text-gray-600">
+                            <i class="bx bx-calendar text-lg"></i>
+                            <span>Joined {{ $creator->created_at->format('F Y') }}</span>
+                        </div>
+                        @if($creator->email && auth()->check() && (auth()->id() === $creator->id || auth()->user()->role === 'admin'))
+                        <div class="flex items-center gap-3 text-gray-600">
+                            <i class="bx bx-envelope text-lg"></i>
+                            <span>{{ $creator->email }}</span>
                         </div>
                         @endif
                     </div>
                 </div>
 
-                <!-- Latest Updates -->
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Latest Updates</h2>
-                        <button class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                            <i class="bx bx-dots-horizontal-rounded text-xl"></i>
-                        </button>
-                    </div>
-                    <div class="space-y-4">
-                        <!-- Update Card 1 -->
-                        <div class="bg-white rounded-lg border border-gray-200 p-4">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                                    {{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}
+                <!-- Featured Work -->
+                @if($publishedBooks->count() > 0)
+                <div class="bg-white rounded-xl border border-gray-200 p-5">
+                    <h2 class="text-base font-semibold text-gray-900 mb-4">Featured Work</h2>
+                    @php $featuredBook = $publishedBooks->first(); @endphp
+                    <a href="{{ route('books.show', $featuredBook->id) }}" class="block group">
+                        <div class="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg mb-3 overflow-hidden">
+                            @if($featuredBook->coverImage)
+                                <img src="{{ asset('storage/' . $featuredBook->coverImage) }}" alt="{{ $featuredBook->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <i class="bx bx-book text-4xl text-gray-400"></i>
                                 </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-medium text-gray-900">{{ $creator->username }}</span>
-                                        <span class="text-xs text-gray-500">2 hours ago</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full mb-2">Announcement</span>
-                            <p class="text-sm text-gray-700 mb-3">Thrilled to announce that the pre-order for my next collection, 'Whispers in the Glass,' will be available starting next Friday! Here is a sneak peek at the cover art. 🌙✨</p>
-                            <div class="w-full h-48 bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                                <i class="bx bx-image text-4xl text-gray-400"></i>
-                            </div>
-                            <div class="flex items-center gap-4 text-sm text-gray-600">
-                                <button class="flex items-center gap-1 hover:text-red-600 transition-colors">
-                                    <i class="bx bx-heart"></i>
-                                    <span>842</span>
-                                </button>
-                                <button class="flex items-center gap-1 hover:text-blue-600 transition-colors">
-                                    <i class="bx bx-message-dots"></i>
-                                    <span>56</span>
-                                </button>
-                                <button class="flex items-center gap-1 hover:text-gray-900 transition-colors">
-                                    <span>Share</span>
-                                    <i class="bx bx-right-arrow-alt"></i>
-                                </button>
-                            </div>
+                            @endif
                         </div>
-                        
-                        <!-- Update Card 2 -->
-                        <div class="bg-white rounded-lg border border-gray-200 p-4">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                                    {{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-medium text-gray-900">{{ $creator->username }}</span>
-                                        <span class="text-xs text-gray-500">2 days ago</span>
-                                    </div>
-                                </div>
+                        <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{{ $featuredBook->title }}</h3>
+                        <p class="text-sm text-gray-500">{{ $featuredBook->genre ?? 'Poetry Collection' }}</p>
+                    </a>
+                </div>
+                @endif
+
+                <!-- Similar Creators -->
+                @php
+                    $similarCreators = \App\Models\User::where('id', '!=', $creator->id)
+                        ->has('poems')
+                        ->withCount('poems')
+                        ->orderBy('poems_count', 'desc')
+                        ->take(3)
+                        ->get();
+                @endphp
+                @if($similarCreators->count() > 0)
+                <div class="bg-white rounded-xl border border-gray-200 p-5">
+                    <h2 class="text-base font-semibold text-gray-900 mb-4">Similar Creators</h2>
+                    <div class="space-y-3">
+                        @foreach($similarCreators as $similar)
+                        <a href="{{ route('profile.creator', $similar->id) }}" class="flex items-center gap-3 hover:bg-gray-50 -mx-2 px-2 py-2 rounded-lg transition-colors">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium">
+                                {{ strtoupper(substr($similar->first_name ?? $similar->username, 0, 1)) }}
                             </div>
-                            <span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full mb-2">Snippet</span>
-                            <p class="text-sm text-gray-700 italic mb-3">"The morning comes, not with a roar, but with the softest sigh of light against the floor."</p>
-                            <div class="flex items-center gap-4 text-sm text-gray-600">
-                                <button class="flex items-center gap-1 hover:text-red-600 transition-colors">
-                                    <i class="bx bx-heart"></i>
-                                    <span>1.2k</span>
-                                </button>
-                                <button class="flex items-center gap-1 hover:text-blue-600 transition-colors">
-                                    <i class="bx bx-message-dots"></i>
-                                    <span>124</span>
-                                </button>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-900 truncate">{{ $similar->first_name ?? $similar->username }}</p>
+                                <p class="text-xs text-gray-500">{{ $similar->poems_count }} poems</p>
                             </div>
-                        </div>
+                        </a>
+                        @endforeach
                     </div>
                 </div>
-            </main>
-
-            <!-- Right Sidebar -->
-            <aside class="space-y-6">
-                <!-- Support Section -->
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <div class="flex items-center gap-2 mb-3">
-                        <i class="bx bx-heart text-red-500"></i>
-                        <h2 class="text-lg font-semibold text-gray-900">Support {{ $creator->username }}</h2>
-                    </div>
-                    <p class="text-sm text-gray-600 mb-4">Get access to exclusive monthly poems, draft previews, and a private Discord channel.</p>
-                    <button class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                        Become a Patron
-                    </button>
-                </div>
-
-                <!-- Upcoming Events -->
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Upcoming Events</h2>
-                        <a href="#" class="text-xs text-blue-600 hover:text-blue-700 font-medium">Calendar</a>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <p class="text-xs font-medium text-gray-900 mb-1">OCT 24</p>
-                            <h3 class="text-sm font-semibold text-gray-900 mb-1">Live Poetry Reading</h3>
-                            <p class="text-xs text-gray-600">Online • 7:00 PM EST</p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium text-gray-900 mb-1">NOV 05</p>
-                            <h3 class="text-sm font-semibold text-gray-900 mb-1">Book Signing: NYC</h3>
-                            <p class="text-xs text-gray-600">Strand Bookstore</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Top Readers -->
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Top Readers</h2>
-                    <div class="flex -space-x-2 mb-3">
-                        @for($i = 0; $i < 5; $i++)
-                            <div class="w-8 h-8 bg-blue-500 rounded-full border-2 border-white"></div>
-                        @endfor
-                        <div class="w-8 h-8 bg-gray-300 rounded-full border-2 border-white flex items-center justify-center text-xs text-gray-600">+42</div>
-                    </div>
-                    <p class="text-xs text-gray-600">Join the reading challenge to get on the leaderboard!</p>
-                </div>
-
-                <!-- Subscriber Chat -->
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Subscriber Chat</h2>
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <p class="text-sm text-gray-700">Live discussion about 'Starlight Ink' is happening now.</p>
-                    </div>
-                    <p class="text-xs text-gray-600">18 Online</p>
-                </div>
+                @endif
             </aside>
         </div>
     </div>
 </div>
 @endsection
 
+@section('scripts')
+<script>
+// Tab switching
+document.querySelectorAll('[data-tab]').forEach(tab => {
+    tab.addEventListener('click', function() {
+        const tabName = this.dataset.tab;
+
+        // Update tab styles
+        document.querySelectorAll('[data-tab]').forEach(t => {
+            t.classList.remove('text-blue-600', 'border-blue-600');
+            t.classList.add('text-gray-600', 'border-transparent');
+        });
+        this.classList.remove('text-gray-600', 'border-transparent');
+        this.classList.add('text-blue-600', 'border-blue-600');
+
+        // Show/hide content
+        document.getElementById('poems-tab').classList.toggle('hidden', tabName !== 'poems');
+        document.getElementById('books-tab').classList.toggle('hidden', tabName !== 'books');
+    });
+});
+
+// Follow/Unfollow
+function toggleFollow(userId, button) {
+    const isFollowing = button.dataset.following === 'true';
+    const url = isFollowing
+        ? `/api/poets/${userId}/unfollow`
+        : `/api/poets/${userId}/follow`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const followerCountEl = document.getElementById('followerCount');
+        let count = parseInt(followerCountEl.textContent.replace(/,/g, ''));
+
+        if (isFollowing) {
+            button.dataset.following = 'false';
+            button.textContent = 'Follow';
+            button.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            button.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+            followerCountEl.textContent = (count - 1).toLocaleString();
+        } else {
+            button.dataset.following = 'true';
+            button.textContent = 'Following';
+            button.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+            button.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            followerCountEl.textContent = (count + 1).toLocaleString();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+@endsection

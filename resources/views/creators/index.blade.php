@@ -1,0 +1,138 @@
+@extends('layouts.app')
+
+@section('title', 'Creators - VerseFountain')
+
+@php $pageTitle = 'Creators'; @endphp
+
+@section('content')
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Discover Creators</h1>
+        <p class="text-gray-600 mt-1">Find and follow talented poets and writers</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        <form action="{{ route('creators.index') }}" method="GET" class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+                <div class="relative">
+                    <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                           placeholder="Search creators..."
+                           class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm">
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <select name="sort" onchange="this.form.submit()"
+                        class="px-4 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm bg-white">
+                    <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Most Popular</option>
+                    <option value="most_poems" {{ request('sort') == 'most_poems' ? 'selected' : '' }}>Most Poems</option>
+                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
+                </select>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Creators Grid -->
+    @if($creators->count() > 0)
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($creators as $creator)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="p-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                                {{ strtoupper(substr($creator->first_name ?? $creator->username ?? 'U', 0, 1)) }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-lg font-semibold text-gray-900 truncate">
+                                    {{ $creator->first_name ?? $creator->username }}
+                                    @if($creator->last_name) {{ $creator->last_name }} @endif
+                                </h3>
+                                <p class="text-sm text-gray-500">{{ '@' . $creator->username }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                            <div class="flex items-center space-x-4">
+                                <span class="flex items-center">
+                                    <i class="bx bx-pen mr-1"></i>
+                                    {{ $creator->poems_count }} poems
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="bx bx-group mr-1"></i>
+                                    {{ $creator->followers_count }} followers
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex space-x-2">
+                            <a href="{{ route('profile.creator', $creator->id) }}"
+                               class="flex-1 text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                                View Profile
+                            </a>
+                            @auth
+                                @if(auth()->id() !== $creator->id)
+                                    <button onclick="toggleFollow({{ $creator->id }}, this)"
+                                            class="px-4 py-2 rounded-lg transition-colors text-sm font-medium {{ auth()->user()->following()->where('poet_id', $creator->id)->exists() ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700' }}"
+                                            data-following="{{ auth()->user()->following()->where('poet_id', $creator->id)->exists() ? 'true' : 'false' }}">
+                                        <i class="bx {{ auth()->user()->following()->where('poet_id', $creator->id)->exists() ? 'bx-user-check' : 'bx-user-plus' }}"></i>
+                                    </button>
+                                @endif
+                            @endauth
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-8">
+            {{ $creators->links() }}
+        </div>
+    @else
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+            <i class="bx bx-user-circle text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No creators found</h3>
+            <p class="text-gray-500">Try adjusting your search criteria</p>
+        </div>
+    @endif
+</div>
+@endsection
+
+@section('scripts')
+<script>
+function toggleFollow(userId, button) {
+    const isFollowing = button.dataset.following === 'true';
+    const url = isFollowing
+        ? `/api/poets/${userId}/unfollow`
+        : `/api/poets/${userId}/follow`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (isFollowing) {
+            button.dataset.following = 'false';
+            button.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            button.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+            button.innerHTML = '<i class="bx bx-user-plus"></i>';
+        } else {
+            button.dataset.following = 'true';
+            button.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+            button.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            button.innerHTML = '<i class="bx bx-user-check"></i>';
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+@endsection

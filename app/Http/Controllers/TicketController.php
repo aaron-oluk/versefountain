@@ -13,6 +13,14 @@ use Illuminate\Validation\Rule;
 class TicketController extends Controller
 {
     /**
+     * Display the tickets page.
+     */
+    public function indexWeb()
+    {
+        return view('tickets');
+    }
+
+    /**
      * Display a listing of the tickets for a specific event.
      */
     public function index(Request $request, Event $event = null)
