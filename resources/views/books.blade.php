@@ -9,73 +9,8 @@
 
 @section('content')
 <div class="min-h-screen bg-gray-50">
-    <!-- Header with Search -->
-    <div class="bg-white border-b border-gray-200 mb-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex items-center gap-4">
-                <div class="flex-1 relative">
-                    <input type="text" placeholder="Search titles, authors, genres..." 
-                           class="w-full pl-10 pr-20 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                    <i class="bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <button class="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded border border-gray-300 flex items-center gap-1">
-                        <i class="bx bx-keyboard"></i>
-                        <span>K</span>
-                    </button>
-                </div>
-                <button class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                    <i class="bx bx-bell text-xl"></i>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex gap-6 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Left Sidebar -->
-        <aside class="hidden lg:block w-64 flex-shrink-0">
-            <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <i class="bx bx-book text-white text-xl"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-base font-semibold text-gray-900">E-Library</h2>
-                    </div>
-                </div>
-            </div>
-            <nav class="space-y-1">
-                <a href="/books" class="flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">
-                    <i class="bx bx-search mr-3"></i>
-                    Browse
-                </a>
-                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
-                    <i class="bx bx-book mr-3"></i>
-                    My Library
-                </a>
-                <a href="{{ route('chatrooms.index') }}" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
-                    <i class="bx bx-message-dots mr-3"></i>
-                    Chatrooms
-                </a>
-                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
-                    <i class="bx bx-group mr-3"></i>
-                    Creators
-                </a>
-            </nav>
-            <div class="mt-8">
-                <div class="flex items-center gap-3 p-3">
-                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-medium">
-                        {{ strtoupper(substr(auth()->user()->username ?? 'A', 0, 1)) }}
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">{{ auth()->user()->username ?? 'Alex Morgan' }}</p>
-                        <p class="text-xs text-gray-600">Premium Member</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
         <!-- Main Content -->
-        <main class="flex-1 min-w-0">
+        <main class="w-full">
             <!-- Filter and Sort -->
             <div class="mb-6">
                 <div class="flex items-center gap-4 mb-4">
@@ -173,6 +108,5 @@
                 <!-- Creator cards would go here -->
             </div>
         </main>
-    </div>
 </div>
 @endsection

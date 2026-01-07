@@ -105,7 +105,16 @@
 
     <!-- Top Header Bar -->
     <header class="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 md:left-64 z-40">
-        <div class="px-4 sm:px-6 lg:px-8 flex items-center justify-end h-16">
+        <div class="px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+            <!-- Search Bar (Centered) -->
+            <div class="flex-1 max-w-md mx-auto">
+                <div class="relative">
+                    <input type="text" placeholder="Search books, authors, or poems..." 
+                           class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-sm bg-gray-100">
+                    <i class="bx bx-search absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"></i>
+                </div>
+            </div>
+
             <!-- Right Side Actions -->
             <div class="flex items-center space-x-4">
                 @auth

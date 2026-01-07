@@ -3,8 +3,9 @@
 @section('title', 'Poetry - VerseFountain')
 
 @section('content')
-    <div class="min-h-screen">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+<div class="min-h-screen bg-gray-50">
+        <!-- Main Content -->
+        <main class="w-full">
             <!-- Page Header -->
             <div class="mb-8">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -36,7 +37,7 @@
                         <label for="search" class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Search Poems</label>
                         <div class="relative">
                             <input type="text" id="search" placeholder="Search by title, author, or content..."
-                                class="w-full pl-9 pr-3 py-2 shadow-sm focus:border-blue-600 text-sm bg-white focus:outline-none">
+                                class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-sm bg-white">
                             <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
                                 <i class="bx bx-search text-base text-gray-400"></i>
                             </div>
@@ -47,7 +48,7 @@
                     <div>
                         <label for="category" class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Category</label>
                         <select id="category"
-                            class="w-full px-3 py-2 shadow-sm focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-sm bg-white appearance-none cursor-pointer">
                             <option value="">All Categories</option>
                             <option value="love">Love</option>
                             <option value="nature">Nature</option>
@@ -62,7 +63,7 @@
                     <div>
                         <label for="sort" class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Sort By</label>
                         <select id="sort"
-                            class="w-full px-3 py-2 shadow-sm focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-sm bg-white appearance-none cursor-pointer">
                             <option value="newest">Newest First</option>
                             <option value="oldest">Oldest First</option>
                             <option value="popular">Most Popular</option>
@@ -75,7 +76,7 @@
             <!-- Poems Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 @forelse($poems as $poem)
-                    <div class="bg-white rounded-lg shadow-sm  focus-within:border-blue-400 transition-colors"
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 focus-within:border-blue-400 transition-colors"
                          data-poem-card
                          data-poem-id="{{ $poem->id }}"
                          data-initial-liked="{{ auth()->check() && $poem->userInteractions->where('user_id', auth()->id())->where('type', 'like')->count() > 0 ? 'true' : 'false' }}"
@@ -169,120 +170,120 @@
                     {{ $poems->links() }}
                 </div>
             @endif
-        </div>
-    </div>
+        </main>
+</div>
 
-    <script>
-    // Poem card functionality (vanilla JavaScript)
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('[data-poem-card]').forEach(card => {
-            const poemId = card.getAttribute('data-poem-id');
-            const initialLiked = card.getAttribute('data-initial-liked') === 'true';
-            const initialRating = parseInt(card.getAttribute('data-initial-rating') || '0');
-            
-            let isLiked = initialLiked;
-            let likesCount = parseInt(card.querySelector('[data-likes-count]')?.textContent || '0');
-            let currentRating = initialRating;
-            let hoverRating = 0;
-            
-            // Like button
-            const likeButton = card.querySelector('[data-like-button]');
-            if (likeButton) {
-                likeButton.addEventListener('click', async function() {
+<script>
+// Poem card functionality (vanilla JavaScript)
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-poem-card]').forEach(card => {
+        const poemId = card.getAttribute('data-poem-id');
+        const initialLiked = card.getAttribute('data-initial-liked') === 'true';
+        const initialRating = parseInt(card.getAttribute('data-initial-rating') || '0');
+        
+        let isLiked = initialLiked;
+        let likesCount = parseInt(card.querySelector('[data-likes-count]')?.textContent || '0');
+        let currentRating = initialRating;
+        let hoverRating = 0;
+        
+        // Like button
+        const likeButton = card.querySelector('[data-like-button]');
+        if (likeButton) {
+            likeButton.addEventListener('click', async function() {
+                @guest
+                    window.location.href = '/login';
+                    return;
+                @endguest
+                
+                try {
+                    const response = await fetch(`/api/poems/${poemId}/like`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        isLiked = data.liked;
+                        likesCount = data.likes_count;
+                        
+                        const icon = likeButton.querySelector('i');
+                        const countSpan = card.querySelector('[data-likes-count]');
+                        
+                        if (icon) {
+                            icon.className = isLiked ? 'bx bxs-heart text-sm' : 'bx bx-heart text-sm';
+                        }
+                        if (countSpan) {
+                            countSpan.textContent = likesCount;
+                        }
+                        likeButton.className = likeButton.className.replace(/text-(red|gray)-500/g, '') + (isLiked ? ' text-red-500' : ' text-gray-500 hover:text-red-500');
+                    }
+                } catch (error) {
+                    console.error('Error toggling like:', error);
+                }
+            });
+        }
+        
+        // Rating buttons
+        for (let i = 1; i <= 5; i++) {
+            const ratingButton = card.querySelector(`[data-rating="${i}"]`);
+            if (ratingButton) {
+                ratingButton.addEventListener('click', async function() {
                     @guest
                         window.location.href = '/login';
                         return;
                     @endguest
                     
                     try {
-                        const response = await fetch(`/api/poems/${poemId}/like`, {
+                        const response = await fetch(`/api/poems/${poemId}/rate`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                                 'Accept': 'application/json'
                             },
+                            body: JSON.stringify({ rating: i }),
                             credentials: 'same-origin'
                         });
                         
                         if (response.ok) {
                             const data = await response.json();
-                            isLiked = data.liked;
-                            likesCount = data.likes_count;
-                            
-                            const icon = likeButton.querySelector('i');
-                            const countSpan = card.querySelector('[data-likes-count]');
-                            
-                            if (icon) {
-                                icon.className = isLiked ? 'bx bxs-heart text-sm' : 'bx bx-heart text-sm';
-                            }
-                            if (countSpan) {
-                                countSpan.textContent = likesCount;
-                            }
-                            likeButton.className = likeButton.className.replace(/text-(red|gray)-500/g, '') + (isLiked ? ' text-red-500' : ' text-gray-500 hover:text-red-500');
+                            currentRating = parseInt(data.rating);
+                            updateRatingDisplay();
                         }
                     } catch (error) {
-                        console.error('Error toggling like:', error);
+                        console.error('Error rating poem:', error);
                     }
                 });
+                
+                ratingButton.addEventListener('mouseenter', function() {
+                    hoverRating = i;
+                    updateRatingDisplay();
+                });
+                
+                ratingButton.addEventListener('mouseleave', function() {
+                    hoverRating = 0;
+                    updateRatingDisplay();
+                });
             }
-            
-            // Rating buttons
+        }
+        
+        function updateRatingDisplay() {
             for (let i = 1; i <= 5; i++) {
-                const ratingButton = card.querySelector(`[data-rating="${i}"]`);
-                if (ratingButton) {
-                    ratingButton.addEventListener('click', async function() {
-                        @guest
-                            window.location.href = '/login';
-                            return;
-                        @endguest
-                        
-                        try {
-                            const response = await fetch(`/api/poems/${poemId}/rate`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                                    'Accept': 'application/json'
-                                },
-                                body: JSON.stringify({ rating: i }),
-                                credentials: 'same-origin'
-                            });
-                            
-                            if (response.ok) {
-                                const data = await response.json();
-                                currentRating = parseInt(data.rating);
-                                updateRatingDisplay();
-                            }
-                        } catch (error) {
-                            console.error('Error rating poem:', error);
-                        }
-                    });
-                    
-                    ratingButton.addEventListener('mouseenter', function() {
-                        hoverRating = i;
-                        updateRatingDisplay();
-                    });
-                    
-                    ratingButton.addEventListener('mouseleave', function() {
-                        hoverRating = 0;
-                        updateRatingDisplay();
-                    });
+                const btn = card.querySelector(`[data-rating="${i}"]`);
+                const icon = btn?.querySelector('i');
+                if (btn && icon) {
+                    const isActive = hoverRating >= i || currentRating >= i;
+                    icon.className = isActive ? 'bx bxs-star text-xs' : 'bx bx-star text-xs';
+                    btn.className = btn.className.replace(/text-(yellow|gray)-[0-9]+/g, '') + (isActive ? ' text-yellow-500' : ' text-gray-400 hover:text-yellow-400');
                 }
             }
-            
-            function updateRatingDisplay() {
-                for (let i = 1; i <= 5; i++) {
-                    const btn = card.querySelector(`[data-rating="${i}"]`);
-                    const icon = btn?.querySelector('i');
-                    if (btn && icon) {
-                        const isActive = hoverRating >= i || currentRating >= i;
-                        icon.className = isActive ? 'bx bxs-star text-xs' : 'bx bx-star text-xs';
-                        btn.className = btn.className.replace(/text-(yellow|gray)-[0-9]+/g, '') + (isActive ? ' text-yellow-500' : ' text-gray-400 hover:text-yellow-400');
-                    }
-                }
-            }
-        });
+        }
     });
-    </script>
+});
+</script>
 @endsection
