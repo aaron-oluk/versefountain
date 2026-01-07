@@ -167,4 +167,22 @@
 
 .sidebar-scroll::-webkit-scrollbar-thumb:hover {
     background: rgba(156, 163, 175, 0.8);
+}
+
+/* Prose styling for reading interface */
+.prose {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.75;
+    color: #1f2937;
+}
+
+.prose p {
+    margin-bottom: 1.25em;
+}
+
+.prose h2 {
+    font-size: 1.875em;
+    font-weight: 700;
+    margin-top: 2em;
+    margin-bottom: 1em;
 } 

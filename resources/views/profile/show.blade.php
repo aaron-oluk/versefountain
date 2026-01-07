@@ -2,258 +2,311 @@
 
 @section('title', 'Profile - VerseFountain')
 
+@php
+    $user = $user ?? auth()->user();
+    $booksRead = 42; // Mock data
+    $following = $user->following()->count() ?? 156;
+    $discussions = 85; // Mock data
+    $rank = 'Scribe Lvl. 5'; // Mock data
+    $currentlyReading = \App\Models\Book::where('approved', true)->first();
+    $trendingBooks = \App\Models\Book::where('approved', true)->take(3)->get();
+    $followedCreators = $user->following()->take(3)->get();
+@endphp
+
 @section('content')
-<div class="min-h-screen bg-stone-50">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <!-- Page Header -->
-        <div class="mb-10 sm:mb-12">
-            <h1 class="text-3xl sm:text-4xl font-light text-gray-800 mb-2 tracking-wide">Profile</h1>
-            <p class="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl">Manage your account and view your activity</p>
-        </div>
-
-        <!-- User Info Card -->
-        <div class="bg-white shadow-sm rounded-md p-5 sm:p-6 mb-8 sm:mb-10">
-        <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
-            <!-- User Avatar -->
-            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl sm:text-3xl font-light">
-                {{ strtoupper(substr($user->name ?? 'A', 0, 1)) }}
-            </div>
-            
-            <!-- User Details -->
-            <div class="text-center sm:text-left flex-1">
-                <h2 class="text-lg sm:text-xl font-light text-gray-800 mb-1 tracking-wide">{{ $user->name ?? 'User' }}</h2>
-                <p class="text-sm text-gray-600 mb-2 font-light">{{ $user->email }}</p>
-                <p class="text-xs text-gray-500 mb-3">Member since {{ $user->created_at->format('M Y') }}</p>
-                
-                <!-- Status Badges -->
-                <div class="flex flex-wrap justify-center sm:justify-start gap-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-normal text-gray-600 border border-gray-200">
-                        Active
-                    </span>
-                    
-                    @if($user->role === 'admin')
-                        <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-normal text-gray-600 border border-gray-200">
-                            Admin
-                        </span>
-                    @endif
+<div class="min-h-screen bg-gray-50">
+    <div class="flex gap-6 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Left Sidebar -->
+        <aside class="hidden lg:block w-64 flex-shrink-0">
+            <!-- User Mini Profile -->
+            <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+                <div class="flex flex-col items-center mb-4">
+                    <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl font-semibold mb-2">
+                        {{ strtoupper(substr($user->first_name ?? $user->username ?? 'U', 0, 1)) }}
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">{{ $user->username ?? 'User' }}</h3>
+                    <p class="text-xs text-gray-600">Reader | Supporter</p>
                 </div>
             </div>
-            
-            <!-- Quick Actions -->
-            <div class="flex flex-col sm:flex-row gap-2">
-                <a href="/profile/edit" class="bg-blue-600 text-white px-4 py-2 text-sm font-normal hover:bg-blue-700 transition-colors text-center">
-                    Edit Profile
-                </a>
-                <a href="/poetry/create" class="bg-white shadow-sm rounded-md text-gray-800 px-4 py-2 text-sm font-normal hover:bg-gray-50 transition-colors text-center">
-                    Write Poem
-                </a>
-            </div>
-        </div>
-    </div>
 
-    <!-- Content Tabs -->
-    <div class="bg-white shadow-sm rounded-md">
-        <!-- Tab Navigation -->
-        <div class="border-b border-gray-200">
-            <nav class="flex space-x-8 px-4 sm:px-6" aria-label="Tabs">
-                <button class="tab-button active py-4 px-1 border-b-2 border-gray-800 text-sm font-normal text-gray-900" data-tab="profile">
-                    My Poems
-                </button>
-                <button class="tab-button py-4 px-1 border-b-2 border-transparent text-sm font-normal text-gray-600 hover:text-gray-900 hover:border-gray-300" data-tab="tickets">
-                    My Tickets
-                </button>
-                <button class="tab-button py-4 px-1 border-b-2 border-transparent text-sm font-normal text-gray-600 hover:text-gray-900 hover:border-gray-300" data-tab="settings">
-                    Account Settings
-                </button>
+            <!-- Navigation -->
+            <nav class="space-y-1 mb-6">
+                <a href="/profile" class="flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">
+                    <i class="bx bx-user mr-3"></i>
+                    My Profile
+                </a>
+                <a href="/books" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="bx bx-book mr-3"></i>
+                    My Library
+                </a>
+                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="bx bx-list-ul mr-3"></i>
+                    Reading Lists
+                </a>
+                <a href="{{ route('chatrooms.index') }}" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="bx bx-message-dots mr-3"></i>
+                    Discussions
+                </a>
+                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="bx bx-group mr-3"></i>
+                    Creators Following
+                </a>
             </nav>
-        </div>
 
-        <!-- Tab Content -->
-        <div class="p-4 sm:p-6">
-            <!-- Profile Tab -->
-            <div id="profile-content" class="tab-content active space-y-6 sm:space-y-8">
-                <!-- My Poems Section -->
-                <div>
-                    <div class="flex items-center justify-between mb-6 sm:mb-8">
-                        <h3 class="text-lg sm:text-xl font-light text-gray-800 tracking-wide">My Poems</h3>
-                        <a href="/poetry/create" class="px-3 sm:px-4 py-2 bg-blue-600 text-white text-sm font-normal hover:bg-blue-700 transition-colors focus:outline-none">
-                            Write New Poem
-                        </a>
+            <!-- Premium Plan -->
+            <div class="bg-blue-50 rounded-lg p-4">
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">Premium Plan</h3>
+                <p class="text-xs text-gray-600 mb-3">Support creators directly</p>
+                <button class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    Upgrade
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 min-w-0">
+            <!-- Profile Header -->
+            <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-6">
+                        <div class="relative">
+                            <div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold">
+                                {{ strtoupper(substr($user->first_name ?? $user->username ?? 'U', 0, 1)) }}
+                            </div>
+                            <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-4 border-white"></div>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-semibold text-gray-900 mb-1">{{ $user->username ?? 'User' }}</h1>
+                            <p class="text-sm text-gray-600 mb-2">Reader | Creator Supporter</p>
+                            <p class="text-sm text-gray-700 italic">"Poetry is truth in its Sunday clothes."</p>
+                        </div>
                     </div>
-                    
-                    <!-- Sample Poems (Replace with actual data) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-                        <div class="bg-gray-50 p-4 transition-colors">
-                            <h4 class="font-normal text-gray-900 mb-2">Whispers of the Wind</h4>
-                            <p class="text-sm text-gray-600 mb-3 font-light">A gentle breeze carries secrets through the trees...</p>
-                            <div class="flex items-center justify-between text-xs text-gray-500">
-                                <span>Published 2 days ago</span>
-                                <div class="flex items-center space-x-4">
-                                    <span class="flex items-center space-x-1">
-                                        <i class="bx bx-heart text-gray-600"></i>
-                                        <span>12</span>
-                                    </span>
-                                    <span class="flex items-center space-x-1">
-                                        <i class="bx bx-comment text-gray-600"></i>
-                                        <span>3</span>
-                                    </span>
+                    <div class="flex gap-2">
+                        <button class="flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                            <i class="bx bx-edit mr-2"></i>
+                            Edit Profile
+                        </button>
+                        <button class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="bx bx-share-alt text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                    <p class="text-xs text-gray-600 uppercase mb-1">Books Read</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $booksRead }}</p>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                    <p class="text-xs text-gray-600 uppercase mb-1">Following</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $following }}</p>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                    <p class="text-xs text-gray-600 uppercase mb-1">Discussions</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $discussions }}</p>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                    <p class="text-xs text-gray-600 uppercase mb-1">Rank</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $rank }}</p>
+                </div>
+            </div>
+
+            <!-- Profile Tabs -->
+            <div class="bg-white rounded-lg border border-gray-200 mb-6">
+                <div class="border-b border-gray-200">
+                    <nav class="flex -mb-px">
+                        <button class="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600">
+                            Overview
+                        </button>
+                        <button class="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300">
+                            Bookshelf
+                        </button>
+                        <button class="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300">
+                            Comments
+                        </button>
+                        <button class="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300">
+                            Favorites
+                        </button>
+                    </nav>
+                </div>
+
+                <div class="p-6">
+                    <!-- Currently Reading -->
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-gray-900">Currently Reading</h2>
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View Log</a>
+                        </div>
+                        @if($currentlyReading)
+                        <div class="flex gap-4 bg-gray-50 rounded-lg p-4">
+                            <div class="w-20 h-28 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center">
+                                @if($currentlyReading->coverImage)
+                                    <img src="{{ $currentlyReading->coverImage }}" alt="{{ $currentlyReading->title }}" class="w-full h-full object-cover rounded">
+                                @else
+                                    <i class="bx bx-book text-2xl text-gray-400"></i>
+                                @endif
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-base font-semibold text-gray-900 mb-1">{{ $currentlyReading->title }}</h3>
+                                <p class="text-sm text-gray-600 mb-3">{{ $currentlyReading->author }}</p>
+                                <div class="mb-3">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-xs text-gray-600">Progress</span>
+                                        <span class="text-xs font-medium text-gray-900">45%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Page 124 of 276</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                        Update Progress
+                                    </button>
+                                    <button class="px-4 py-2 bg-white border border-blue-600 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 transition-colors">
+                                        View Discussion
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 transition-colors">
-                            <h4 class="font-normal text-gray-900 mb-2">Midnight Dreams</h4>
-                            <p class="text-sm text-gray-600 mb-3 font-light">In the quiet hours when the world sleeps...</p>
-                            <div class="flex items-center justify-between text-xs text-gray-500">
-                                <span>Published 1 week ago</span>
-                                <div class="flex items-center space-x-4">
-                                    <span class="flex items-center space-x-1">
-                                        <i class="bx bx-heart text-gray-600"></i>
-                                        <span>8</span>
-                                    </span>
-                                    <span class="flex items-center space-x-1">
-                                        <i class="bx bx-comment text-gray-600"></i>
-                                        <span>1</span>
-                                    </span>
+                        @endif
+                    </div>
+
+                    <!-- Recent Contributions -->
+                    <div class="mb-8">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Contributions</h2>
+                        <div class="space-y-4">
+                            <div class="flex gap-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="bx bx-message-dots text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-sm font-medium text-gray-900">Commented on</span>
+                                        <a href="#" class="text-sm text-blue-600 hover:underline">The Raven Discussion</a>
+                                        <span class="text-xs text-gray-500">2h ago</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700 italic mb-2">"The rhythm here is fascinating, specifically how the internal rhyme scheme drives the narrative forward with such urgency..."</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-600">
+                                        <span>12 Likes</span>
+                                        <span>3 Replies</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="bx bx-star text-purple-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-sm font-medium text-gray-900">Reviewed</span>
+                                        <a href="#" class="text-sm text-blue-600 hover:underline">Modernist Literature</a>
+                                        <span class="text-xs text-gray-500">1d ago</span>
+                                    </div>
+                                    <div class="flex items-center gap-1 mb-2">
+                                        @for($i = 0; $i < 5; $i++)
+                                            <i class="bx bxs-star text-yellow-400 text-sm"></i>
+                                        @endfor
+                                    </div>
+                                    <p class="text-sm text-gray-700 italic">"A comprehensive collection that really captures the fragmented spirit of the era. Highly recommended for students."</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Empty State -->
-                    <div class="hidden text-center py-8">
-                        <i class="bx bx-message-dots text-gray-400 mx-auto mb-4"></i>
-                        <h3 class="text-lg font-light text-gray-800 mb-2 tracking-wide">No poems yet</h3>
-                        <p class="text-gray-600 mb-4 font-light">Start your poetic journey by writing your first poem.</p>
-                        <a href="/poetry/create" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-normal hover:bg-blue-700 transition-colors focus:outline-none">
-                            Write Your First Poem
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tickets Tab -->
-            <div id="tickets-content" class="tab-content hidden space-y-6 sm:space-y-8">
-                <div>
-                    <h3 class="text-lg sm:text-xl font-light text-gray-800 mb-6 sm:mb-8 tracking-wide">My Tickets</h3>
-                    
-                    <!-- Sample Tickets -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-                        <div class="bg-gray-50 p-4 transition-colors">
-                            <div class="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
-                                <span class="text-xs text-gray-600 uppercase tracking-wide">Poetry Reading</span>
-                                <span class="text-xs text-gray-500">$15</span>
+                    <!-- Up Next -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-gray-900">Up Next</h2>
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View All</a>
+                        </div>
+                        <div class="flex gap-4 overflow-x-auto pb-2">
+                            @foreach($trendingBooks as $book)
+                            <div class="flex-shrink-0 w-32">
+                                <div class="w-32 h-48 bg-gray-200 rounded mb-2 flex items-center justify-center">
+                                    @if($book->coverImage)
+                                        <img src="{{ $book->coverImage }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded">
+                                    @else
+                                        <i class="bx bx-book text-3xl text-gray-400"></i>
+                                    @endif
+                                </div>
+                                <h3 class="text-sm font-semibold text-gray-900 truncate">{{ $book->title }}</h3>
+                                <p class="text-xs text-gray-600 truncate">{{ $book->author }}</p>
                             </div>
-                            <h4 class="font-normal text-gray-900 mb-2">Open Mic Night</h4>
-                            <p class="text-sm text-gray-600 mb-3 font-light">Dec 15, 2024 • 7:00 PM</p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-500">Central Library</span>
-                                <span class="text-xs text-gray-600 font-normal">Confirmed</span>
+                            @endforeach
+                            <div class="flex-shrink-0 w-32">
+                                <div class="w-32 h-48 bg-gray-100 rounded mb-2 flex flex-col items-center justify-center border-2 border-dashed border-gray-300">
+                                    <i class="bx bx-plus text-3xl text-gray-400 mb-2"></i>
+                                    <span class="text-xs text-gray-600 text-center px-2">Discover</span>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 transition-colors">
-                            <div class="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
-                                <span class="text-xs text-gray-600 uppercase tracking-wide">Workshop</span>
-                                <span class="text-xs text-gray-500">$25</span>
-                            </div>
-                            <h4 class="font-normal text-gray-900 mb-2">Creative Writing Workshop</h4>
-                            <p class="text-sm text-gray-600 mb-3 font-light">Dec 20, 2024 • 2:00 PM</p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-500">Community Center</span>
-                                <span class="text-xs text-gray-600 font-normal">Confirmed</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Empty State -->
-                    <div class="hidden text-center py-8">
-                        <i class="bx bx-ticket text-gray-400 mx-auto mb-4"></i>
-                        <h3 class="text-lg font-light text-gray-800 mb-2 tracking-wide">No tickets yet</h3>
-                        <p class="text-gray-600 mb-4 font-light">Purchase tickets for upcoming events to see them here.</p>
-                        <a href="/tickets" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-normal hover:bg-blue-700 transition-colors focus:outline-none">
-                            Browse Events
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings Tab -->
-            <div id="settings-content" class="tab-content hidden space-y-6 sm:space-y-8">
-                <div>
-                    <h3 class="text-lg sm:text-xl font-light text-gray-800 mb-6 sm:mb-8 tracking-wide">Account Settings</h3>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-                        <div class="bg-gray-50 p-4 sm:p-6">
-                            <h4 class="font-normal text-gray-900 mb-2">Profile Information</h4>
-                            <p class="text-sm text-gray-600 mb-4 font-light">Update your account profile information and email address.</p>
-                            <a href="/profile/edit" class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">
-                                Edit Profile →
-                            </a>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 sm:p-6">
-                            <h4 class="font-normal text-gray-900 mb-2">Change Password</h4>
-                            <p class="text-sm text-gray-600 mb-4 font-light">Ensure your account is using a long, random password to stay secure.</p>
-                            <a href="/profile/edit" class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">
-                                Change Password →
-                            </a>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 sm:p-6">
-                            <h4 class="font-normal text-gray-900 mb-2">Email Notifications</h4>
-                            <p class="text-sm text-gray-600 mb-4 font-light">Manage your email notification preferences.</p>
-                            <a href="/profile/edit" class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">
-                                Manage Notifications →
-                            </a>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 sm:p-6">
-                            <h4 class="font-normal text-gray-900 mb-2">Privacy Settings</h4>
-                            <p class="text-sm text-gray-600 mb-4 font-light">Control your privacy and data sharing preferences.</p>
-                            <a href="/profile/edit" class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">
-                                Privacy Settings →
-                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="hidden xl:block w-80 flex-shrink-0">
+            <!-- Creators Following -->
+            <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Creators Following</h2>
+                    <a href="#" class="text-xs text-blue-600 hover:text-blue-700 font-medium uppercase">View All</a>
+                </div>
+                <div class="space-y-4">
+                    @foreach($followedCreators as $creator)
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                {{ strtoupper(substr($creator->username ?? 'U', 0, 1)) }}
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">{{ $creator->username }}</h3>
+                                <p class="text-xs text-gray-600">Poet • New York</p>
+                            </div>
+                        </div>
+                        <button class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="bx bx-paper-plane text-lg"></i>
+                        </button>
+                    </div>
+                    @endforeach
+                </div>
+                <button class="w-full mt-4 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                    Discover More Creators
+                </button>
+            </div>
+
+            <!-- Trending in Poetry -->
+            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Trending in Poetry</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg font-bold text-gray-900">#1</span>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-900">The Hill We Climb</h3>
+                            <p class="text-xs text-gray-600">Amanda Gorman</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg font-bold text-gray-900">#2</span>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-900">Devotions</h3>
+                            <p class="text-xs text-gray-600">Mary Oliver</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg font-bold text-gray-900">#3</span>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-900">Milk and Honey</h3>
+                            <p class="text-xs text-gray-600">Rupi Kaur</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const targetTab = button.getAttribute('data-tab');
-            
-            // Remove active classes from all buttons and contents
-            tabButtons.forEach(btn => {
-                btn.classList.remove('active', 'border-gray-800', 'text-gray-900');
-                btn.classList.add('border-transparent', 'text-gray-600');
-            });
-            
-            tabContents.forEach(content => {
-                content.classList.remove('active');
-                content.classList.add('hidden');
-            });
-            
-            // Add active classes to clicked button and corresponding content
-            button.classList.add('active', 'border-gray-800', 'text-gray-900');
-            button.classList.remove('border-transparent', 'text-gray-600');
-            
-            const targetContent = document.getElementById(targetTab + '-content');
-            if (targetContent) {
-                targetContent.classList.add('active');
-                targetContent.classList.remove('hidden');
-            }
-        });
-    });
-});
-</script>
-@endsection 
+@endsection

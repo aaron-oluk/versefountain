@@ -136,6 +136,28 @@ Route::middleware('auth')->group(function () {
     // Admin Dashboard Route
     Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
+    // Creator Studio
+    Route::get('/creator-studio/submit', function () {
+        return view('poetry.submit');
+    })->name('poetry.submit');
+
+    // Reading Interface
+    Route::get('/books/{book}/read', function ($book) {
+        $bookModel = \App\Models\Book::findOrFail($book);
+        return view('books.read', ['book' => $bookModel]);
+    })->name('books.read');
+
+    // Subscription
+    Route::get('/subscription', function () {
+        return view('subscription');
+    })->name('subscription');
+
+    // Creator Profile
+    Route::get('/creators/{user}', function ($user) {
+        $userModel = \App\Models\User::findOrFail($user);
+        return view('profile.creator', ['creator' => $userModel]);
+    })->name('profile.creator');
+
     // API-style routes (returning JSON) - Authenticated routes
     // Poems
     Route::get('/api/poems/user', [PoemController::class, 'userPoems'])->name('api.poems.user');

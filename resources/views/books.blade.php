@@ -1,184 +1,178 @@
 @extends('layouts.app')
 
-@section('title', 'Books - VerseFountain')
+@section('title', 'Browse - VerseFountain')
+
+@php
+    $trendingBooks = \App\Models\Book::where('approved', true)->latest()->take(3)->get();
+    $topPoetry = \App\Models\Book::where('approved', true)->where('genre', 'Poetry')->take(5)->get();
+@endphp
 
 @section('content')
-    <div class="min-h-screen">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <!-- Page Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl sm:text-4xl font-semibold text-gray-900 mb-2">Books</h1>
-                <p class="text-base text-gray-600 leading-relaxed max-w-2xl">Explore our vast collection of eBooks and literary works</p>
-            </div>
-
-            <!-- Search and Filter Section -->
-            <div class="bg-white rounded-lg p-5 shadow-sm mb-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Search -->
-                    <div class="sm:col-span-2 lg:col-span-1">
-                        <label for="search"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Search
-                            Books</label>
-                        <div class="relative">
-                            <input type="text" id="search" placeholder="Search books, authors, or genres..."
-                                class="w-full pl-9 pr-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none">
-                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                <i class="bx bx-search text-base text-gray-400"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Genre Filter -->
-                    <div>
-                        <label for="genre"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Genre</label>
-                        <select id="genre"
-                            class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
-                            <option value="">All Genres</option>
-                            <option value="fiction">Fiction</option>
-                            <option value="non-fiction">Non-Fiction</option>
-                            <option value="poetry">Poetry</option>
-                            <option value="drama">Drama</option>
-                            <option value="biography">Biography</option>
-                        </select>
-                    </div>
-
-                    <!-- Language Filter -->
-                    <div>
-                        <label for="language"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Language</label>
-                        <select id="language"
-                            class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
-                            <option value="">All Languages</option>
-                            <option value="english">English</option>
-                            <option value="spanish">Spanish</option>
-                            <option value="french">French</option>
-                            <option value="german">German</option>
-                            <option value="italian">Italian</option>
-                        </select>
-                    </div>
+<div class="min-h-screen bg-gray-50">
+    <!-- Header with Search -->
+    <div class="bg-white border-b border-gray-200 mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center gap-4">
+                <div class="flex-1 relative">
+                    <input type="text" placeholder="Search titles, authors, genres..." 
+                           class="w-full pl-10 pr-20 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    <i class="bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <button class="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded border border-gray-300 flex items-center gap-1">
+                        <i class="bx bx-keyboard"></i>
+                        <span>K</span>
+                    </button>
                 </div>
-            </div>
-
-            <!-- Featured Books -->
-            @if($featuredBooks->count() > 0)
-                <div class="mb-10">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Featured Books</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        @foreach($featuredBooks as $book)
-                            <div class="bg-white rounded-lg shadow-sm transition-colors overflow-hidden">
-                                <div class="h-40 sm:h-48 bg-gray-100 flex items-center justify-center">
-                                    @if($book->coverImage)
-                                        <img src="{{ $book->coverImage }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
-                                    @else
-                                        <i class="bx bx-book text-6xl text-gray-400"></i>
-                                    @endif
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <h3 class="font-normal text-gray-900 mb-1 text-sm sm:text-base">
-                                        <a href="{{ route('books.show', $book) }}" class="hover:text-gray-700">
-                                            {{ $book->title }}
-                                        </a>
-                                    </h3>
-                                    <p class="text-gray-600 text-xs sm:text-sm mb-3 font-light">{{ $book->author }}</p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs text-gray-500">{{ $book->genre ?? 'General' }}</span>
-                                        <a href="{{ route('books.show', $book) }}"
-                                            class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">Read
-                                            →</a>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
-            <!-- Book Categories -->
-            @if($genres->count() > 0)
-                <div class="mb-10 sm:mb-12">
-                    <h2 class="text-xl sm:text-2xl font-light text-gray-800 mb-6 sm:mb-8 tracking-wide">Browse by Category</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                        @foreach($genres->take(4) as $genre)
-                            @php
-                                $genreCount = \App\Models\Book::where('genre', $genre)->where('approved', true)->count();
-                                $icons = [
-                                    'Fiction' => 'bx-book',
-                                    'Non-Fiction' => 'bx-file',
-                                    'Poetry' => 'bx-book-reader',
-                                    'Drama' => 'bx-theatre',
-                                    'Biography' => 'bx-user',
-                                ];
-                                $icon = $icons[$genre] ?? 'bx-book';
-                            @endphp
-                            <a href="/books?genre={{ urlencode($genre) }}"
-                                class="bg-white shadow-sm rounded-md p-4 sm:p-6 transition-colors cursor-pointer block">
-                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                                    <i class="bx {{ $icon }} text-xl sm:text-2xl text-gray-600"></i>
-                                </div>
-                                <h3 class="font-normal text-gray-900 text-sm sm:text-base">{{ $genre }}</h3>
-                                <p class="text-xs sm:text-sm text-gray-500 mt-1">{{ $genreCount }}
-                                    {{ $genreCount === 1 ? 'book' : 'books' }}</p>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
-            <!-- Recent Additions -->
-            <div class="mb-10">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Recent Additions</h2>
-                @if($recentBooks->count() > 0)
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        @foreach($recentBooks as $book)
-                            <div class="bg-white rounded-lg shadow-sm p-5 transition-colors">
-                                <div class="flex items-start space-x-4">
-                                    <div
-                                        class="w-16 h-20 sm:w-20 sm:h-24 bg-gray-100 flex items-center justify-center flex-shrink-0">
-                                        @if($book->coverImage)
-                                            <img src="{{ $book->coverImage }}" alt="{{ $book->title }}"
-                                                class="w-full h-full object-cover">
-                                        @else
-                                            <i class="bx bx-book text-4xl sm:text-5xl text-gray-400"></i>
-                                        @endif
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-normal text-gray-900 text-sm sm:text-base mb-1">
-                                            <a href="{{ route('books.show', $book) }}" class="hover:text-gray-700">
-                                                {{ $book->title }}
-                                            </a>
-                                        </h3>
-                                        <p class="text-gray-600 text-xs sm:text-sm mb-2 font-light">{{ $book->author }}</p>
-                                        <p class="text-xs text-gray-500 mb-3">Added {{ $book->created_at->diffForHumans() }}</p>
-                                        @if($book->description)
-                                            <p class="text-xs text-gray-600 mb-3 line-clamp-2">{{ Str::limit($book->description, 80) }}
-                                            </p>
-                                        @endif
-                                        <a href="{{ route('books.show', $book) }}"
-                                            class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">Read
-                                            →</a>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <!-- Pagination -->
-                    @if($recentBooks->hasPages())
-                        <div class="text-center mt-10 sm:mt-12">
-                            {{ $recentBooks->links() }}
-                        </div>
-                    @endif
-                @else
-                    <div class="text-center py-16 sm:py-20">
-                        <div class="max-w-md mx-auto">
-                            <i class="bx bx-book text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-lg font-normal text-gray-700 mb-2">No books yet</h3>
-                            <p class="text-sm text-gray-500 mb-6">Check back soon for new book additions.</p>
-                        </div>
-                    </div>
-                @endif
+                <button class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="bx bx-bell text-xl"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
             </div>
         </div>
     </div>
+
+    <div class="flex gap-6 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Left Sidebar -->
+        <aside class="hidden lg:block w-64 flex-shrink-0">
+            <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="bx bx-book text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-semibold text-gray-900">E-Library</h2>
+                    </div>
+                </div>
+            </div>
+            <nav class="space-y-1">
+                <a href="/books" class="flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">
+                    <i class="bx bx-search mr-3"></i>
+                    Browse
+                </a>
+                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="bx bx-book mr-3"></i>
+                    My Library
+                </a>
+                <a href="{{ route('chatrooms.index') }}" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="bx bx-message-dots mr-3"></i>
+                    Chatrooms
+                </a>
+                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="bx bx-group mr-3"></i>
+                    Creators
+                </a>
+            </nav>
+            <div class="mt-8">
+                <div class="flex items-center gap-3 p-3">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                        {{ strtoupper(substr(auth()->user()->username ?? 'A', 0, 1)) }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">{{ auth()->user()->username ?? 'Alex Morgan' }}</p>
+                        <p class="text-xs text-gray-600">Premium Member</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 min-w-0">
+            <!-- Filter and Sort -->
+            <div class="mb-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="text-sm text-gray-700">Filter by:</span>
+                    <div class="flex gap-2 flex-wrap">
+                        <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg">All</button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200">Books</button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200">Poetry</button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200">Romance</button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200">Sci-Fi</button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200">Haiku</button>
+                    </div>
+                    <select class="ml-auto text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Sort: Popular</option>
+                        <option>Sort: Newest</option>
+                        <option>Sort: Alphabetical</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Trending Now -->
+            <div class="mb-8">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="bx bx-trending-up text-orange-500"></i>
+                    <h2 class="text-xl font-semibold text-gray-900">Trending Now</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    @foreach($trendingBooks as $index => $book)
+                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        <div class="h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative">
+                            @if($book->coverImage)
+                                <img src="{{ $book->coverImage }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
+                            @else
+                                <i class="bx bx-book text-6xl text-gray-400"></i>
+                            @endif
+                            @if($index === 0)
+                                <span class="absolute top-4 left-4 px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full">EDITOR'S PICK</span>
+                            @elseif($index === 1)
+                                <span class="absolute top-4 left-4 px-3 py-1 bg-purple-600 text-white text-xs font-semibold rounded-full">LIVE EVENT</span>
+                            @else
+                                <span class="absolute top-4 left-4 px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-full">NEW RELEASE</span>
+                            @endif
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-white mb-1">{{ $book->title }}</h3>
+                            <p class="text-sm text-gray-300">By {{ $book->author }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Top Poetry -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900">Top Poetry</h2>
+                    <a href="/books?genre=Poetry" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View All →</a>
+                </div>
+                <div class="flex gap-4 overflow-x-auto pb-2">
+                    @foreach($topPoetry as $book)
+                    <div class="flex-shrink-0 w-40">
+                        <div class="w-40 h-56 bg-gray-200 rounded mb-2 flex items-center justify-center overflow-hidden">
+                            @if($book->coverImage)
+                                <img src="{{ $book->coverImage }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
+                            @else
+                                <i class="bx bx-book text-4xl text-gray-400"></i>
+                            @endif
+                        </div>
+                        <h3 class="text-sm font-semibold text-gray-900 truncate">{{ $book->title }}</h3>
+                        <p class="text-xs text-gray-600 truncate">{{ $book->author }}</p>
+                        <div class="flex items-center gap-1 mt-1">
+                            <i class="bx bxs-star text-yellow-400 text-xs"></i>
+                            <span class="text-xs text-gray-600">4.8</span>
+                        </div>
+                    </div>
+                    @endforeach
+                    <div class="flex-shrink-0 w-40">
+                        <div class="w-40 h-56 bg-gray-100 rounded mb-2 flex flex-col items-center justify-center border-2 border-dashed border-gray-300">
+                            <i class="bx bx-grid-alt text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-xs text-gray-600 text-center px-2">Explore all 1,240 Poetry books</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Creator Spotlight -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">Creator Spotlight</h2>
+                        <p class="text-sm text-gray-600">Join the conversation with trending authors</p>
+                    </div>
+                    <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View All Creators</a>
+                </div>
+                <!-- Creator cards would go here -->
+            </div>
+        </main>
+    </div>
+</div>
 @endsection
