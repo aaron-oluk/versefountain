@@ -120,7 +120,13 @@ class ChatRoomController extends Controller
 
         $chatRoom->members()->attach($user->id, ['joinedAt' => now()]);
 
-        return response()->json($chatRoom, 201);
+        if ($request->wantsJson() || $request->expectsJson()) {
+            return response()->json($chatRoom, 201);
+        }
+
+        return redirect()
+            ->route('chatroom.show', $chatRoom)
+            ->with('success', 'Chatroom created successfully.');
     }
 
     public function userChatRooms(Request $request)
@@ -298,5 +304,68 @@ class ChatRoomController extends Controller
             ->get();
 
         return response()->json(['requests' => $requests]);
+    }
+
+    /**
+     * Show the user's chat rooms.
+     */
+    public function myRooms()
+    {
+        $user = Auth::user();
+        $chatrooms = $user->chatRooms()->withCount('members')->with('createdBy')->latest()->get();
+        $userChatrooms = $chatrooms;
+        $pendingRequests = ChatRoomJoinRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->pluck('chat_room_id')
+            ->toArray();
+
+        return view('chatrooms', compact('chatrooms', 'userChatrooms', 'pendingRequests'));
+    }
+
+    /**
+     * Show the create chat room form.
+     */
+    public function create()
+    {
+        return view('chatrooms.create');
+    }
+
+    /**
+     * Accept a chat room invitation.
+     */
+    public function acceptInvitation(ChatRoomInvitation $invitation)
+    {
+        $user = Auth::user();
+
+        // Verify the invitation belongs to the authenticated user
+        if ($invitation->user_id !== $user->id) {
+            return redirect()->back()->with('error', 'Invalid invitation.');
+        }
+
+        // Update invitation status
+        $invitation->update(['status' => 'accepted']);
+
+        // Add user to the chat room
+        $invitation->room->members()->attach($user->id);
+
+        return redirect()->route('chatroom.show', $invitation->room)->with('success', 'Invitation accepted!');
+    }
+
+    /**
+     * Decline a chat room invitation.
+     */
+    public function declineInvitation(ChatRoomInvitation $invitation)
+    {
+        $user = Auth::user();
+
+        // Verify the invitation belongs to the authenticated user
+        if ($invitation->user_id !== $user->id) {
+            return redirect()->back()->with('error', 'Invalid invitation.');
+        }
+
+        // Update invitation status
+        $invitation->update(['status' => 'declined']);
+
+        return redirect()->back()->with('success', 'Invitation declined.');
     }
 }

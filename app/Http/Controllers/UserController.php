@@ -158,7 +158,7 @@ class UserController extends Controller
             ->find($user->id);
 
         $poems = $user->poems()->where('approved', true)->latest()->paginate(12);
-        $publishedBooks = \App\Models\Book::where('uploadedById', $user->id)->where('approved', true)->get();
+        $publishedBooks = \App\Models\Book::where('uploaded_by_id', $user->id)->where('approved', true)->get();
         $followerCount = $creator->followers_count;
         $followingCount = $user->following()->count();
         $isFollowing = Auth::check()

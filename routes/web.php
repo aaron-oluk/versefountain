@@ -50,6 +50,7 @@ Route::get('/creators', [UserController::class, 'index'])->name('creators.index'
 // Poetry
 Route::get('/poetry', [PoemController::class, 'index'])->name('poetry.index');
 Route::get('/poetry/create', [PoemController::class, 'create'])->middleware('auth')->name('poetry.create');
+    Route::post('/poetry', [PoemController::class, 'store'])->middleware('auth')->name('poetry.store');
 Route::get('/poetry/{poem}', [PoemController::class, 'show'])->name('poetry.show');
 Route::get('/poetry/{poem}/edit', [PoemController::class, 'edit'])->middleware('auth')->name('poetry.edit');
 
@@ -58,6 +59,7 @@ Route::get('/books', [BookController::class, 'index'])->name('books.index');
 Route::get('/books/create', function () {
     return view('books.create');
 })->middleware('auth')->name('books.create');
+    Route::post('/books', [BookController::class, 'store'])->middleware('auth')->name('books.store');
 Route::get('/books/{book}', [BookController::class, 'showWeb'])->name('books.show');
 
 // Academics
@@ -108,11 +110,18 @@ Route::middleware('auth')->group(function () {
 
     // Chat
     Route::get('/chat/rooms', [ChatRoomController::class, 'list'])->name('chatrooms.index');
+    Route::get('/chat/rooms/my', [ChatRoomController::class, 'myRooms'])->name('chatrooms.my');
+    Route::get('/chat/rooms/create', [ChatRoomController::class, 'create'])->name('chatrooms.create');
+    Route::post('/chat/rooms', [ChatRoomController::class, 'store'])->name('chatrooms.store');
     Route::get('/chat/rooms/{chatroom}', [ChatRoomController::class, 'show'])->name('chatroom.show');
     Route::post('/chat/rooms/{chatroom}/join', [ChatRoomController::class, 'joinRoom']);
     Route::post('/chat/rooms/{chatroom}/leave', [ChatRoomController::class, 'leaveRoom']);
     Route::post('/chat/rooms/{chatroom}/messages', [ChatMessageController::class, 'store']);
     Route::get('/chat/rooms/{chatroom}/messages', [ChatMessageController::class, 'index']);
+    
+    // Chat Room Invitations
+    Route::post('/chat/invitations/{invitation}/accept', [ChatRoomController::class, 'acceptInvitation'])->name('chatroom.invitation.accept');
+    Route::post('/chat/invitations/{invitation}/decline', [ChatRoomController::class, 'declineInvitation'])->name('chatroom.invitation.decline');
 
     // Tickets
     Route::get('/tickets', [TicketController::class, 'list'])->name('tickets.index');

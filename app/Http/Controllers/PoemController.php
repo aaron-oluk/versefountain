@@ -248,26 +248,18 @@ class PoemController extends Controller
     public function like(Poem $poem)
     {
         $user = Auth::user();
-        $existingLike = UserPoem::where('user_id', $user->id)
-            ->where('poem_id', $poem->id)
-            ->where('type', 'like')
-            ->first();
+        $interaction = UserPoem::firstOrCreate(
+            ['user_id' => $user->id, 'poem_id' => $poem->id],
+            ['liked' => false]
+        );
 
-        if ($existingLike) {
-            $existingLike->delete();
-            $liked = false;
-        } else {
-            UserPoem::create([
-                'user_id' => $user->id,
-                'poem_id' => $poem->id,
-                'type' => 'like',
-            ]);
-            $liked = true;
-        }
+        $interaction->liked = !$interaction->liked;
+        $interaction->save();
 
-        // Get likes count using withCount would be better, but since we just modified, refresh count
+        $liked = $interaction->liked;
+
         $likesCount = UserPoem::where('poem_id', $poem->id)
-            ->where('type', 'like')
+            ->where('liked', true)
             ->count();
 
         return response()->json([
@@ -282,17 +274,16 @@ class PoemController extends Controller
     public function unlike(Poem $poem)
     {
         $user = Auth::user();
-        $existingLike = UserPoem::where('user_id', $user->id)
-            ->where('poem_id', $poem->id)
-            ->where('type', 'like')
-            ->first();
+        $interaction = UserPoem::firstOrCreate(
+            ['user_id' => $user->id, 'poem_id' => $poem->id],
+            ['liked' => false]
+        );
 
-        if ($existingLike) {
-            $existingLike->delete();
-        }
+        $interaction->liked = false;
+        $interaction->save();
 
         $likesCount = UserPoem::where('poem_id', $poem->id)
-            ->where('type', 'like')
+            ->where('liked', true)
             ->count();
 
         return response()->json([
@@ -312,21 +303,18 @@ class PoemController extends Controller
 
         $user = Auth::user();
         
-        // Update or create rating
-        UserPoem::updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'poem_id' => $poem->id,
-                'type' => 'rating',
-            ],
-            [
-                'rating' => $validated['rating'],
-            ]
+        // Update or create rating on the single interaction row
+        $interaction = UserPoem::firstOrCreate(
+            ['user_id' => $user->id, 'poem_id' => $poem->id],
+            ['liked' => false]
         );
+
+        $interaction->rating = $validated['rating'];
+        $interaction->save();
 
         // Get rating stats in a single query using aggregation
         $ratingStats = UserPoem::where('poem_id', $poem->id)
-            ->where('type', 'rating')
+            ->whereNotNull('rating')
             ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as rating_count')
             ->first();
 
@@ -367,7 +355,7 @@ class PoemController extends Controller
     public function getLikeCount(Poem $poem)
     {
         $likesCount = UserPoem::where('poem_id', $poem->id)
-            ->where('type', 'like')
+            ->where('liked', true)
             ->count();
 
         return response()->json([
@@ -383,22 +371,19 @@ class PoemController extends Controller
         $user = Auth::user();
         
         // Get all user interactions for this poem in a single query
-        $userInteractions = UserPoem::where('user_id', $user->id)
+        $interaction = UserPoem::where('user_id', $user->id)
             ->where('poem_id', $poem->id)
-            ->get()
-            ->keyBy('type');
+            ->first();
         
         // Get rating stats in a single query
         $ratingStats = UserPoem::where('poem_id', $poem->id)
-            ->where('type', 'rating')
+            ->whereNotNull('rating')
             ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as rating_count')
             ->first();
 
-        $userRating = $userInteractions->get('rating');
-        
         return response()->json([
-            'liked' => $userInteractions->has('like'),
-            'rating' => $userRating ? $userRating->rating : 0,
+            'liked' => $interaction ? (bool)$interaction->liked : false,
+            'rating' => $interaction ? ($interaction->rating ?? 0) : 0,
             'average_rating' => round($ratingStats->avg_rating ?? 0, 1),
             'rating_count' => $ratingStats->rating_count ?? 0,
         ]);

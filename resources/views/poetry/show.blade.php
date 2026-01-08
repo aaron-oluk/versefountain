@@ -100,14 +100,14 @@
                 </div>
 
                 <!-- Engagement Section -->
-                <div class="px-6 sm:px-8 py-4 border-t border-gray-200 bg-gray-50">
+                <div class="px-6 sm:px-8 py-4 border-t border-gray-200 bg-gray-50 dark:bg-gray-900">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-6">
+                        <div class="flex items-center space-x-6 text-gray-700 dark:text-gray-300">
                             <!-- Like Button -->
                             <button data-like-button
-                                    class="flex items-center space-x-2 text-sm font-normal transition-colors {{ $isLiked ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900' }}">
+                                    class="flex items-center space-x-2 text-sm font-normal transition-colors {{ $isLiked ? 'text-red-500' : 'text-gray-600 dark:text-gray-400 hover:text-red-500' }}">
                                 <i class="{{ $isLiked ? 'bx bxs-heart' : 'bx bx-heart' }} text-base"></i>
-                                <span data-likes-count>{{ $poem->userInteractions->where('type', 'like')->count() ?? 0 }}</span>
+                                <span data-likes-count>{{ $poem->userInteractions->where('liked', true)->count() ?? 0 }}</span>
                             </button>
 
                             <!-- Comment Button -->
@@ -122,7 +122,7 @@
                                 @php
                                     $userRating = 0;
                                     if (auth()->check() && isset($poem->id) && $poem->id > 0) {
-                                        $userRatingInteraction = $poem->userInteractions->where('user_id', auth()->id())->where('type', 'rating')->first();
+                                        $userRatingInteraction = $poem->userInteractions->where('user_id', auth()->id())->first();
                                         $userRating = $userRatingInteraction ? $userRatingInteraction->rating : 0;
                                     }
                                 @endphp
@@ -132,8 +132,12 @@
                                         <i class="{{ $userRating >= $i ? 'bx bxs-star' : 'bx bx-star' }} text-base"></i>
                                     </button>
                                 @endfor
-                                <span class="text-xs text-gray-500 ml-2" data-rating-display>
-                                    {{ number_format($poem->userInteractions->where('type', 'rating')->avg('rating') ?? 0, 1) }} ({{ $poem->userInteractions->where('type', 'rating')->count() }})
+                                @php
+                                    $ratingAvg = $poem->userInteractions->whereNotNull('rating')->avg('rating') ?? 0;
+                                    $ratingCount = $poem->userInteractions->whereNotNull('rating')->count();
+                                @endphp
+                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2" data-rating-display>
+                                    {{ number_format($ratingAvg, 1) }} ({{ $ratingCount }})
                                 </span>
                             </div>
                         </div>
@@ -141,36 +145,36 @@
                         <!-- Share Button with Dropdown -->
                         <div class="relative">
                             <button data-share-toggle
-                                    class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm font-normal transition-colors">
+                                    class="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-normal transition-colors">
                                 <i class="bx bx-share-alt text-base"></i>
                                 <span>Share</span>
                             </button>
                             
                             <!-- Share Menu Dropdown -->
                             <div data-share-menu
-                                 class="absolute right-0 mt-2 w-56 bg-white shadow-sm rounded-md py-2 z-50 hidden">
-                                <button data-share-copy class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+                                 class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 shadow-sm rounded-md py-2 z-50 hidden border border-gray-100 dark:border-gray-700">
+                                <button data-share-copy class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2">
                                     <i class="bx bx-link text-base"></i>
                                     <span>Copy Link</span>
                                 </button>
-                                <button data-share-twitter class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+                                <button data-share-twitter class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2">
                                     <i class="bx bxl-twitter text-base text-blue-400"></i>
                                     <span>Share on Twitter</span>
                                 </button>
-                                <button data-share-facebook class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+                                <button data-share-facebook class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2">
                                     <i class="bx bxl-facebook text-base text-blue-600"></i>
                                     <span>Share on Facebook</span>
                                 </button>
-                                <button data-share-whatsapp class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+                                <button data-share-whatsapp class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2">
                                     <i class="bx bxl-whatsapp text-base text-blue-500"></i>
                                     <span>Share on WhatsApp</span>
                                 </button>
-                                <button data-share-email class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+                                <button data-share-email class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2">
                                     <i class="bx bx-envelope text-base"></i>
                                     <span>Share via Email</span>
                                 </button>
                                 <div class="border-t border-gray-200 my-1"></div>
-                                <button data-share-native class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+                                <button data-share-native class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2">
                                     <i class="bx bx-share text-base"></i>
                                     <span>More Options...</span>
                                 </button>
@@ -251,17 +255,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const apiBaseUrl = "{{ url('/api/poems') }}";
     const poemId = {{ $poem->id }};
     const isLiked = {{ $isLiked ? 'true' : 'false' }};
-    const likesCount = {{ $poem->userInteractions->where('type', 'like')->count() ?? 0 }};
+    const likesCount = {{ $poem->userInteractions->where('liked', true)->count() ?? 0 }};
     @php
         $userRating = 0;
         if (auth()->check() && isset($poem->id) && $poem->id > 0) {
-            $userRatingInteraction = $poem->userInteractions->where('user_id', auth()->id())->where('type', 'rating')->first();
+            $userRatingInteraction = $poem->userInteractions->where('user_id', auth()->id())->first();
             $userRating = $userRatingInteraction ? $userRatingInteraction->rating : 0;
         }
     @endphp
     const currentRating = {{ $userRating }};
-    const avgRating = {{ number_format($poem->userInteractions->where('type', 'rating')->avg('rating') ?? 0, 1) }};
-    const ratingCount = {{ $poem->userInteractions->where('type', 'rating')->count() }};
+    const avgRating = {{ number_format($poem->userInteractions->whereNotNull('rating')->avg('rating') ?? 0, 1) }};
+    const ratingCount = {{ $poem->userInteractions->whereNotNull('rating')->count() }};
     const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
     const poemTitle = "{{ addslashes($poem->title ?? '') }}";
     const poemContent = "{{ addslashes(Str::limit($poem->content ?? '', 200)) }}";

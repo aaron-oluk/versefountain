@@ -20,7 +20,8 @@
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-md shadow-sm p-4 sm:p-6">
-            <form id="book-create-form" data-book-form>
+            <form method="POST" action="{{ route('books.store') }}" id="book-create-form">
+                @csrf
                 <div class="space-y-6">
                     <!-- Cover Image Upload -->
                     <div>

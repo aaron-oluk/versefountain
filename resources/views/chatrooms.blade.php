@@ -12,10 +12,10 @@
             <p class="text-sm text-gray-500 dark:text-gray-400">Join conversations with fellow readers and writers.</p>
         </div>
         @auth
-        <button onclick="openCreateRoomModal()" class="px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+        <a href="{{ route('chatrooms.create') }}" class="px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
             <i class="bx bx-plus text-lg"></i>
             Create Room
-        </button>
+        </a>
         @endauth
     </div>
 

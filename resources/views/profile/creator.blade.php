@@ -116,7 +116,7 @@
                                 <div class="flex items-center gap-4 text-sm text-gray-500">
                                     <span class="flex items-center gap-1">
                                         <i class="bx bx-heart"></i>
-                                        {{ $poem->userInteractions()->where('type', 'like')->count() }} likes
+                                        {{ $poem->userInteractions()->where('liked', true)->count() }} likes
                                     </span>
                                     <span class="flex items-center gap-1">
                                         <i class="bx bx-comment"></i>

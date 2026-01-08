@@ -213,6 +213,12 @@ class BookController extends Controller
         // Clear cache to ensure fresh data
         Cache::flush(); // Clear all book caches
 
-        return response()->json($book, 201);
+        if ($request->wantsJson() || $request->expectsJson()) {
+            return response()->json($book, 201);
+        }
+
+        return redirect()
+            ->route('books.show', $book)
+            ->with('success', 'Book submitted and awaiting approval.');
     }
 }

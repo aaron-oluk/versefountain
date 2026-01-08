@@ -69,9 +69,9 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         @forelse($poems as $poem)
             @php
-                $userLiked = auth()->check() && $poem->userInteractions->where('user_id', auth()->id())->where('type', 'like')->count() > 0;
-                $userRating = auth()->check() ? ($poem->userInteractions->where('user_id', auth()->id())->where('type', 'rating')->first()?->rating ?? 0) : 0;
-                $likesCount = $poem->userInteractions->where('type', 'like')->count();
+                $userLiked = auth()->check() && $poem->userInteractions->where('user_id', auth()->id())->where('liked', true)->count() > 0;
+                $userRating = auth()->check() ? ($poem->userInteractions->where('user_id', auth()->id())->first()?->rating ?? 0) : 0;
+                $likesCount = $poem->userInteractions->where('liked', true)->count();
                 $commentsCount = $poem->comments->count();
             @endphp
             <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900 transition-all group"
