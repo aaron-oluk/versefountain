@@ -18,9 +18,10 @@ return new class extends Migration
             $table->string('coverImage')->nullable();
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
             $table->string('genre')->nullable();
-            $table->foreignId('uploadedById')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('status')->default('unpublished');
+            $table->foreignId('uploaded_by_id')->nullable()->constrained('users')->onDelete('set null');
             $table->boolean('approved')->default(false);
-            $table->timestamps(); // Adds created_at and updated_at
+            $table->timestamps();
         });
     }
 

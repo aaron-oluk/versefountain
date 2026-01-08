@@ -1,184 +1,124 @@
 @extends('layouts.app')
 
-@section('title', 'Books - VerseFountain')
+@section('title', 'Library - VerseFountain')
+@section('pageTitle', 'Library')
 
 @section('content')
-    <div class="min-h-screen">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <!-- Page Header -->
+    <div class="max-w-7xl mx-auto">
+        <!-- Filter Bar -->
+        <div class="flex flex-wrap items-center gap-3 mb-6">
+            <span class="text-sm text-gray-500">Filter by:</span>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('books.index') }}"
+                    class="px-4 py-1.5 {{ !$genre || $genre === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }} text-sm font-medium rounded-full transition-colors">All</a>
+                @foreach($genres->take(5) as $g)
+                    <a href="{{ route('books.index', ['genre' => $g]) }}"
+                        class="px-4 py-1.5 {{ $genre === $g ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }} text-sm font-medium rounded-full transition-colors">{{ $g }}</a>
+                @endforeach
+            </div>
+            <div class="ml-auto">
+                <form action="{{ route('books.index') }}" method="GET" id="sortForm">
+                    <input type="hidden" name="genre" value="{{ $genre }}">
+                    <select name="sort" onchange="document.getElementById('sortForm').submit()"
+                        class="text-sm bg-white border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600">
+                        <option value="latest" {{ $sort === 'latest' ? 'selected' : '' }}>Sort: Newest</option>
+                        <option value="oldest" {{ $sort === 'oldest' ? 'selected' : '' }}>Sort: Oldest</option>
+                        <option value="title" {{ $sort === 'title' ? 'selected' : '' }}>Sort: A-Z</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <!-- Trending Now -->
+        @if($trendingBooks->count() > 0 && !$genre)
             <div class="mb-8">
-                <h1 class="text-3xl sm:text-4xl font-semibold text-gray-900 mb-2">Books</h1>
-                <p class="text-base text-gray-600 leading-relaxed max-w-2xl">Explore our vast collection of eBooks and literary works</p>
-            </div>
-
-            <!-- Search and Filter Section -->
-            <div class="bg-white rounded-lg p-5 shadow-sm mb-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Search -->
-                    <div class="sm:col-span-2 lg:col-span-1">
-                        <label for="search"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Search
-                            Books</label>
-                        <div class="relative">
-                            <input type="text" id="search" placeholder="Search books, authors, or genres..."
-                                class="w-full pl-9 pr-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none">
-                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                <i class="bx bx-search text-base text-gray-400"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Genre Filter -->
-                    <div>
-                        <label for="genre"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Genre</label>
-                        <select id="genre"
-                            class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
-                            <option value="">All Genres</option>
-                            <option value="fiction">Fiction</option>
-                            <option value="non-fiction">Non-Fiction</option>
-                            <option value="poetry">Poetry</option>
-                            <option value="drama">Drama</option>
-                            <option value="biography">Biography</option>
-                        </select>
-                    </div>
-
-                    <!-- Language Filter -->
-                    <div>
-                        <label for="language"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Language</label>
-                        <select id="language"
-                            class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
-                            <option value="">All Languages</option>
-                            <option value="english">English</option>
-                            <option value="spanish">Spanish</option>
-                            <option value="french">French</option>
-                            <option value="german">German</option>
-                            <option value="italian">Italian</option>
-                        </select>
-                    </div>
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="bx bx-trending-up text-orange-500 text-xl"></i>
+                    <h2 class="text-lg font-semibold text-gray-900">Trending Now</h2>
                 </div>
-            </div>
-
-            <!-- Featured Books -->
-            @if($featuredBooks->count() > 0)
-                <div class="mb-10">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Featured Books</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        @foreach($featuredBooks as $book)
-                            <div class="bg-white rounded-lg shadow-sm transition-colors overflow-hidden">
-                                <div class="h-40 sm:h-48 bg-gray-100 flex items-center justify-center">
-                                    @if($book->coverImage)
-                                        <img src="{{ $book->coverImage }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
-                                    @else
-                                        <i class="bx bx-book text-6xl text-gray-400"></i>
-                                    @endif
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <h3 class="font-normal text-gray-900 mb-1 text-sm sm:text-base">
-                                        <a href="{{ route('books.show', $book) }}" class="hover:text-gray-700">
-                                            {{ $book->title }}
-                                        </a>
-                                    </h3>
-                                    <p class="text-gray-600 text-xs sm:text-sm mb-3 font-light">{{ $book->author }}</p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs text-gray-500">{{ $book->genre ?? 'General' }}</span>
-                                        <a href="{{ route('books.show', $book) }}"
-                                            class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">Read
-                                            →</a>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
-            <!-- Book Categories -->
-            @if($genres->count() > 0)
-                <div class="mb-10 sm:mb-12">
-                    <h2 class="text-xl sm:text-2xl font-light text-gray-800 mb-6 sm:mb-8 tracking-wide">Browse by Category</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                        @foreach($genres->take(4) as $genre)
-                            @php
-                                $genreCount = \App\Models\Book::where('genre', $genre)->where('approved', true)->count();
-                                $icons = [
-                                    'Fiction' => 'bx-book',
-                                    'Non-Fiction' => 'bx-file',
-                                    'Poetry' => 'bx-book-reader',
-                                    'Drama' => 'bx-theatre',
-                                    'Biography' => 'bx-user',
-                                ];
-                                $icon = $icons[$genre] ?? 'bx-book';
-                            @endphp
-                            <a href="/books?genre={{ urlencode($genre) }}"
-                                class="bg-white shadow-sm rounded-md p-4 sm:p-6 transition-colors cursor-pointer block">
-                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                                    <i class="bx {{ $icon }} text-xl sm:text-2xl text-gray-600"></i>
-                                </div>
-                                <h3 class="font-normal text-gray-900 text-sm sm:text-base">{{ $genre }}</h3>
-                                <p class="text-xs sm:text-sm text-gray-500 mt-1">{{ $genreCount }}
-                                    {{ $genreCount === 1 ? 'book' : 'books' }}</p>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
-            <!-- Recent Additions -->
-            <div class="mb-10">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Recent Additions</h2>
-                @if($recentBooks->count() > 0)
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        @foreach($recentBooks as $book)
-                            <div class="bg-white rounded-lg shadow-sm p-5 transition-colors">
-                                <div class="flex items-start space-x-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    @foreach($trendingBooks as $index => $book)
+                        <a href="{{ route('books.show', $book->id) }}"
+                            class="bg-white rounded-xl border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+                            <div class="h-48 bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden">
+                                @if($book->coverImage)
+                                    <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                @else
                                     <div
-                                        class="w-16 h-20 sm:w-20 sm:h-24 bg-gray-100 flex items-center justify-center flex-shrink-0">
-                                        @if($book->coverImage)
-                                            <img src="{{ $book->coverImage }}" alt="{{ $book->title }}"
-                                                class="w-full h-full object-cover">
-                                        @else
-                                            <i class="bx bx-book text-4xl sm:text-5xl text-gray-400"></i>
-                                        @endif
+                                        class="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800 flex items-center justify-center">
+                                        <i class="bx bx-book text-5xl text-white/30"></i>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="font-normal text-gray-900 text-sm sm:text-base mb-1">
-                                            <a href="{{ route('books.show', $book) }}" class="hover:text-gray-700">
-                                                {{ $book->title }}
-                                            </a>
-                                        </h3>
-                                        <p class="text-gray-600 text-xs sm:text-sm mb-2 font-light">{{ $book->author }}</p>
-                                        <p class="text-xs text-gray-500 mb-3">Added {{ $book->created_at->diffForHumans() }}</p>
-                                        @if($book->description)
-                                            <p class="text-xs text-gray-600 mb-3 line-clamp-2">{{ Str::limit($book->description, 80) }}
-                                            </p>
-                                        @endif
-                                        <a href="{{ route('books.show', $book) }}"
-                                            class="text-xs text-gray-700 hover:text-gray-900 font-normal uppercase tracking-wide">Read
-                                            →</a>
-                                    </div>
-                                </div>
+                                @endif
+                                @if($index === 0)
+                                    <span
+                                        class="absolute top-3 left-3 px-2.5 py-1 bg-blue-600 text-white text-[10px] font-semibold rounded-full uppercase">Editor's
+                                        Pick</span>
+                                @elseif($index === 1)
+                                    <span
+                                        class="absolute top-3 left-3 px-2.5 py-1 bg-purple-600 text-white text-[10px] font-semibold rounded-full uppercase">Popular</span>
+                                @else
+                                    <span
+                                        class="absolute top-3 left-3 px-2.5 py-1 bg-green-600 text-white text-[10px] font-semibold rounded-full uppercase">New
+                                        Release</span>
+                                @endif
                             </div>
-                        @endforeach
-                    </div>
-
-                    <!-- Pagination -->
-                    @if($recentBooks->hasPages())
-                        <div class="text-center mt-10 sm:mt-12">
-                            {{ $recentBooks->links() }}
-                        </div>
-                    @endif
-                @else
-                    <div class="text-center py-16 sm:py-20">
-                        <div class="max-w-md mx-auto">
-                            <i class="bx bx-book text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-lg font-normal text-gray-700 mb-2">No books yet</h3>
-                            <p class="text-sm text-gray-500 mb-6">Check back soon for new book additions.</p>
-                        </div>
-                    </div>
-                @endif
+                            <div class="p-4">
+                                <h3 class="text-base font-semibold text-gray-900 mb-1 truncate">{{ $book->title }}</h3>
+                                <p class="text-sm text-gray-500">By {{ $book->author }}</p>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
             </div>
+        @endif
+
+        <!-- All Books -->
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">{{ $genre ? ucfirst($genre) . ' Books' : 'All Books' }}</h2>
+                <span class="text-sm text-gray-500">{{ $allBooks->total() }} books</span>
+            </div>
+
+            @if($allBooks->count() > 0)
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    @foreach($allBooks as $book)
+                        <a href="{{ route('books.show', $book->id) }}"
+                            class="bg-white rounded-xl border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+                            <div class="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+                                @if($book->coverImage)
+                                    <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center">
+                                        <i class="bx bx-book text-4xl text-gray-400"></i>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="p-3">
+                                <h3 class="text-sm font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                                    {{ $book->title }}</h3>
+                                <p class="text-xs text-gray-500 truncate">{{ $book->author }}</p>
+                                @if($book->genre)
+                                    <span
+                                        class="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] rounded-full">{{ $book->genre }}</span>
+                                @endif
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-8">
+                    {{ $allBooks->links() }}
+                </div>
+            @else
+                <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                    <i class="bx bx-book text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No books found</h3>
+                    <p class="text-gray-500">Try adjusting your filters or check back later.</p>
+                </div>
+            @endif
         </div>
     </div>
 @endsection

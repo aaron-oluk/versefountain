@@ -1,275 +1,284 @@
 @extends('layouts.app')
 
 @section('title', $chatroom->name . ' - VerseFountain')
+@section('pageTitle', $chatroom->name)
 
 @section('content')
-    @php
-        $isMember = auth()->check() && $chatroom->members()->where('user_id', auth()->id())->exists();
-        $messages = $chatroom->messages()->with('user')->latest()->take(50)->get()->reverse();
-    @endphp
-
-    <div class="min-h-screen bg-stone-50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <!-- Chatroom Header -->
-            <div class="bg-white shadow-sm rounded-md p-4 sm:p-6 mb-6 sm:mb-8">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <a href="{{ route('chatrooms.index') }}"
-                            class="text-gray-600 hover:text-gray-900 transition-colors">
-                            <i class="bx bx-arrow-back text-xl"></i>
-                        </a>
-                        <div>
-                            <h1 class="text-xl sm:text-2xl font-light text-gray-800 tracking-wide">{{ $chatroom->name }}
-                            </h1>
-                            <p class="text-sm text-gray-600 font-light">{{ $chatroom->description }}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-500">{{ $chatroom->members->count() }} members</span>
-                        @if($isMember)
-                            <button onclick="leaveChatroom()" class="text-gray-600 hover:text-gray-900 text-sm font-normal">
-                                Leave Room
-                            </button>
-                        @endif
-                    </div>
+<div class="max-w-4xl mx-auto">
+    <!-- Chatroom Header -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('chatrooms.index') }}" class="text-gray-500 hover:text-gray-700">
+                    <i class="bx bx-arrow-back text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-lg font-semibold text-gray-900">{{ $chatroom->name }}</h1>
+                    @if($chatroom->description)
+                        <p class="text-sm text-gray-500">{{ $chatroom->description }}</p>
+                    @endif
                 </div>
             </div>
-
-            @if($isMember)
-                <!-- Chat Interface -->
-                <div class="bg-white shadow-sm rounded-md" data-chat-interface">
-
-                    <!-- Messages Area -->
-                    <div class="h-96 sm:h-[500px] overflow-y-auto p-4 sm:p-6 space-y-4" data-messages-container>
-
-                        @forelse($messages as $message)
-                            <div class="flex space-x-3">
-                                <div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                                    <span class="text-xs font-normal text-gray-700">
-                                        {{ strtoupper(($message->user->first_name ?? $message->user->username ?? 'U')[0]) }}
-                                    </span>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center space-x-2 mb-1">
-                                        <span class="text-sm font-normal text-gray-900">
-                                            {{ $message->user->first_name ?? $message->user->username ?? 'Anonymous' }}
-                                        </span>
-                                        <span class="text-xs text-gray-500">
-                                            {{ $message->created_at->diffForHumans() }}
-                                        </span>
-                                    </div>
-                                    <div class="bg-gray-50 px-3 py-2">
-                                        <p class="text-sm text-gray-800 font-light">{{ $message->message }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="text-center text-gray-500 py-8 font-light">
-                                <p>No messages yet. Start the conversation!</p>
-                            </div>
-                        @endforelse
-
-                        <!-- New messages will appear here -->
-                        <div data-new-messages style="display: none;"></div>
-                    </div>
-
-                    <!-- Message Input -->
-                    <div class="border-t border-gray-200 p-4 sm:p-6">
-                        <form data-message-form class="flex space-x-3">
-                            <div class="flex-1">
-                                <input data-message-input type="text" placeholder="Type your message..."
-                                    class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 bg-white focus:outline-none text-sm">
-                            </div>
-                            <button type="submit"
-                                class="px-4 py-2 bg-blue-600 text-white text-sm font-normal hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                <span data-send-text>Send</span>
-                                <span data-sending-text style="display: none;">Sending...</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            @else
-                <!-- Join Prompt -->
-                <div class="bg-white shadow-sm rounded-md p-8 sm:p-12 text-center">
-                    <div class="max-w-md mx-auto">
-                        <i class="bx bx-message-dots text-gray-400 mx-auto mb-4"></i>
-                        <h3 class="text-lg font-light text-gray-800 mb-2 tracking-wide">Join this chatroom</h3>
-                        <p class="text-gray-600 mb-4 font-light">You need to join this chatroom to participate in the
-                            conversation.</p>
-                        <button onclick="joinChatroom({{ $chatroom->id }})"
-                            class="px-6 py-2.5 bg-blue-600 text-white text-sm font-normal hover:bg-blue-700 transition-colors focus:outline-none">
-                            Join Chatroom
-                        </button>
-                    </div>
-                </div>
-            @endif
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-gray-500">
+                    <i class="bx bx-user mr-1"></i>{{ $chatroom->members->count() }} members
+                </span>
+                @if($isMember)
+                    <button onclick="leaveChatroom()" class="text-sm text-gray-500 hover:text-red-600">
+                        Leave
+                    </button>
+                @endif
+            </div>
         </div>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const apiBaseUrl = "{{ url('/chat/rooms') }}";
-        const chatUrl = "{{ url('/chat/rooms') }}";
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const roomId = {{ $chatroom->id }};
+    @if($isMember)
+        <!-- Chat Interface -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden" id="chat-container">
+            <!-- Messages Area -->
+            <div id="messages-container" class="h-[500px] overflow-y-auto p-4 space-y-4">
+                @forelse($messages as $message)
+                    <div class="flex gap-3" data-message-id="{{ $message->id }}">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                            <span class="text-xs font-medium text-white">
+                                {{ strtoupper(substr($message->user->first_name ?? $message->user->username ?? 'U', 0, 1)) }}
+                            </span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-sm font-medium text-gray-900">
+                                    {{ $message->user->first_name ?? $message->user->username ?? 'Anonymous' }}
+                                </span>
+                                <span class="text-xs text-gray-400">
+                                    {{ $message->created_at->diffForHumans() }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-700">{{ $message->message }}</p>
+                        </div>
+                    </div>
+                @empty
+                    <div id="empty-state" class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <i class="bx bx-message-dots text-4xl mb-2"></i>
+                        <p class="text-sm">No messages yet. Start the conversation!</p>
+                    </div>
+                @endforelse
+            </div>
 
-        @if($isMember)
-            // Initialize ChatInterface
-            const chatContainer = document.querySelector('[data-chat-interface]');
-            if (chatContainer) {
-                const chatInterface = new ChatInterface(chatContainer, {
-                    roomId: roomId,
-                    apiBaseUrl: apiBaseUrl
-                });
+            <!-- Message Input -->
+            <div class="border-t border-gray-200 p-4">
+                <form id="message-form" class="flex gap-3">
+                    <input type="text" id="message-input" placeholder="Type your message..."
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm"
+                        maxlength="1000" autocomplete="off">
+                    <button type="submit" id="send-button"
+                        class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span id="send-text">Send</span>
+                        <span id="sending-text" class="hidden">Sending...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    @else
+        <!-- Join Prompt -->
+        <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+            <div class="max-w-md mx-auto">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="bx bx-message-dots text-2xl text-gray-400"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Join this chatroom</h3>
+                <p class="text-gray-500 mb-6">You need to join this chatroom to participate in the conversation.</p>
+                @auth
+                    <button onclick="joinChatroom()"
+                        class="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                        Join Chatroom
+                    </button>
+                @else
+                    <a href="{{ route('login') }}"
+                        class="inline-block px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                        Login to Join
+                    </a>
+                @endauth
+            </div>
+        </div>
+    @endif
+</div>
+@endsection
 
-                // Store globally for WebSocket access
-                window.chatInterfaceInstance = chatInterface;
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roomId = {{ $chatroom->id }};
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const chatUrl = "{{ url('/chat/rooms') }}";
 
-                // Update send button state
-                const messageForm = chatContainer.querySelector('[data-message-form]');
-                const messageInput = chatContainer.querySelector('[data-message-input]');
-                const sendText = chatContainer.querySelector('[data-send-text]');
-                const sendingText = chatContainer.querySelector('[data-sending-text]');
+    @if($isMember)
+    const messagesContainer = document.getElementById('messages-container');
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const sendText = document.getElementById('send-text');
+    const sendingText = document.getElementById('sending-text');
+    const emptyState = document.getElementById('empty-state');
 
-                if (messageForm) {
-                    messageForm.addEventListener('submit', async function(e) {
-                        e.preventDefault();
-                        const message = messageInput?.value.trim();
-                        if (!message) return;
+    // Scroll to bottom on load
+    scrollToBottom();
 
-                        // Update UI
-                        if (sendText) sendText.style.display = 'none';
-                        if (sendingText) sendingText.style.display = 'inline';
-                        messageInput.disabled = true;
+    // Handle form submission
+    messageForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-                        try {
-                            const response = await fetch(`${apiBaseUrl}/${roomId}/messages`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken,
-                                    'Accept': 'application/json'
-                                },
-                                body: JSON.stringify({ message })
-                            });
+        const message = messageInput.value.trim();
+        if (!message) return;
 
-                            if (response.ok) {
-                                const data = await response.json();
-                                chatInterface.addNewMessage(data);
-                                messageInput.value = '';
-                            } else {
-                                const errorData = await response.json();
-                                if (window.flashMessage) {
-                                    window.flashMessage.show(errorData.message || 'Failed to send message', 'error');
-                                }
-                            }
-                        } catch (error) {
-                            console.error('Error sending message:', error);
-                            if (window.flashMessage) {
-                                window.flashMessage.show('Failed to send message', 'error');
-                            }
-                        } finally {
-                            if (sendText) sendText.style.display = 'inline';
-                            if (sendingText) sendingText.style.display = 'none';
-                            messageInput.disabled = false;
-                        }
-                    });
-                }
+        // Update UI state
+        sendText.classList.add('hidden');
+        sendingText.classList.remove('hidden');
+        sendButton.disabled = true;
+        messageInput.disabled = true;
+
+        try {
+            const response = await fetch(`${chatUrl}/${roomId}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                addMessageToUI(data);
+                messageInput.value = '';
+            } else {
+                const errorData = await response.json();
+                alert(errorData.message || 'Failed to send message');
             }
-
-            // Initialize Echo for real-time messaging
-            if (typeof Echo !== 'undefined') {
-                window.Echo.join(`chat.room.${roomId}`)
-                    .here((users) => {
-                        console.log('Users currently in chatroom:', users);
-                    })
-                    .joining((user) => {
-                        console.log('User joining:', user);
-                    })
-                    .leaving((user) => {
-                        console.log('User leaving:', user);
-                    })
-                    .listen('ChatMessageSent', (e) => {
-                        console.log('New message received:', e);
-                        if (window.chatInterfaceInstance) {
-                            window.chatInterfaceInstance.addNewMessage(e);
-                        }
-                    });
-            }
-        @endif
-
-        async function joinChatroom(roomId) {
-            try {
-                const response = await fetch(`${chatUrl}/${roomId}/join`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    credentials: 'same-origin'
-                });
-
-                if (response.ok) {
-                    if (window.flashMessage) {
-                        window.flashMessage.show('Successfully joined the chatroom!', 'success');
-                    }
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
-                } else {
-                    const data = await response.json();
-                    if (window.flashMessage) {
-                        window.flashMessage.show(data.message || 'Failed to join chatroom', 'error');
-                    }
-                }
-            } catch (error) {
-                console.error('Error joining chatroom:', error);
-                if (window.flashMessage) {
-                    window.flashMessage.show('An error occurred while joining the chatroom', 'error');
-                }
-            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
+        } finally {
+            sendText.classList.remove('hidden');
+            sendingText.classList.add('hidden');
+            sendButton.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
         }
-
-        async function leaveChatroom() {
-            if (!confirm('Are you sure you want to leave this chatroom?')) {
-                return;
-            }
-
-            try {
-                const response = await fetch(`${chatUrl}/${roomId}/leave`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    credentials: 'same-origin'
-                });
-
-                if (response.ok) {
-                    if (window.flashMessage) {
-                        window.flashMessage.show('Left the chatroom', 'success');
-                    }
-                    setTimeout(() => {
-                        window.location.href = "{{ route('chatrooms.index') }}";
-                    }, 1000);
-                } else {
-                    if (window.flashMessage) {
-                        window.flashMessage.show('Failed to leave chatroom', 'error');
-                    }
-                }
-            } catch (error) {
-                console.error('Error leaving chatroom:', error);
-                if (window.flashMessage) {
-                    window.flashMessage.show('An error occurred while leaving the chatroom', 'error');
-                }
-            }
-        }
-
-        // Make functions globally available
-        window.joinChatroom = joinChatroom;
-        window.leaveChatroom = leaveChatroom;
     });
-    </script>
+
+    // Add message to UI
+    function addMessageToUI(message) {
+        // Remove empty state if present
+        if (emptyState) {
+            emptyState.remove();
+        }
+
+        const messageHtml = `
+            <div class="flex gap-3" data-message-id="${message.id}">
+                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <span class="text-xs font-medium text-white">
+                        ${(message.username || 'U').charAt(0).toUpperCase()}
+                    </span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-sm font-medium text-gray-900">
+                            ${message.username || 'Anonymous'}
+                        </span>
+                        <span class="text-xs text-gray-400">just now</span>
+                    </div>
+                    <p class="text-sm text-gray-700">${escapeHtml(message.message)}</p>
+                </div>
+            </div>
+        `;
+
+        messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Real-time messaging with Laravel Echo (if available)
+    if (typeof Echo !== 'undefined') {
+        Echo.join(`chat.room.${roomId}`)
+            .here((users) => {
+                console.log('Users in room:', users.length);
+            })
+            .joining((user) => {
+                console.log('User joined:', user.username);
+            })
+            .leaving((user) => {
+                console.log('User left:', user.username);
+            })
+            .listen('ChatMessageSent', (e) => {
+                // Only add if not from current user (we already added it locally)
+                const existingMessage = document.querySelector(`[data-message-id="${e.id}"]`);
+                if (!existingMessage) {
+                    addMessageToUI(e);
+                }
+            });
+    }
+    @endif
+
+    // Join chatroom
+    window.joinChatroom = async function() {
+        try {
+            const response = await fetch(`${chatUrl}/${roomId}/join`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to join chatroom');
+            }
+        } catch (error) {
+            console.error('Error joining chatroom:', error);
+            alert('An error occurred while joining the chatroom');
+        }
+    };
+
+    // Leave chatroom
+    window.leaveChatroom = async function() {
+        if (!confirm('Are you sure you want to leave this chatroom?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${chatUrl}/${roomId}/leave`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                window.location.href = "{{ route('chatrooms.index') }}";
+            } else {
+                alert('Failed to leave chatroom');
+            }
+        } catch (error) {
+            console.error('Error leaving chatroom:', error);
+            alert('An error occurred while leaving the chatroom');
+        }
+    };
+});
+</script>
 @endsection

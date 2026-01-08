@@ -4,22 +4,48 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ChatRoom;
+use App\Models\ChatRoomInvitation;
+use App\Models\ChatRoomJoinRequest;
+use App\Models\User;
 use App\Events\UserJoinedChatRoom;
 use App\Events\UserLeftChatRoom;
 use Illuminate\Support\Facades\Auth;
 
 class ChatRoomController extends Controller
 {
+    /**
+     * Display the chatrooms listing page.
+     */
+    public function list(Request $request)
+    {
+        $chatrooms = ChatRoom::withCount('members')->with('createdBy')->latest()->get();
+        $userChatrooms = Auth::user()->chatRooms ?? collect();
+        $pendingRequests = [];
+
+        if (Auth::check()) {
+            $pendingRequests = ChatRoomJoinRequest::where('user_id', Auth::id())
+                ->where('status', 'pending')
+                ->pluck('chat_room_id')
+                ->toArray();
+        }
+
+        if ($request->get('filter') === 'my-rooms') {
+            $chatrooms = $userChatrooms->load('createdBy')->loadCount('members');
+        }
+
+        return view('chatrooms', compact('chatrooms', 'userChatrooms', 'pendingRequests'));
+    }
+
     public function index(Request $request)
     {
         $query = ChatRoom::query()->withCount('members');
 
-        if ($request->has('isPrivate')) {
-            $request->validate(['isPrivate' => 'boolean']);
-            $query->where('isPrivate', $request->boolean('isPrivate'));
+        if ($request->has('is_private')) {
+            $request->validate(['is_private' => 'boolean']);
+            $query->where('is_private', $request->boolean('is_private'));
         } else {
             if (!Auth::check()) {
-                $query->where('isPrivate', false);
+                $query->where('is_private', false);
             }
         }
 
@@ -42,16 +68,19 @@ class ChatRoomController extends Controller
     {
         // Load relationships
         $chatroom->load('members', 'messages.user');
-        
-        if ($chatroom->isPrivate) {
+
+        if ($chatroom->is_private) {
             $user = Auth::user();
             // Use eager loaded relationship instead of separate query
             if (!$user || !$chatroom->members->contains('id', $user->id)) {
                 abort(403, 'Forbidden. You are not a member of this private chat room.');
             }
         }
-        
-        return view('chatroom', ['chatroom' => $chatroom]);
+
+        $isMember = Auth::check() && $chatroom->members->contains('id', Auth::id());
+        $messages = $chatroom->messages()->with('user')->latest()->take(50)->get()->reverse();
+
+        return view('chatroom', compact('chatroom', 'isMember', 'messages'));
     }
 
     public function apiShow(ChatRoom $room)
@@ -59,7 +88,7 @@ class ChatRoomController extends Controller
         // Load relationships for API response
         $room->load('members');
         
-        if ($room->isPrivate) {
+        if ($room->is_private) {
             $user = Auth::user();
             // Use eager loaded relationship instead of separate query
             if (!$user || !$room->members->contains('id', $user->id)) {
@@ -79,12 +108,14 @@ class ChatRoomController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'isPrivate' => 'boolean',
+            'is_private' => 'boolean',
         ]);
 
         $chatRoom = ChatRoom::create([
-            ...$validatedData,
-            'created_by_id' => $user->id
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'] ?? null,
+            'is_private' => $validatedData['is_private'] ?? false,
+            'created_by_id' => $user->id,
         ]);
 
         $chatRoom->members()->attach($user->id, ['joinedAt' => now()]);
@@ -111,7 +142,7 @@ class ChatRoomController extends Controller
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        if ($room->isPrivate) {
+        if ($room->is_private) {
             if ($room->created_by_id !== $user->id && $user->role !== 'admin') {
                 return response()->json(['message' => 'Forbidden. You cannot join this private chat room without an invitation or admin privileges.'], 403);
             }
@@ -160,5 +191,112 @@ class ChatRoomController extends Controller
         $room->load('members');
         $isMember = $room->members->contains('id', $user->id);
         return response()->json(['isMember' => $isMember]);
+    }
+
+    public function requestJoin(Request $request, ChatRoom $room)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        if (!$room->is_private) {
+            return response()->json(['message' => 'This chatroom is public. You can join directly.'], 400);
+        }
+
+        // Check if already a member
+        if ($room->members()->where('user_id', $user->id)->exists()) {
+            return response()->json(['message' => 'You are already a member of this chatroom.'], 400);
+        }
+
+        // Check if there's already a pending request
+        $existingRequest = ChatRoomJoinRequest::where('user_id', $user->id)
+            ->where('chat_room_id', $room->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existingRequest) {
+            return response()->json(['message' => 'You already have a pending request for this chatroom.'], 400);
+        }
+
+        $request->validate([
+            'message' => 'nullable|string|max:500',
+        ]);
+
+        $joinRequest = ChatRoomJoinRequest::create([
+            'user_id' => $user->id,
+            'chat_room_id' => $room->id,
+            'message' => $request->message,
+        ]);
+
+        return response()->json([
+            'message' => 'Join request sent successfully.',
+            'request' => $joinRequest->load('user'),
+        ], 201);
+    }
+
+    public function approveJoinRequest(ChatRoomJoinRequest $joinRequest)
+    {
+        $user = Auth::user();
+        $room = $joinRequest->chatRoom;
+
+        // Check if user is the creator or admin
+        if ($room->created_by_id !== $user->id && $user->role !== 'admin') {
+            return response()->json(['message' => 'You do not have permission to approve requests.'], 403);
+        }
+
+        if ($joinRequest->status !== 'pending') {
+            return response()->json(['message' => 'This request has already been reviewed.'], 400);
+        }
+
+        $joinRequest->approve($user->id);
+
+        // Add user to chatroom
+        $room->members()->attach($joinRequest->user_id, ['joinedAt' => now()]);
+
+        return response()->json([
+            'message' => 'Join request approved successfully.',
+            'request' => $joinRequest->fresh()->load(['user', 'reviewer']),
+        ]);
+    }
+
+    public function rejectJoinRequest(ChatRoomJoinRequest $joinRequest)
+    {
+        $user = Auth::user();
+        $room = $joinRequest->chatRoom;
+
+        // Check if user is the creator or admin
+        if ($room->created_by_id !== $user->id && $user->role !== 'admin') {
+            return response()->json(['message' => 'You do not have permission to reject requests.'], 403);
+        }
+
+        if ($joinRequest->status !== 'pending') {
+            return response()->json(['message' => 'This request has already been reviewed.'], 400);
+        }
+
+        $joinRequest->reject($user->id);
+
+        return response()->json([
+            'message' => 'Join request rejected.',
+            'request' => $joinRequest->fresh()->load(['user', 'reviewer']),
+        ]);
+    }
+
+    public function getPendingRequests(ChatRoom $room)
+    {
+        $user = Auth::user();
+
+        // Check if user is the creator or admin
+        if ($room->created_by_id !== $user->id && $user->role !== 'admin') {
+            return response()->json(['message' => 'You do not have permission to view requests.'], 403);
+        }
+
+        $requests = ChatRoomJoinRequest::where('chat_room_id', $room->id)
+            ->where('status', 'pending')
+            ->with('user')
+            ->latest()
+            ->get();
+
+        return response()->json(['requests' => $requests]);
     }
 }

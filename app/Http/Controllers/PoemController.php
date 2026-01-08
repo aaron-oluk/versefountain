@@ -33,6 +33,14 @@ class PoemController extends Controller
     }
 
     /**
+     * Show the poem submission page (Creator Studio).
+     */
+    public function submit()
+    {
+        return view('poetry.submit');
+    }
+
+    /**
      * Store a newly created poem
      */
     public function store(Request $request)

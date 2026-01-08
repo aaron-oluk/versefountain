@@ -1,319 +1,297 @@
 @extends('layouts.app')
 
 @section('title', 'Chatrooms - VerseFountain')
+@section('pageTitle', 'Chatrooms')
 
 @section('content')
-    @php
-        $chatrooms = App\Models\ChatRoom::with('members')->get();
-    @endphp
+<div class="max-w-5xl mx-auto">
+    <!-- Header with Create Button -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-gray-900 mb-1">Explore Chatrooms</h1>
+            <p class="text-sm text-gray-500">Join conversations with fellow readers and writers.</p>
+        </div>
+        @auth
+        <button onclick="openCreateRoomModal()" class="px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+            <i class="bx bx-plus text-lg"></i>
+            Create Room
+        </button>
+        @endauth
+    </div>
 
-    <div class="min-h-screen">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <!-- Page Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl sm:text-4xl font-semibold text-gray-900 mb-2">Chatrooms</h1>
-                <p class="text-base text-gray-600 leading-relaxed max-w-2xl">Connect with fellow poetry enthusiasts and writers</p>
-            </div>
+    <!-- Filter Tabs -->
+    <div class="flex items-center gap-4 mb-6">
+        <a href="{{ route('chatrooms.index') }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ !request('filter') ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }} transition-colors">
+            All Rooms
+        </a>
+        @auth
+        <a href="{{ route('chatrooms.index', ['filter' => 'my-rooms']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'my-rooms' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }} transition-colors">
+            My Rooms
+            @if($userChatrooms->count() > 0)
+                <span class="ml-1 px-1.5 py-0.5 bg-white/20 rounded text-xs">{{ $userChatrooms->count() }}</span>
+            @endif
+        </a>
+        @endauth
+    </div>
 
-            <!-- Search and Filter Section -->
-            <div class="bg-white rounded-lg p-5 shadow-sm mb-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Search -->
-                    <div class="sm:col-span-2 lg:col-span-1">
-                        <label for="search"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Search
-                            Chatrooms</label>
-                        <div class="relative">
-                            <input type="text" id="search" placeholder="Search chatrooms or topics..."
-                                class="w-full pl-9 pr-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none">
-                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                <i class="bx bx-search text-gray-400"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Category Filter -->
-                    <div>
-                        <label for="category"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Category</label>
-                        <select id="category"
-                            class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
-                            <option value="">All Categories</option>
-                            <option value="general">General Discussion</option>
-                            <option value="poetry">Poetry</option>
-                            <option value="writing">Writing Tips</option>
-                            <option value="books">Book Discussion</option>
-                        </select>
-                    </div>
-
-                    <!-- Sort By -->
-                    <div>
-                        <label for="sort"
-                            class="block text-xs font-normal text-gray-600 mb-1.5 uppercase tracking-wide">Sort By</label>
-                        <select id="sort"
-                            class="w-full px-3 py-2 border border-gray-300 focus:border-blue-600 text-sm bg-white focus:outline-none appearance-none cursor-pointer">
-                            <option value="active">Most Active</option>
-                            <option value="recent">Recently Created</option>
-                            <option value="members">Most Members</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- All Chatrooms -->
-            <div class="mb-10">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Available Chatrooms</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    @foreach($chatrooms as $index => $room)
-                        <div class="bg-white rounded-lg shadow-sm transition-colors overflow-hidden">
-                            <div class="h-40 sm:h-48 bg-gray-100 flex items-center justify-center">
-                                <i class="bx bx-message-dots text-gray-400"></i>
-                            </div>
-                            <div class="p-4 sm:p-6">
-                                <div class="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
-                                    <span class="text-xs text-gray-600 uppercase tracking-wide">
-                                        {{ ['Poetry', 'Writing', 'Books', 'General', 'Critique', 'Haiku', 'Spoken Word', 'Challenges', 'Classic', 'Modern', 'Translation', 'Education'][$index % 12] }}
-                                    </span>
-                                    <span class="text-xs text-gray-500">{{ $room->members->count() }} members</span>
-                                </div>
-                                <h3 class="font-normal text-gray-900 mb-1 text-sm sm:text-base">{{ $room->name }}</h3>
-                                <p class="text-gray-600 text-xs sm:text-sm mb-3 font-light line-clamp-2">
-                                    {{ $room->description }}</p>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-gray-500">Active now</span>
-                                    <div class="flex space-x-2">
-                                        @auth
-                                            @if($room->members->contains(auth()->id()))
-                                                <a href="{{ route('chatroom.show', $room) }}"
-                                                    class="px-3 py-1 bg-blue-600 text-white rounded-md text-xs font-normal hover:bg-blue-700 focus:outline-none transition-colors">
-                                                    Enter Chat
-                                                </a>
-                                                <button onclick="leaveChatroom({{ $room->id }})"
-                                                    class="px-3 py-1 bg-white shadow-sm rounded-md text-gray-700 text-xs font-normal hover:bg-gray-50 focus:outline-none transition-colors">
-                                                    Leave
-                                                </button>
-                                            @else
-                                                <button
-                                                    class="px-3 py-1 bg-blue-600 text-white rounded-md text-xs font-normal hover:bg-blue-700 focus:outline-none transition-colors"
-                                                    data-room-id="{{ $room->id }}" onclick="joinChatroom({{ $room->id }})">
-                                                    Join
-                                                </button>
-                                            @endif
-                                        @else
-                                            <a href="{{ route('login') }}"
-                                                class="px-3 py-1 bg-white shadow-sm rounded-md text-gray-700 text-xs font-normal hover:bg-gray-50 transition-colors">
-                                                Login to Join
-                                            </a>
-                                        @endauth
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Create New Chatroom Button -->
-            @auth
-                <div class="text-center mb-10">
-                    <button class="px-6 py-3 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors rounded-lg">
-                        <i class="bx bx-plus text-base mr-2"></i>
-                        Create New Chatroom
-                    </button>
-                </div>
-            @endauth
+    <!-- Search -->
+    <div class="mb-6">
+        <div class="relative">
+            <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="searchRooms" placeholder="Search chatrooms..."
+                   class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm">
         </div>
     </div>
 
-    <script>
-        const joinUrl = "{{ url('/chat/rooms') }}";
-        const chatUrl = "{{ url('/chat/rooms') }}";
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-        async function joinChatroom(roomId) {
-            const button = event.target;
-            const originalText = button.textContent;
-
-            try {
-                // Show loading state
-                button.textContent = 'Joining...';
-                button.disabled = true;
-                button.classList.add('opacity-50');
-
-                const response = await fetch(joinUrl + '/' + roomId + '/join', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    credentials: 'same-origin'
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Update button to show joined state
-                    button.outerHTML = `
-                    <a href="${chatUrl}/${roomId}" 
-                       class="bg-blue-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-blue-700 focus:outline-none transition-colors">
-                        Enter Chat
+    <!-- Room Cards -->
+    <div class="space-y-4" id="roomsList">
+        @forelse($chatrooms as $room)
+        <div class="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow room-card" data-name="{{ strtolower($room->name) }}">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+                @if($room->is_private)
+                    <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-semibold rounded-full uppercase">Private</span>
+                @else
+                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-semibold rounded-full uppercase">Public</span>
+                @endif
+                <span class="flex items-center gap-1 text-[10px] text-green-600">
+                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                    {{ $room->members_count }} members
+                </span>
+            </div>
+            <h3 class="text-base font-semibold text-gray-900 mb-1">{{ $room->name }}</h3>
+            <p class="text-sm text-gray-500 mb-3 line-clamp-2">{{ $room->description ?? 'Join the conversation!' }}</p>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <span>Created by</span>
+                    <a href="{{ route('profile.creator', $room->createdBy->id ?? 1) }}" class="font-medium text-gray-700 hover:text-blue-600">
+                        {{ $room->createdBy->first_name ?? $room->createdBy->username ?? 'Unknown' }}
                     </a>
-                    <button onclick="leaveChatroom(${roomId})" 
-                            class="bg-red-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-red-700 transition-colors focus:outline-none">
-                        Leave
+                </div>
+                @php
+                    $isMember = $userChatrooms->contains('id', $room->id);
+                    $isPending = in_array($room->id, $pendingRequests ?? []);
+                @endphp
+                @if($isMember)
+                    <a href="{{ route('chatroom.show', $room->id) }}" class="px-4 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                        Enter Room
+                    </a>
+                @elseif($isPending)
+                    <button class="px-4 py-1.5 bg-gray-100 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
+                        Request Pending
                     </button>
-                `;
+                @else
+                    <button data-private="{{ $room->is_private ? '1' : '0' }}" onclick="joinRoom({{ $room->id }}, this)" class="px-4 py-1.5 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                        {{ $room->is_private ? 'Request Access' : 'Join Room' }}
+                    </button>
+                @endif
+            </div>
+        </div>
+        @empty
+        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <i class="bx bx-message-square-dots text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No chatrooms yet</h3>
+            <p class="text-gray-500 mb-4">Be the first to create a chatroom!</p>
+            @auth
+            <button onclick="openCreateRoomModal()" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                Create Room
+            </button>
+            @endauth
+        </div>
+        @endforelse
+    </div>
+</div>
 
-                    // Update member count
-                    updateMemberCount(roomId, 1);
+<!-- Create Room Modal -->
+<div id="createRoomModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Create New Chatroom</h3>
+        <form id="createRoomForm">
+            <div class="space-y-4">
+                <div>
+                    <label for="roomName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Room Name</label>
+                    <input type="text" id="roomName" name="name" required
+                           class="w-full px-4 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="roomDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                    <textarea id="roomDescription" name="description" rows="3"
+                              class="w-full px-4 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"></textarea>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="isPrivate" name="is_private" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <label for="isPrivate" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Make this room private</label>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" onclick="closeCreateRoomModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Create Room
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
-                    // Show success message
-                    showNotification('Successfully joined the chatroom!', 'success');
-                } else {
-                    // Reset button state
-                    button.textContent = originalText;
-                    button.disabled = false;
-                    button.classList.remove('opacity-50');
+<!-- Join Request Modal -->
+<div id="joinRequestModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Request to Join</h3>
+        <form id="joinRequestForm">
+            <div class="space-y-4">
+                <div>
+                    <label for="joinMessage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Add a note for the host (optional)</label>
+                    <textarea id="joinMessage" name="message" rows="3" placeholder="Tell the host why you'd like to join..."
+                              class="w-full px-4 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" onclick="closeJoinRequestModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Send Request
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
 
-                    // Show error message
-                    showNotification(data.message || 'Failed to join chatroom', 'error');
-                }
-            } catch (error) {
-                console.error('Error joining chatroom:', error);
+@section('scripts')
+<script>
+// Search functionality
+document.getElementById('searchRooms').addEventListener('input', function(e) {
+    const search = e.target.value.toLowerCase();
+    document.querySelectorAll('.room-card').forEach(card => {
+        const name = card.dataset.name;
+        card.style.display = name.includes(search) ? 'block' : 'none';
+    });
+});
 
-                // Reset button state
-                button.textContent = originalText;
-                button.disabled = false;
-                button.classList.remove('opacity-50');
+// Create room modal
+function openCreateRoomModal() {
+    document.getElementById('createRoomModal').classList.remove('hidden');
+}
 
-                // Show error message
-                showNotification('An error occurred while joining the chatroom', 'error');
-            }
+function closeCreateRoomModal() {
+    document.getElementById('createRoomModal').classList.add('hidden');
+}
+
+// Join request modal
+let currentJoinRoomId = null;
+let currentJoinButton = null;
+
+function openJoinRequestModal(roomId, button) {
+    currentJoinRoomId = roomId;
+    currentJoinButton = button;
+    document.getElementById('joinMessage').value = '';
+    document.getElementById('joinRequestModal').classList.remove('hidden');
+}
+
+function closeJoinRequestModal() {
+    document.getElementById('joinRequestModal').classList.add('hidden');
+    currentJoinRoomId = null;
+    currentJoinButton = null;
+}
+
+// Create room form
+document.getElementById('createRoomForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = {
+        name: document.getElementById('roomName').value,
+        description: document.getElementById('roomDescription').value,
+        is_private: document.getElementById('isPrivate').checked
+    };
+
+    fetch('/api/chat/rooms', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.id) {
+            window.location.href = `/chat/rooms/${data.id}`;
+        } else {
+            alert(data.message || 'Failed to create room');
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to create room');
+    });
+});
 
-        function showNotification(message, type) {
-            // Remove any existing notifications
-            const existingNotifications = document.querySelectorAll('.notification');
-            existingNotifications.forEach(notification => notification.remove());
-
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = 'notification fixed top-4 right-4 px-6 py-3 rounded-md text-white z-50 ' +
-                (type === 'success' ? 'bg-blue-500' : 'bg-red-500');
-            notification.textContent = message;
-
-            // Add animation classes
-            notification.style.transform = 'translateX(100%)';
-            notification.style.transition = 'transform 0.3s ease-out';
-
-            document.body.appendChild(notification);
-
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 10);
-
-            // Remove notification after 4 seconds
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 300);
-            }, 4000);
+// Join request form
+document.getElementById('joinRequestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentJoinRoomId || !currentJoinButton) return;
+    
+    const message = document.getElementById('joinMessage').value;
+    
+    fetch(`/api/chat/rooms/${currentJoinRoomId}/join-request`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            currentJoinButton.textContent = 'Request Pending';
+            currentJoinButton.disabled = true;
+            currentJoinButton.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
+            currentJoinButton.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+            closeJoinRequestModal();
+        } else {
+            alert('Failed to send request');
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to send request');
+    });
+});
 
-        // Add search functionality
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('search');
-            const categorySelect = document.getElementById('category');
-            const sortSelect = document.getElementById('sort');
-            const chatroomCards = document.querySelectorAll('.bg-white.rounded-md');
+// Join room
+function joinRoom(roomId, button) {
+    const isPrivate = button.dataset.private === '1';
 
-            function filterChatrooms() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const selectedCategory = categorySelect.value;
+    if (isPrivate) {
+        openJoinRequestModal(roomId, button);
+        return;
+    }
 
-                chatroomCards.forEach(card => {
-                    const title = card.querySelector('h3').textContent.toLowerCase();
-                    const description = card.querySelector('p').textContent.toLowerCase();
-                    const category = card.querySelector('span').textContent.toLowerCase();
-
-                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-                    const matchesCategory = !selectedCategory || category.includes(selectedCategory);
-
-                    if (matchesSearch && matchesCategory) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
-
-            searchInput.addEventListener('input', filterChatrooms);
-            categorySelect.addEventListener('change', filterChatrooms);
-            sortSelect.addEventListener('change', function () {
-                // Add sorting logic here if needed
-                console.log('Sort by:', this.value);
-            });
-        });
-
-        async function leaveChatroom(roomId) {
-            if (!confirm('Are you sure you want to leave this chatroom?')) {
-                return;
-            }
-
-            try {
-                const response = await fetch(joinUrl + '/' + roomId + '/leave', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    credentials: 'same-origin'
-                });
-
-                if (response.ok) {
-                    // Find the chatroom card and update buttons
-                    const chatroomCard = document.querySelector(`[data-room-id="${roomId}"]`)?.closest('.bg-white.rounded-md');
-                    if (chatroomCard) {
-                        const buttonContainer = chatroomCard.querySelector('.flex.space-x-2');
-                        buttonContainer.innerHTML = `
-                        <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-700 transition-colors focus:outline-none" 
-                                data-room-id="${roomId}"
-                                onclick="joinChatroom(${roomId})">
-                            Join
-                        </button>
-                    `;
-                    }
-
-                    // Update member count
-                    updateMemberCount(roomId, -1);
-
-                    showNotification('Left the chatroom', 'success');
-                } else {
-                    const data = await response.json();
-                    showNotification(data.message || 'Failed to leave chatroom', 'error');
-                }
-            } catch (error) {
-                console.error('Error leaving chatroom:', error);
-                showNotification('An error occurred while leaving the chatroom', 'error');
-            }
+    fetch(`/api/chat/rooms/${roomId}/join`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         }
-
-        function updateMemberCount(roomId, change) {
-            const chatroomCard = document.querySelector(`[data-room-id="${roomId}"]`)?.closest('.bg-white.rounded-md');
-            if (chatroomCard) {
-                const memberCountElement = chatroomCard.querySelector('.text-xs.text-gray-500');
-                if (memberCountElement) {
-                    const currentCount = parseInt(memberCountElement.textContent.split(' ')[0]);
-                    const newCount = Math.max(0, currentCount + change);
-                    memberCountElement.textContent = `${newCount} members`;
-                }
-            }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message && data.message.includes('success')) {
+            button.textContent = 'Enter Room';
+            button.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
+            button.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+            button.onclick = () => window.location.href = `/chat/rooms/${roomId}`;
+        } else {
+            alert(data.message || 'Failed to join room');
         }
-    </script>
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to join room');
+    });
+}
+</script>
 @endsection
