@@ -11,12 +11,12 @@ import './bootstrap';
         if (lightIcon && darkIcon) {
             if (isDark) {
                 // In dark mode, show sun icon (to switch to light)
-                lightIcon.classList.remove('hidden');
-                darkIcon.classList.add('hidden');
+                lightIcon.style.display = 'block';
+                darkIcon.style.display = 'none';
             } else {
                 // In light mode, show moon icon (to switch to dark)
-                lightIcon.classList.add('hidden');
-                darkIcon.classList.remove('hidden');
+                lightIcon.style.display = 'none';
+                darkIcon.style.display = 'block';
             }
         }
     }
@@ -27,7 +27,8 @@ import './bootstrap';
         document.documentElement.classList.add('dark');
     }
 
-    // Update icons on page load
+    // Update icons immediately and on page load
+    updateThemeIcons();
     document.addEventListener('DOMContentLoaded', updateThemeIcons);
 
     // Toggle dark mode function

@@ -24,9 +24,9 @@
         <div class="flex items-center space-x-2">
             <!-- Dark Mode Toggle -->
             <button onclick="toggleDarkMode()" id="theme-toggle"
-                class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                <i class="bx bx-moon text-xl" id="theme-toggle-dark-icon"></i>
-                <i class="bx bx-sun text-xl hidden" id="theme-toggle-light-icon"></i>
+                class="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors w-10 h-10 flex items-center justify-center">
+                <i class="bx bx-moon text-xl absolute" id="theme-toggle-dark-icon" style="display: block;"></i>
+                <i class="bx bx-sun text-xl absolute" id="theme-toggle-light-icon" style="display: none;"></i>
             </button>
 
             @auth
