@@ -50,9 +50,10 @@ Route::get('/creators', [UserController::class, 'index'])->name('creators.index'
 // Poetry
 Route::get('/poetry', [PoemController::class, 'index'])->name('poetry.index');
 Route::get('/poetry/create', [PoemController::class, 'create'])->middleware('auth')->name('poetry.create');
-    Route::post('/poetry', [PoemController::class, 'store'])->middleware('auth')->name('poetry.store');
+Route::post('/poetry', [PoemController::class, 'store'])->middleware('auth')->name('poetry.store');
 Route::get('/poetry/{poem}', [PoemController::class, 'show'])->name('poetry.show');
 Route::get('/poetry/{poem}/edit', [PoemController::class, 'edit'])->middleware('auth')->name('poetry.edit');
+Route::put('/poetry/{poem}', [PoemController::class, 'update'])->middleware('auth')->name('poetry.update');
 
 // Books
 Route::get('/books', [BookController::class, 'index'])->name('books.index');

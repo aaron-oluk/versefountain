@@ -339,9 +339,17 @@ class PoemDetail {
                 this.isLiked = data.liked;
                 this.likesCount = data.likes_count;
                 this.updateLikeDisplay();
+            } else {
+                console.error('Failed to toggle like:', response.status);
+                if (window.flashMessage) {
+                    window.flashMessage.show('Failed to like poem', 'error');
+                }
             }
         } catch (error) {
             console.error('Error toggling like:', error);
+            if (window.flashMessage) {
+                window.flashMessage.show('Error: ' + error.message, 'error');
+            }
         }
     }
 
@@ -351,8 +359,13 @@ class PoemDetail {
         const likeIcon = likeBtn?.querySelector('i');
 
         if (likeBtn) {
-            likeBtn.className = likeBtn.className.replace(/text-(red|gray)-500/g, '') +
-                (this.isLiked ? ' text-red-500' : ' text-gray-500 hover:text-red-500');
+            // Remove old color classes and add new ones
+            likeBtn.classList.remove('text-red-500', 'text-gray-500', 'hover:text-red-500', 'dark:text-gray-400');
+            if (this.isLiked) {
+                likeBtn.classList.add('text-red-500');
+            } else {
+                likeBtn.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:text-red-500');
+            }
         }
 
         if (likeIcon) {
@@ -392,9 +405,20 @@ class PoemDetail {
                     this.ratingCount = parseInt(data.rating_count);
                 }
                 this.updateRatingDisplay();
+                if (window.flashMessage) {
+                    window.flashMessage.show('Poem rated successfully!', 'success');
+                }
+            } else {
+                console.error('Failed to rate poem:', response.status);
+                if (window.flashMessage) {
+                    window.flashMessage.show('Failed to rate poem', 'error');
+                }
             }
         } catch (error) {
             console.error('Error rating poem:', error);
+            if (window.flashMessage) {
+                window.flashMessage.show('Error: ' + error.message, 'error');
+            }
         }
     }
 
@@ -404,9 +428,16 @@ class PoemDetail {
             const icon = btn?.querySelector('i');
             if (btn && icon) {
                 const isActive = this.currentRating >= i;
+                // Remove old classes
                 icon.className = isActive ? 'bx bxs-star text-xs' : 'bx bx-star text-xs';
-                btn.className = btn.className.replace(/text-(yellow|gray)-[0-9]+/g, '') +
-                    (isActive ? ' text-yellow-500' : ' text-gray-400 hover:text-yellow-400');
+                
+                // Update button classes
+                btn.classList.remove('text-yellow-500', 'text-gray-400', 'hover:text-yellow-400', 'dark:text-gray-500');
+                if (isActive) {
+                    btn.classList.add('text-yellow-500');
+                } else {
+                    btn.classList.add('text-gray-400', 'dark:text-gray-500', 'hover:text-yellow-400');
+                }
             }
         }
 
@@ -418,12 +449,12 @@ class PoemDetail {
     }
 
     toggleComments() {
-        this.showComments = !this.showComments;
-        const commentsSection = this.container.querySelector('[data-comments-section]');
-        if (commentsSection) {
-            commentsSection.style.display = this.showComments ? 'block' : 'none';
-            if (this.showComments) {
-                commentsSection.classList.add('transition', 'ease-out', 'duration-300');
+        const commentFormContainer = this.container.querySelector('[data-comment-form-container]');
+        if (commentFormContainer) {
+            if (commentFormContainer.classList.contains('hidden')) {
+                commentFormContainer.classList.remove('hidden');
+            } else {
+                commentFormContainer.classList.add('hidden');
             }
         }
     }
@@ -432,7 +463,13 @@ class PoemDetail {
         this.showShareMenu = !this.showShareMenu;
         const shareMenu = this.container.querySelector('[data-share-menu]');
         if (shareMenu) {
-            shareMenu.style.display = this.showShareMenu ? 'block' : 'none';
+            if (this.showShareMenu) {
+                shareMenu.classList.remove('hidden');
+                shareMenu.classList.add('block');
+            } else {
+                shareMenu.classList.add('hidden');
+                shareMenu.classList.remove('block');
+            }
         }
     }
 
@@ -470,11 +507,22 @@ class PoemDetail {
             if (response.ok) {
                 const data = await response.json();
                 if (textarea) textarea.value = '';
+                if (window.flashMessage) {
+                    window.flashMessage.show('Comment posted successfully!', 'success');
+                }
                 // Reload page to show new comment
-                window.location.reload();
+                setTimeout(() => window.location.reload(), 500);
+            } else {
+                console.error('Failed to post comment:', response.status);
+                if (window.flashMessage) {
+                    window.flashMessage.show('Failed to post comment', 'error');
+                }
             }
         } catch (error) {
             console.error('Error submitting comment:', error);
+            if (window.flashMessage) {
+                window.flashMessage.show('Error: ' + error.message, 'error');
+            }
         }
     }
 }
@@ -1524,4 +1572,134 @@ window.Dropdown = Dropdown;
 window.BookManager = BookManager;
 window.EventManager = EventManager;
 window.AcademicResourceManager = AcademicResourceManager;
-window.CRUDFormHandler = CRUDFormHandler; 
+window.CRUDFormHandler = CRUDFormHandler;
+
+// Auto-initialize PoemDetail when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    const poemContainer = document.querySelector('[data-poem-detail]');
+    if (!poemContainer) return;
+
+    try {
+        // Get data from data attributes
+        const poemId = parseInt(poemContainer.getAttribute('data-poem-id'));
+        const isLiked = poemContainer.getAttribute('data-is-liked') === 'true';
+        const likesCount = parseInt(poemContainer.getAttribute('data-likes-count')) || 0;
+        const currentRating = parseInt(poemContainer.getAttribute('data-current-rating')) || 0;
+        const avgRating = parseFloat(poemContainer.getAttribute('data-avg-rating')) || 0;
+        const ratingCount = parseInt(poemContainer.getAttribute('data-rating-count')) || 0;
+        const isAuthenticated = poemContainer.getAttribute('data-is-authenticated') === 'true';
+        const poemTitle = poemContainer.getAttribute('data-poem-title');
+        const poemContent = poemContainer.getAttribute('data-poem-content');
+        const poetryIndexUrl = poemContainer.getAttribute('data-poetry-index-url');
+        const apiBaseUrl = '/api/poems';
+
+        // Initialize PoemDetail
+        const poemDetail = new PoemDetail(poemContainer, {
+            poemId,
+            isLiked,
+            likesCount,
+            currentRating,
+            avgRating,
+            ratingCount,
+            poemUrl: window.location.href,
+            apiBaseUrl,
+            isAuthenticated
+        });
+
+        // Delete poem handler
+        const deleteBtn = poemContainer.querySelector('[data-delete-poem]');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', async function() {
+                if (!confirm('Are you sure you want to delete this poem?')) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${apiBaseUrl}/${poemId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': window.csrfToken,
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        if (window.flashMessage) {
+                            window.flashMessage.show('Poem deleted successfully!', 'success');
+                        }
+                        setTimeout(() => window.location.href = poetryIndexUrl, 1000);
+                    } else {
+                        if (window.flashMessage) {
+                            window.flashMessage.show('Failed to delete poem.', 'error');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error deleting poem:', error);
+                    if (window.flashMessage) {
+                        window.flashMessage.show('Failed to delete poem.', 'error');
+                    }
+                }
+            });
+        }
+
+        // Share handlers
+        const shareHandlers = {
+            twitter: () => {
+                const url = encodeURIComponent(window.location.href);
+                const text = encodeURIComponent(`${poemTitle} - ${poemContent.substring(0, 100)}...`);
+                window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=550,height=420');
+            },
+            facebook: () => {
+                const url = encodeURIComponent(window.location.href);
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=550,height=420');
+            },
+            whatsapp: () => {
+                const url = encodeURIComponent(window.location.href);
+                const text = encodeURIComponent(`${poemTitle}\n\n${poemContent.substring(0, 100)}...\n\n${window.location.href}`);
+                window.open(`https://wa.me/?text=${text}`, '_blank');
+            },
+            email: () => {
+                const subject = encodeURIComponent(`Check out this poem: ${poemTitle}`);
+                const body = encodeURIComponent(`${poemContent}\n\nRead more: ${window.location.href}\n\nShared from VerseFountain`);
+                window.location.href = `mailto:?subject=${subject}&body=${body}`;
+            },
+            native: async () => {
+                const poemData = {
+                    title: poemTitle || 'Poem from VerseFountain',
+                    text: poemContent || 'Check out this poem on VerseFountain',
+                    url: window.location.href
+                };
+                
+                if (navigator.share) {
+                    try {
+                        await navigator.share(poemData);
+                        if (window.flashMessage) {
+                            window.flashMessage.show('Poem shared successfully!', 'success');
+                        }
+                        return;
+                    } catch (error) {
+                        if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') {
+                            console.error('Share error:', error);
+                        }
+                    }
+                }
+                
+                // Fallback to copy link
+                poemDetail.copyLink();
+            }
+        };
+
+        // Attach share handlers
+        Object.keys(shareHandlers).forEach(key => {
+            const btn = poemContainer.querySelector(`[data-share-${key}]`);
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    shareHandlers[key]();
+                    poemDetail.toggleShareMenu();
+                });
+            }
+        });
+    } catch (error) {
+        console.error('[PoemDetail] Initialization error:', error);
+    }
+});

@@ -80,7 +80,7 @@ class ChatRoomController extends Controller
         $isMember = Auth::check() && $chatroom->members->contains('id', Auth::id());
         $messages = $chatroom->messages()->with('user')->latest()->take(50)->get()->reverse();
 
-        return view('chatroom', compact('chatroom', 'isMember', 'messages'));
+        return view('chatrooms.show', compact('chatroom', 'isMember', 'messages'));
     }
 
     public function apiShow(ChatRoom $room)
