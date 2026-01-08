@@ -2,16 +2,37 @@ import './bootstrap';
 
 // Dark Mode Toggle
 (function () {
+    // Update theme icons based on current mode
+    function updateThemeIcons() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+
+        if (lightIcon && darkIcon) {
+            if (isDark) {
+                lightIcon.classList.add('hidden');
+                darkIcon.classList.remove('hidden');
+            } else {
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
+            }
+        }
+    }
+
     // Check for saved dark mode preference or default to light mode
     const darkMode = localStorage.getItem('dark-mode');
     if (darkMode === 'enabled') {
         document.documentElement.classList.add('dark');
     }
 
+    // Update icons on page load
+    document.addEventListener('DOMContentLoaded', updateThemeIcons);
+
     // Toggle dark mode function
     window.toggleDarkMode = function () {
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('dark-mode', isDark ? 'enabled' : 'disabled');
+        updateThemeIcons();
     };
 })();
 

@@ -216,4 +216,33 @@
     font-weight: 700;
     margin-top: 2em;
     margin-bottom: 1em;
+}
+
+/* Safe area for mobile bottom navigation (notch devices) */
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Prevent horizontal overflow on mobile */
+@media (max-width: 767px) {
+    html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Extra small text utility */
+.text-2xs {
+    font-size: 0.625rem;
+    line-height: 0.875rem;
 } 

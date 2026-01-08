@@ -23,10 +23,10 @@
         <!-- Right Side Actions -->
         <div class="flex items-center space-x-2">
             <!-- Dark Mode Toggle -->
-            <button onclick="toggleDarkMode()" 
-                class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                <i class="bx bx-sun text-xl dark:hidden"></i>
-                <i class="bx bx-moon text-xl hidden dark:block"></i>
+            <button onclick="toggleDarkMode()" id="theme-toggle"
+                class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                <i class="bx bx-sun text-xl" id="theme-toggle-light-icon"></i>
+                <i class="bx bx-moon text-xl hidden" id="theme-toggle-dark-icon"></i>
             </button>
 
             @auth
