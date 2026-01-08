@@ -33,24 +33,12 @@
                 class="bx {{ request()->is('academics*') ? 'bxs-book' : 'bx-book' }} text-[22px]"></i>
             <span class="text-[10px] font-medium mt-0.5">Resources</span>
         </a>
-        <a href="{{ route('subscription') }}"
-            class="flex flex-col items-center justify-center min-w-0 flex-1 py-1.5 rounded-lg transition-colors {{ request()->routeIs('subscription') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400' }}">
-            <i
-                class="bx {{ request()->routeIs('subscription') ? 'bxs-diamond' : 'bx-diamond' }} text-[22px]"></i>
-            <span class="text-[10px] font-medium mt-0.5">Premium</span>
-        </a>
         @auth
             <a href="{{ route('profile') }}"
                 class="flex flex-col items-center justify-center min-w-0 flex-1 py-1.5 rounded-lg transition-colors {{ request()->routeIs('profile') || request()->routeIs('profile.edit') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400' }}">
                 <i
                     class="bx {{ request()->routeIs('profile') || request()->routeIs('profile.edit') ? 'bxs-user' : 'bx-user' }} text-[22px]"></i>
                 <span class="text-[10px] font-medium mt-0.5">Profile</span>
-            </a>
-        @else
-            <a href="{{ route('login') }}"
-                class="flex flex-col items-center justify-center min-w-0 flex-1 py-1.5 rounded-lg transition-colors text-gray-500 dark:text-gray-400">
-                <i class="bx bx-log-in text-[22px]"></i>
-                <span class="text-[10px] font-medium mt-0.5">Login</span>
             </a>
         @endauth
     </div>

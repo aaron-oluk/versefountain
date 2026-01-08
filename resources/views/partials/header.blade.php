@@ -80,7 +80,7 @@
                     Log In
                 </a>
                 <a href="{{ route('register') }}"
-                    class="bg-blue-600 text-white px-4 py-2 text-sm font-medium hover:bg-blue-700 rounded-lg transition-colors">
+                    class="hidden sm:inline-block bg-blue-600 text-white px-4 py-2 text-sm font-medium hover:bg-blue-700 rounded-lg transition-colors">
                     Sign Up
                 </a>
             @endauth
