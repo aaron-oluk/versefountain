@@ -175,16 +175,19 @@ class BookController extends Controller
         }
 
         $request->validate([
-            'cover_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover_image' => 'required|string', // Accept base64 image data
         ]);
 
+        $coverImage = $request->input('cover_image');
+        
+        // If it's not a base64 string and a file was uploaded
         if ($request->hasFile('cover_image')) {
-            $path = $request->file('cover_image')->store('public/book_covers');
-            // Return the URL relative to your public storage
-            return response()->json(['coverImage' => Storage::url($path)]);
+            $file = $request->file('cover_image');
+            $coverImage = base64_encode(file_get_contents($file->getRealPath()));
         }
 
-        return response()->json(['message' => 'No image uploaded.'], 400);
+        // Return the base64 data
+        return response()->json(['coverImage' => $coverImage]);
     }
 
     /**
@@ -201,7 +204,7 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'coverImage' => 'nullable|url', // Expecting a URL from uploadCover endpoint
+            'coverImage' => 'nullable|string', // Accept base64 image data or URL
             'genre' => 'nullable|string|max:255',
         ]);
 

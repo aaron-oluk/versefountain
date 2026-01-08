@@ -7,24 +7,24 @@
 <div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Discover Creators</h1>
-        <p class="text-gray-600 mt-1">Find and follow talented poets and writers</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Discover Creators</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-1">Find and follow talented poets and writers</p>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
         <form action="{{ route('creators.index') }}" method="GET" class="flex flex-col sm:flex-row gap-4">
             <div class="flex-1">
                 <div class="relative">
                     <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     <input type="text" name="search" value="{{ request('search') }}"
                            placeholder="Search creators..."
-                           class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm">
+                           class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
                 </div>
             </div>
             <div class="flex gap-2">
                 <select name="sort" onchange="this.form.submit()"
-                        class="px-4 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm bg-white">
+                        class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                     <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Most Popular</option>
                     <option value="most_poems" {{ request('sort') == 'most_poems' ? 'selected' : '' }}>Most Poems</option>
                     <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
@@ -40,22 +40,22 @@
     @if($creators->count() > 0)
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($creators as $creator)
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
                     <div class="p-6">
                         <div class="flex items-center space-x-4">
                             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
                                 {{ strtoupper(substr($creator->first_name ?? $creator->username ?? 'U', 0, 1)) }}
                             </div>
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-lg font-semibold text-gray-900 truncate">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white truncate">
                                     {{ $creator->first_name ?? $creator->username }}
                                     @if($creator->last_name) {{ $creator->last_name }} @endif
                                 </h3>
-                                <p class="text-sm text-gray-500">{{ '@' . $creator->username }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ '@' . $creator->username }}</p>
                             </div>
                         </div>
 
-                        <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                        <div class="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                             <div class="flex items-center space-x-4">
                                 <span class="flex items-center">
                                     <i class="bx bx-pen mr-1"></i>
@@ -70,7 +70,7 @@
 
                         <div class="mt-4 flex space-x-2">
                             <a href="{{ route('profile.creator', $creator->id) }}"
-                               class="flex-1 text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                               class="flex-1 text-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
                                 View Profile
                             </a>
                             @auth
@@ -93,10 +93,10 @@
             {{ $creators->links() }}
         </div>
     @else
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <i class="bx bx-user-circle text-6xl text-gray-300 mb-4"></i>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No creators found</h3>
-            <p class="text-gray-500">Try adjusting your search criteria</p>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <i class="bx bx-user-circle text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No creators found</h3>
+            <p class="text-gray-500 dark:text-gray-400">Try adjusting your search criteria</p>
         </div>
     @endif
 </div>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('coverImage')->nullable();
+            $table->longText('coverImage')->nullable();
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
             $table->string('genre')->nullable();
             $table->string('status')->default('unpublished');

@@ -8,8 +8,8 @@
     <!-- Header with Create Button -->
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-xl font-bold text-gray-900 mb-1">Explore Chatrooms</h1>
-            <p class="text-sm text-gray-500">Join conversations with fellow readers and writers.</p>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Explore Chatrooms</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Join conversations with fellow readers and writers.</p>
         </div>
         @auth
         <button onclick="openCreateRoomModal()" class="px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
@@ -21,11 +21,11 @@
 
     <!-- Filter Tabs -->
     <div class="flex items-center gap-4 mb-6">
-        <a href="{{ route('chatrooms.index') }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ !request('filter') ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }} transition-colors">
+        <a href="{{ route('chatrooms.index') }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ !request('filter') ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
             All Rooms
         </a>
         @auth
-        <a href="{{ route('chatrooms.index', ['filter' => 'my-rooms']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'my-rooms' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }} transition-colors">
+        <a href="{{ route('chatrooms.index', ['filter' => 'my-rooms']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'my-rooms' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
             My Rooms
             @if($userChatrooms->count() > 0)
                 <span class="ml-1 px-1.5 py-0.5 bg-white/20 rounded text-xs">{{ $userChatrooms->count() }}</span>
@@ -37,33 +37,33 @@
     <!-- Search -->
     <div class="mb-6">
         <div class="relative">
-            <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
             <input type="text" id="searchRooms" placeholder="Search chatrooms..."
-                   class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm">
+                   class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
         </div>
     </div>
 
     <!-- Room Cards -->
     <div class="space-y-4" id="roomsList">
         @forelse($chatrooms as $room)
-        <div class="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow room-card" data-name="{{ strtolower($room->name) }}">
+        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md dark:hover:shadow-lg transition-shadow room-card" data-name="{{ strtolower($room->name) }}">
             <div class="flex items-center gap-2 mb-2 flex-wrap">
                 @if($room->is_private)
-                    <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-semibold rounded-full uppercase">Private</span>
+                    <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-[10px] font-semibold rounded-full uppercase">Private</span>
                 @else
-                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-semibold rounded-full uppercase">Public</span>
+                    <span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-semibold rounded-full uppercase">Public</span>
                 @endif
-                <span class="flex items-center gap-1 text-[10px] text-green-600">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                <span class="flex items-center gap-1 text-[10px] text-green-600 dark:text-green-400">
+                    <span class="w-1.5 h-1.5 bg-green-500 dark:bg-green-400 rounded-full"></span>
                     {{ $room->members_count }} members
                 </span>
             </div>
-            <h3 class="text-base font-semibold text-gray-900 mb-1">{{ $room->name }}</h3>
-            <p class="text-sm text-gray-500 mb-3 line-clamp-2">{{ $room->description ?? 'Join the conversation!' }}</p>
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">{{ $room->name }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">{{ $room->description ?? 'Join the conversation!' }}</p>
             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2 text-xs text-gray-500">
+                <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                     <span>Created by</span>
-                    <a href="{{ route('profile.creator', $room->createdBy->id ?? 1) }}" class="font-medium text-gray-700 hover:text-blue-600">
+                    <a href="{{ route('profile.creator', $room->createdBy->id ?? 1) }}" class="font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
                         {{ $room->createdBy->first_name ?? $room->createdBy->username ?? 'Unknown' }}
                     </a>
                 </div>
@@ -76,21 +76,21 @@
                         Enter Room
                     </a>
                 @elseif($isPending)
-                    <button class="px-4 py-1.5 bg-gray-100 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
+                    <button class="px-4 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
                         Request Pending
                     </button>
                 @else
-                    <button data-private="{{ $room->is_private ? '1' : '0' }}" onclick="joinRoom({{ $room->id }}, this)" class="px-4 py-1.5 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                    <button data-private="{{ $room->is_private ? '1' : '0' }}" onclick="joinRoom({{ $room->id }}, this)" class="px-4 py-1.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
                         {{ $room->is_private ? 'Request Access' : 'Join Room' }}
                     </button>
                 @endif
             </div>
         </div>
         @empty
-        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <i class="bx bx-message-square-dots text-6xl text-gray-300 mb-4"></i>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No chatrooms yet</h3>
-            <p class="text-gray-500 mb-4">Be the first to create a chatroom!</p>
+        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <i class="bx bx-message-square-dots text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No chatrooms yet</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">Be the first to create a chatroom!</p>
             @auth
             <button onclick="openCreateRoomModal()" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                 Create Room

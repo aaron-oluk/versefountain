@@ -55,6 +55,9 @@ Route::get('/poetry/{poem}/edit', [PoemController::class, 'edit'])->middleware('
 
 // Books
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/create', function () {
+    return view('books.create');
+})->middleware('auth')->name('books.create');
 Route::get('/books/{book}', [BookController::class, 'showWeb'])->name('books.show');
 
 // Academics
@@ -64,6 +67,9 @@ Route::get('/academics/{resource}/download', [AcademicResourceController::class,
 
 // Events
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/create', function () {
+    return view('events.create');
+})->middleware('auth')->name('events.create');
 
 // API - Current user
 Route::get('/api/user', [UserController::class, 'currentUser'])->middleware('auth')->name('api.user');

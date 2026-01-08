@@ -3,12 +3,12 @@
 @section('title', ($poem->title ?? 'Poem') . ' - VerseFountain')
 
 @section('content')
-<div class="min-h-screen bg-stone-50" id="poetry-show-container">
+<div class="min-h-screen bg-stone-50 dark:bg-gray-900" id="poetry-show-container">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <!-- Back Button -->
         <div class="mb-6">
             <a href="{{ route('poetry.index') }}" 
-               class="inline-flex items-center text-gray-600 hover:text-gray-900 text-sm font-normal">
+               class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm font-normal">
                 <i class="bx bx-arrow-back text-base mr-1"></i>
                 Back to poems
             </a>
@@ -40,14 +40,14 @@
                 </div>
             @endif
 
-            <div class="bg-white shadow-sm rounded-md" data-poem-detail>
+            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-md" data-poem-detail>
                 
                 <!-- Header -->
-                <div class="p-6 sm:p-8 border-b border-gray-200">
+                <div class="p-6 sm:p-8 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h1 class="text-2xl md:text-3xl font-light text-gray-800 mb-3 tracking-wide">{{ $poem->title ?? 'Untitled' }}</h1>
-                            <div class="flex items-center space-x-4 text-gray-600">
+                            <h1 class="text-2xl md:text-3xl font-light text-gray-800 dark:text-white mb-3 tracking-wide">{{ $poem->title ?? 'Untitled' }}</h1>
+                            <div class="flex items-center space-x-4 text-gray-600 dark:text-gray-400">
                                 <div class="flex items-center space-x-2">
                                     <div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
                                         <span class="text-xs font-normal text-gray-700">
@@ -65,11 +65,11 @@
                             @if(Auth::id() === $poem->author_id)
                                 <div class="flex space-x-2">
                                     <a href="{{ route('poetry.edit', $poem) }}" 
-                                       class="inline-flex items-center px-3 py-2 shadow-sm text-sm font-normal text-gray-700 hover:bg-gray-50 transition-colors">
+                                       class="inline-flex items-center px-3 py-2 shadow-sm text-sm font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                         Edit
                                     </a>
                                     <button data-delete-poem
-                                            class="inline-flex items-center px-3 py-2 shadow-sm text-sm font-normal text-gray-700 hover:bg-gray-50 transition-colors">
+                                            class="inline-flex items-center px-3 py-2 shadow-sm text-sm font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                         Delete
                                     </button>
                                 </div>
@@ -93,7 +93,7 @@
                     @endif
                     
                     <div class="prose prose-lg max-w-none">
-                        <div class="whitespace-pre-line text-gray-700 leading-relaxed font-light">
+                        <div class="whitespace-pre-line text-gray-700 dark:text-gray-300 leading-relaxed font-light">
                             {{ $poem->content ?? '' }}
                         </div>
                     </div>

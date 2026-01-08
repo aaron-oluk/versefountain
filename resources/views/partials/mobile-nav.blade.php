@@ -21,11 +21,17 @@
                 <span class="text-[10px] font-medium mt-0.5">Chat</span>
             </a>
         @endauth
-        <a href="{{ route('creators.index') }}"
-            class="flex flex-col items-center justify-center min-w-0 flex-1 py-1.5 rounded-lg transition-colors {{ request()->routeIs('creators.*') || request()->routeIs('profile.creator') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400' }}">
+        <a href="{{ route('events.index') }}"
+            class="flex flex-col items-center justify-center min-w-0 flex-1 py-1.5 rounded-lg transition-colors {{ request()->routeIs('events.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400' }}">
             <i
-                class="bx {{ request()->routeIs('creators.*') || request()->routeIs('profile.creator') ? 'bxs-group' : 'bx-group' }} text-[22px]"></i>
-            <span class="text-[10px] font-medium mt-0.5">Creators</span>
+                class="bx {{ request()->routeIs('events.*') ? 'bxs-calendar' : 'bx-calendar' }} text-[22px]"></i>
+            <span class="text-[10px] font-medium mt-0.5">Events</span>
+        </a>
+        <a href="{{ route('subscription') }}"
+            class="flex flex-col items-center justify-center min-w-0 flex-1 py-1.5 rounded-lg transition-colors {{ request()->routeIs('subscription') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400' }}">
+            <i
+                class="bx {{ request()->routeIs('subscription') ? 'bxs-diamond' : 'bx-diamond' }} text-[22px]"></i>
+            <span class="text-[10px] font-medium mt-0.5">Premium</span>
         </a>
         @auth
             <a href="{{ route('profile') }}"
