@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('genre')->nullable();
             $table->string('status')->default('unpublished');
             $table->foreignId('uploaded_by_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->boolean('approved')->default(false);
+            $table->boolean('approved')->default(true);
             $table->timestamps();
         });
     }

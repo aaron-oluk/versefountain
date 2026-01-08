@@ -218,11 +218,14 @@
                                     {{ Str::limit($chatroom->description, 50) }}</p>
                                 <div class="flex items-center gap-2">
                                     <div class="flex -space-x-1.5">
-                                        @for ($i = 0; $i < min(3, $chatroom->members_count); $i++)
+                                        @forelse($chatroom->members->take(3) as $member)
                                             <div
-                                                class="w-4 h-4 sm:w-5 sm:h-5 bg-{{ ['blue', 'purple', 'pink'][$i] }}-500 rounded-full border-2 border-white dark:border-gray-900">
+                                                class="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full border-2 border-white dark:border-gray-900 flex items-center justify-center flex-shrink-0">
+                                                <span class="text-2xs text-white font-semibold">{{ strtoupper(substr($member->username, 0, 1)) }}</span>
                                             </div>
-                                        @endfor
+                                        @empty
+                                            <div class="w-4 h-4 sm:w-5 sm:h-5 bg-gray-300 rounded-full border-2 border-white dark:border-gray-900"></div>
+                                        @endforelse
                                     </div>
                                     @if ($chatroom->members_count > 3)
                                         <span

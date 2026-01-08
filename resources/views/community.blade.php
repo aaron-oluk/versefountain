@@ -189,9 +189,9 @@
                             <i class='bx bx-calendar text-lg'></i>
                             <span>{{ $firstEvent->date ? $firstEvent->date->format('l, g:i A') : 'TBA' }}</span>
                         </div>
-                        <button class="w-full px-4 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
+                        <a href="{{ route('events.show', $firstEvent) }}" class="block w-full px-4 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors text-center">
                             Set Reminder
-                        </button>
+                        </a>
                     @endif
                 </div>
                 @endif
