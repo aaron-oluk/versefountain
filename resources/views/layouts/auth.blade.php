@@ -14,7 +14,7 @@
     @yield('head')
 </head>
 
-<body class="antialiased bg-gray-50">
+<body class="antialiased bg-white dark:bg-gray-900">
     <div class="min-h-screen flex">
         <!-- Left Section - Auth Form -->
         <div class="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -25,43 +25,43 @@
 
         <!-- Right Section - Feature Promotion -->
         @if(request()->routeIs('login'))
-        <div class="hidden lg:flex lg:flex-1 bg-white items-center justify-center px-12">
+        <div class="hidden lg:flex lg:flex-1 bg-white dark:bg-gray-800 items-center justify-center px-12">
             <div class="max-w-md">
-                <h2 class="text-3xl font-semibold text-gray-900 mb-4">Discover the World of Poetry</h2>
-                <p class="text-base text-gray-600 mb-8">
+                <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">Discover the World of Poetry</h2>
+                <p class="text-base text-gray-600 dark:text-gray-400 mb-8">
                     Join our community of readers and writers. Share your poetry, discover new books, and connect with like-minded literature enthusiasts.
                 </p>
                 <div class="space-y-4">
-                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6 hover:shadow-md dark:hover:shadow-lg transition-shadow">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="bx bx-edit text-2xl text-gray-600"></i>
+                            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="bx bx-edit text-2xl text-gray-600 dark:text-gray-300"></i>
                             </div>
                             <div>
-                                <h3 class="text-base font-semibold text-gray-900 mb-1">Share Your Poetry</h3>
-                                <p class="text-sm text-gray-600">Publish your poems in text or video format</p>
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Share Your Poetry</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Publish your poems in text or video format</p>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6 hover:shadow-md dark:hover:shadow-lg transition-shadow">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="bx bx-message-dots text-2xl text-gray-600"></i>
+                            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="bx bx-message-dots text-2xl text-gray-600 dark:text-gray-300"></i>
                             </div>
                             <div>
-                                <h3 class="text-base font-semibold text-gray-900 mb-1">Engage in Chat Rooms</h3>
-                                <p class="text-sm text-gray-600">Discuss literature with fellow enthusiasts</p>
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Engage in Chat Rooms</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Discuss literature with fellow enthusiasts</p>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6 hover:shadow-md dark:hover:shadow-lg transition-shadow">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="bx bx-book text-2xl text-gray-600"></i>
+                            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="bx bx-book text-2xl text-gray-600 dark:text-gray-300"></i>
                             </div>
                             <div>
-                                <h3 class="text-base font-semibold text-gray-900 mb-1">Explore Books</h3>
-                                <p class="text-sm text-gray-600">Access our vast collection of eBooks</p>
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Explore Books</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Access our vast collection of eBooks</p>
                             </div>
                         </div>
                     </div>
