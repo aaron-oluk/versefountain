@@ -101,7 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Chat
-    Route::get('/chat/rooms', [ChatRoomController::class, 'indexWeb'])->name('chatrooms.index');
+    Route::get('/chat/rooms', [ChatRoomController::class, 'list'])->name('chatrooms.index');
     Route::get('/chat/rooms/{chatroom}', [ChatRoomController::class, 'show'])->name('chatroom.show');
     Route::post('/chat/rooms/{chatroom}/join', [ChatRoomController::class, 'joinRoom']);
     Route::post('/chat/rooms/{chatroom}/leave', [ChatRoomController::class, 'leaveRoom']);
@@ -109,7 +109,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/rooms/{chatroom}/messages', [ChatMessageController::class, 'index']);
 
     // Tickets
-    Route::get('/tickets', [TicketController::class, 'indexWeb'])->name('tickets.index');
+    Route::get('/tickets', [TicketController::class, 'list'])->name('tickets.index');
 
     // Admin
     Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -121,7 +121,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/books/{book}/read', [BookController::class, 'read'])->name('books.read');
 
     // Subscription
-    Route::get('/subscription', [SubscriptionController::class, 'indexWeb'])->name('subscription');
+    Route::get('/subscription', [SubscriptionController::class, 'showPlans'])->name('subscription');
 
     // Creator Profile
     Route::get('/creators/{user}', [UserController::class, 'showCreator'])->name('profile.creator');

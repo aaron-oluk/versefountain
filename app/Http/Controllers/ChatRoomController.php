@@ -13,7 +13,7 @@ class ChatRoomController extends Controller
     /**
      * Display the chatrooms listing page.
      */
-    public function indexWeb()
+    public function list()
     {
         return view('chatrooms');
     }

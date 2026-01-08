@@ -15,7 +15,7 @@ class TicketController extends Controller
     /**
      * Display the tickets page.
      */
-    public function indexWeb()
+    public function list()
     {
         return view('tickets');
     }

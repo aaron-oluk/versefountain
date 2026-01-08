@@ -14,7 +14,7 @@ class SubscriptionController extends Controller
     /**
      * Display the subscription page.
      */
-    public function indexWeb()
+    public function showPlans()
     {
         return view('subscription');
     }
