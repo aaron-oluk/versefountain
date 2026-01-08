@@ -73,6 +73,7 @@ Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/create', function () {
     return view('events.create');
 })->middleware('auth')->name('events.create');
+Route::get('/events/{event}', [EventController::class, 'showView'])->name('events.show');
 
 // API - Current user
 Route::get('/api/user', [UserController::class, 'currentUser'])->middleware('auth')->name('api.user');

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Event;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use App\Models\Ticket;
 
 class EventController extends Controller
 {
@@ -231,5 +232,23 @@ class EventController extends Controller
                        ->paginate($request->input('limit', 10));
 
         return response()->json($events);
+    }
+
+    /**
+     * Display a single event view page.
+     */
+    public function showView(Event $event)
+    {
+        $event->load('createdBy');
+        
+        // Check if user already has a ticket
+        $hasTicket = false;
+        if (Auth::check()) {
+            $hasTicket = Ticket::where('user_id', Auth::id())
+                ->where('event_id', $event->id)
+                ->exists();
+        }
+        
+        return view('events.show', compact('event', 'hasTicket'));
     }
 }

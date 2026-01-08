@@ -55,25 +55,25 @@
                             <i class="bx bx-envelope mr-2 text-base"></i>
                             Invites
                         </a>
-                        
+
                         <a href="{{ route('chatrooms.my') }}"
                             class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request()->routeIs('chatrooms.my') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                             <i class="bx bx-chat mr-2 text-base"></i>
                             My Rooms
                         </a>
-                        
+
                         <a href="{{ route('chatrooms.index', ['filter' => 'poetry-slams']) }}"
                             class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request('filter') === 'poetry-slams' ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                             <i class="bx bx-microphone mr-2 text-base"></i>
                             Poetry Slams
                         </a>
-                        
+
                         <a href="{{ route('chatrooms.index', ['filter' => 'book-clubs']) }}"
                             class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request('filter') === 'book-clubs' ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                             <i class="bx bx-book mr-2 text-base"></i>
                             Book Clubs
                         </a>
-                        
+
                         <a href="{{ route('chatrooms.index', ['filter' => 'author-qa']) }}"
                             class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request('filter') === 'author-qa' ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                             <i class="bx bx-help-circle mr-2 text-base"></i>
@@ -102,6 +102,15 @@
                         class="bx bx-calendar-event mr-3 text-lg {{ request()->routeIs('events.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                     Events
                 </a>
+
+                @auth
+                    <a href="{{ route('tickets.index') }}"
+                        class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('tickets.*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                        <i
+                            class="bx bx-receipt mr-3 text-lg {{ request()->routeIs('tickets.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
+                        My Tickets
+                    </a>
+                @endauth
 
                 <a href="/academics"
                     class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->is('academics*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">

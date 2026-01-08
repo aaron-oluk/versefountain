@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\Book;
+use App\Models\ChatRoom;
+use App\Models\Event;
+use App\Models\Poem;
+use App\Models\User;
+use App\Models\Ticket;
 
 class ProfileController extends Controller
 {
@@ -18,16 +24,25 @@ class ProfileController extends Controller
     public function dashboard(): View
     {
         $user = Auth::user();
-        $upcomingEvents = \App\Models\Event::where('date', '>', now())->orderBy('date', 'asc')->take(3)->get();
-        $recommendedBooks = \App\Models\Book::where('approved', true)->latest()->take(4)->get();
-        $liveChatrooms = \App\Models\ChatRoom::withCount('members')->latest()->take(2)->get();
-        $trendingPoems = \App\Models\Poem::where('approved', true)
+        $upcomingEvents = Event::where('date', '>', now())->orderBy('date', 'asc')->take(3)->get();
+        $recommendedBooks = Book::where('approved', true)->latest()->take(4)->get();
+        $liveChatrooms = ChatRoom::withCount('members')->latest()->take(2)->get();
+        $trendingPoems = Poem::where('approved', true)
             ->withCount('userInteractions')
             ->orderBy('user_interactions_count', 'desc')
             ->take(2)
             ->get();
-        $featuredBook = \App\Models\Book::where('approved', true)->inRandomOrder()->first();
+        $featuredBook = Book::where('approved', true)->inRandomOrder()->first();
         $followedCreators = $user->following()->with('poems')->latest()->take(2)->get();
+        $userTickets = Ticket::with('event')
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['confirmed', 'pending'])
+            ->whereHas('event', function ($query) {
+                $query->where('date', '>', now());
+            })
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
 
         $hour = now()->hour;
         $greeting = match (true) {
@@ -44,7 +59,8 @@ class ProfileController extends Controller
             'trendingPoems',
             'featuredBook',
             'followedCreators',
-            'greeting'
+            'greeting',
+            'userTickets'
         ));
     }
 

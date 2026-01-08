@@ -169,8 +169,10 @@
             <!-- Right Sidebar -->
             <div class="space-y-4 sm:space-y-5">
                 <!-- Quick Actions -->
-                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 dark:border-gray-800">
-                    <h2 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Quick Actions</h2>
+                <div
+                    class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 dark:border-gray-800">
+                    <h2 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Quick Actions
+                    </h2>
                     <div class="space-y-2">
                         <a href="{{ route('poetry.create') }}"
                             class="flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
@@ -191,36 +193,47 @@
                 </div>
 
                 <!-- Live Chatrooms -->
-                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 dark:border-gray-800">
+                <div
+                    class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 dark:border-gray-800">
                     <div class="flex items-center justify-between mb-3 sm:mb-4">
                         <h2 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Live Chatrooms</h2>
-                        <span class="text-2xs sm:text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">{{ $liveChatrooms->count() }} Active</span>
+                        <span
+                            class="text-2xs sm:text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">{{ $liveChatrooms->count() }}
+                            Active</span>
                     </div>
                     <div class="space-y-3 sm:space-y-4">
                         @forelse($liveChatrooms as $chatroom)
                             <a href="{{ route('chatroom.show', $chatroom->id) }}"
                                 class="block {{ !$loop->last ? 'pb-3 sm:pb-4 border-b border-gray-100 dark:border-gray-800' : '' }}">
                                 <div class="flex items-start justify-between mb-1">
-                                    <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">{{ $chatroom->name }}</h3>
-                                    <span class="flex items-center gap-1 text-2xs sm:text-xs text-green-600 dark:text-green-400">
+                                    <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ $chatroom->name }}</h3>
+                                    <span
+                                        class="flex items-center gap-1 text-2xs sm:text-xs text-green-600 dark:text-green-400">
                                         <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
                                         Live
                                     </span>
                                 </div>
-                                <p class="text-2xs sm:text-xs text-gray-500 dark:text-gray-400 mb-2">{{ Str::limit($chatroom->description, 50) }}</p>
+                                <p class="text-2xs sm:text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                    {{ Str::limit($chatroom->description, 50) }}</p>
                                 <div class="flex items-center gap-2">
                                     <div class="flex -space-x-1.5">
                                         @for ($i = 0; $i < min(3, $chatroom->members_count); $i++)
-                                            <div class="w-4 h-4 sm:w-5 sm:h-5 bg-{{ ['blue', 'purple', 'pink'][$i] }}-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+                                            <div
+                                                class="w-4 h-4 sm:w-5 sm:h-5 bg-{{ ['blue', 'purple', 'pink'][$i] }}-500 rounded-full border-2 border-white dark:border-gray-900">
+                                            </div>
                                         @endfor
                                     </div>
                                     @if ($chatroom->members_count > 3)
-                                        <span class="text-2xs sm:text-xs text-gray-500 dark:text-gray-400">+{{ $chatroom->members_count - 3 }} others</span>
+                                        <span
+                                            class="text-2xs sm:text-xs text-gray-500 dark:text-gray-400">+{{ $chatroom->members_count - 3 }}
+                                            others</span>
                                     @endif
                                 </div>
                             </a>
                         @empty
-                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center py-4">No active chatrooms.</p>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center py-4">No active
+                                chatrooms.</p>
                         @endforelse
                     </div>
                     <a href="{{ route('chatrooms.index') }}"
@@ -229,23 +242,75 @@
                     </a>
                 </div>
 
-                <!-- Upcoming Events -->
-                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 dark:border-gray-800">
-                    <h2 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Upcoming Events</h2>
+                <!-- My Tickets -->
+                <div
+                    class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 dark:border-gray-800">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                        <h2 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">My Tickets</h2>
+                        <a href="{{ route('tickets.index') }}"
+                            class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium">View All</a>
+                    </div>
                     <div class="space-y-3 sm:space-y-4">
-                        @forelse($upcomingEvents as $event)
-                            <div class="flex gap-3">
-                                <div class="w-10 h-12 sm:w-12 sm:h-14 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex flex-col items-center justify-center flex-shrink-0">
-                                    <span class="text-sm sm:text-lg font-bold text-blue-600 dark:text-blue-400">{{ $event->date->format('d') }}</span>
-                                    <span class="text-2xs text-blue-600 dark:text-blue-400 uppercase">{{ $event->date->format('M') }}</span>
+                        @forelse($userTickets ?? [] as $ticket)
+                            <div class="flex gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div
+                                    class="w-10 h-12 sm:w-12 sm:h-14 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex flex-col items-center justify-center flex-shrink-0">
+                                    <span
+                                        class="text-sm sm:text-lg font-bold text-blue-600 dark:text-blue-400">{{ $ticket->event->date->format('d') }}</span>
+                                    <span
+                                        class="text-2xs text-blue-600 dark:text-blue-400 uppercase">{{ $ticket->event->date->format('M') }}</span>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-0.5 truncate">{{ $event->title }}</h3>
-                                    <p class="text-2xs sm:text-xs text-gray-500 dark:text-gray-400">{{ $event->date->format('g:i A') }}</p>
+                                    <h3
+                                        class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-0.5 truncate">
+                                        {{ $ticket->event->title }}</h3>
+                                    <p class="text-2xs sm:text-xs text-gray-500 dark:text-gray-400 mb-1">
+                                        {{ $ticket->event->date->format('g:i A') }}</p>
+                                    <span
+                                        class="inline-block px-2 py-0.5 text-2xs font-medium rounded-full 
+                                        {{ $ticket->status === 'confirmed' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : '' }}
+                                        {{ $ticket->status === 'pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' : '' }}
+                                        {{ $ticket->status === 'cancelled' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' : '' }}">
+                                        {{ ucfirst($ticket->status) }}
+                                    </span>
                                 </div>
                             </div>
                         @empty
-                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center py-4">No upcoming events.</p>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center py-4">No tickets
+                                purchased yet.</p>
+                            <a href="{{ route('events.index') }}"
+                                class="block text-center text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium mt-2">Browse
+                                Events</a>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div
+                    class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 dark:border-gray-800">
+                    <h2 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Upcoming
+                        Events</h2>
+                    <div class="space-y-3 sm:space-y-4">
+                        @forelse($upcomingEvents as $event)
+                            <div class="flex gap-3">
+                                <div
+                                    class="w-10 h-12 sm:w-12 sm:h-14 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex flex-col items-center justify-center flex-shrink-0">
+                                    <span
+                                        class="text-sm sm:text-lg font-bold text-blue-600 dark:text-blue-400">{{ $event->date->format('d') }}</span>
+                                    <span
+                                        class="text-2xs text-blue-600 dark:text-blue-400 uppercase">{{ $event->date->format('M') }}</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3
+                                        class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-0.5 truncate">
+                                        {{ $event->title }}</h3>
+                                    <p class="text-2xs sm:text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $event->date->format('g:i A') }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center py-4">No upcoming
+                                events.</p>
                         @endforelse
                     </div>
                     <a href="{{ route('events.index') }}"

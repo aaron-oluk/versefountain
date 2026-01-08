@@ -22,16 +22,16 @@
         <div class="bg-white dark:bg-gray-800 rounded-md shadow-sm p-4 sm:p-6">
             <form id="event-create-form" data-event-form>
                 <div class="space-y-6">
-                    <!-- Name -->
+                    <!-- Title -->
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Event Name <span class="text-red-500">*</span>
+                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Event Title <span class="text-red-500">*</span>
                         </label>
-                        <input id="name" 
-                               name="name" 
+                        <input id="title" 
+                               name="title" 
                                type="text" 
                                required
-                               placeholder="Enter event name"
+                               placeholder="Enter event title"
                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
                     </div>
 
@@ -89,32 +89,61 @@
                         </select>
                     </div>
 
-                    <!-- Price & Capacity -->
+                    <!-- Price & Virtual Event -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Price (USD)
+                            <label for="ticketPrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Ticket Price (USD)
                             </label>
-                            <input id="price" 
-                                   name="price" 
+                            <input id="ticketPrice" 
+                                   name="ticketPrice" 
                                    type="number" 
                                    min="0" 
-                                   step="0.01"
-                                   placeholder="0.00"
+                                   step="1"
+                                   placeholder="0"
+                                   value="0"
                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave blank for free events</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave as 0 for free events</p>
                         </div>
                         <div>
-                            <label for="capacity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Max Capacity
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Event Type
                             </label>
-                            <input id="capacity" 
-                                   name="capacity" 
-                                   type="number" 
-                                   min="1"
-                                   placeholder="Unlimited"
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+                            <div class="flex items-center space-x-6">
+                                <label class="flex items-center">
+                                    <input type="radio" name="isVirtual" value="0" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">In-Person</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="isVirtual" value="1" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Virtual</span>
+                                </label>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Stream URL (conditional) -->
+                    <div id="streamUrlContainer" class="hidden">
+                        <label for="streamUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Stream URL <span class="text-red-500">*</span>
+                        </label>
+                        <input id="streamUrl" 
+                               name="streamUrl" 
+                               type="url" 
+                               placeholder="https://..."
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+                    </div>
+
+                    <!-- Organizer -->
+                    <div>
+                        <label for="organizer" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Organizer
+                        </label>
+                        <input id="organizer" 
+                               name="organizer" 
+                               type="text" 
+                               placeholder="Event organizer name"
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
                     </div>
 
                     <!-- Description -->
@@ -150,20 +179,50 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('event-create-form');
     const eventManager = new EventManager();
+    
+    // Toggle stream URL field based on event type
+    const isVirtualRadios = document.querySelectorAll('input[name="isVirtual"]');
+    const streamUrlContainer = document.getElementById('streamUrlContainer');
+    const streamUrlInput = document.getElementById('streamUrl');
+    const locationInput = document.getElementById('location');
+    
+    isVirtualRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === '1') {
+                streamUrlContainer.classList.remove('hidden');
+                streamUrlInput.required = true;
+                locationInput.required = false;
+            } else {
+                streamUrlContainer.classList.add('hidden');
+                streamUrlInput.required = false;
+                streamUrlInput.value = '';
+                locationInput.required = true;
+            }
+        });
+    });
 
     // Form handler
     const formHandler = new CRUDFormHandler(form, {
         async onSubmit(formData) {
-            // Convert price to decimal if present
-            if (formData.price) {
-                formData.price = parseFloat(formData.price);
-            }
+            // Convert ticketPrice to integer
+            formData.ticketPrice = formData.ticketPrice ? parseInt(formData.ticketPrice) : 0;
+            
+            // Convert isVirtual to boolean
+            formData.isVirtual = formData.isVirtual === '1';
+            
+            // Set isFree based on ticketPrice
+            formData.isFree = formData.ticketPrice === 0;
             
             // Combine date and time if both present
             if (formData.date && formData.time) {
                 formData.date = `${formData.date} ${formData.time}`;
             }
             delete formData.time;
+
+            // Remove streamUrl if event is not virtual
+            if (!formData.isVirtual && formData.streamUrl) {
+                delete formData.streamUrl;
+            }
 
             // Create event
             const event = await eventManager.create(formData);
