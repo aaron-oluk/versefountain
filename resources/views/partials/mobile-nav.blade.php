@@ -27,6 +27,12 @@
                 class="bx {{ request()->routeIs('events.*') ? 'bxs-calendar' : 'bx-calendar' }} text-[22px]"></i>
             <span class="text-[10px] font-medium mt-0.5">Events</span>
         </a>
+        <a href="/academics"
+            class="flex flex-col items-center justify-center min-w-0 flex-1 py-1.5 rounded-lg transition-colors {{ request()->is('academics*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400' }}">
+            <i
+                class="bx {{ request()->is('academics*') ? 'bxs-book' : 'bx-book' }} text-[22px]"></i>
+            <span class="text-[10px] font-medium mt-0.5">Resources</span>
+        </a>
         <a href="{{ route('subscription') }}"
             class="flex flex-col items-center justify-center min-w-0 flex-1 py-1.5 rounded-lg transition-colors {{ request()->routeIs('subscription') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400' }}">
             <i
