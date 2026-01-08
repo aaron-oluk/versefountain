@@ -18,7 +18,48 @@ class ChatRoomController extends Controller
      */
     public function list(Request $request)
     {
-        $chatrooms = ChatRoom::withCount('members')->with('createdBy')->latest()->get();
+        $query = ChatRoom::withCount('members')->with('createdBy')->latest();
+        
+        $filter = $request->get('filter');
+        
+        // Handle different filters
+        if ($filter === 'my-rooms' && Auth::check()) {
+            $chatrooms = Auth::user()->chatRooms->load('createdBy')->loadCount('members');
+        } elseif ($filter === 'invites' && Auth::check()) {
+            // Get pending invitations for the user
+            $invitationRoomIds = ChatRoomInvitation::where('user_id', Auth::id())
+                ->where('status', 'pending')
+                ->pluck('room_id');
+            $chatrooms = ChatRoom::whereIn('id', $invitationRoomIds)
+                ->withCount('members')
+                ->with('createdBy')
+                ->get();
+        } elseif ($filter === 'poetry-slams') {
+            $chatrooms = $query->where(function($q) {
+                $q->where('name', 'LIKE', '%poetry%')
+                  ->orWhere('name', 'LIKE', '%slam%')
+                  ->orWhere('description', 'LIKE', '%poetry%')
+                  ->orWhere('description', 'LIKE', '%slam%');
+            })->get();
+        } elseif ($filter === 'book-clubs') {
+            $chatrooms = $query->where(function($q) {
+                $q->where('name', 'LIKE', '%book%')
+                  ->orWhere('name', 'LIKE', '%club%')
+                  ->orWhere('description', 'LIKE', '%book%')
+                  ->orWhere('description', 'LIKE', '%club%');
+            })->get();
+        } elseif ($filter === 'author-qa') {
+            $chatrooms = $query->where(function($q) {
+                $q->where('name', 'LIKE', '%author%')
+                  ->orWhere('name', 'LIKE', '%Q&A%')
+                  ->orWhere('name', 'LIKE', '%question%')
+                  ->orWhere('description', 'LIKE', '%author%')
+                  ->orWhere('description', 'LIKE', '%Q&A%');
+            })->get();
+        } else {
+            $chatrooms = $query->get();
+        }
+
         $userChatrooms = Auth::user()->chatRooms ?? collect();
         $pendingRequests = [];
 
@@ -27,10 +68,6 @@ class ChatRoomController extends Controller
                 ->where('status', 'pending')
                 ->pluck('chat_room_id')
                 ->toArray();
-        }
-
-        if ($request->get('filter') === 'my-rooms') {
-            $chatrooms = $userChatrooms->load('createdBy')->loadCount('members');
         }
 
         return view('chatrooms.index', compact('chatrooms', 'userChatrooms', 'pendingRequests'));

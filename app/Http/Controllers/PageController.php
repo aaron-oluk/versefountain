@@ -44,6 +44,7 @@ class PageController extends Controller
         
         // Get pending invitations for authenticated user
         $pendingInvites = [];
+        $userChatrooms = collect();
         if ($user) {
             $pendingInvites = ChatRoomInvitation::with(['room', 'inviter'])
                 ->where('user_id', $user->id)
@@ -52,6 +53,8 @@ class PageController extends Controller
                 ->latest()
                 ->take(4)
                 ->get();
+            
+            $userChatrooms = $user->chatRooms;
         }
         
         // Get user's joined chat rooms
@@ -96,7 +99,8 @@ class PageController extends Controller
             'activeCreators',
             'pendingInvites',
             'myCommunities',
-            'trendingBooks'
+            'trendingBooks',
+            'userChatrooms'
         ));
     }
 }

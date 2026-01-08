@@ -6,16 +6,16 @@
 @section('content')
     <div class="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
         <!-- Clean Header -->
-        <div class="border-b border-gray-200 dark:border-gray-800 py-8">
+        <div class="border-b border-gray-200 dark:border-gray-800 py-6 sm:py-8">
             <div class="px-4 sm:px-6 lg:px-8">
-                <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Academic Resources</h1>
-                <p class="text-gray-600 dark:text-gray-400">Discover research papers, learning guides, and educational materials</p>
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Academic Resources</h1>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Discover research papers, learning guides, and educational materials</p>
             </div>
         </div>
 
-        <div class="px-4 sm:px-6 lg:px-8 py-8 flex-1">
+        <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1">
             <!-- Search Bar -->
-            <div class="mb-12 max-w-2xl">
+            <div class="mb-8 sm:mb-12 max-w-2xl">
                 <div class="relative">
                     <i class="bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
                     <input type="text" id="searchResources" placeholder="Search papers, topics, subjects..."
@@ -25,9 +25,9 @@
 
             <!-- Featured Resources -->
             @if ($featuredResources->count() > 0)
-                <div class="mb-16">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Featured</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div class="mb-12 sm:mb-16">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Featured</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                         @foreach ($featuredResources as $resource)
                             <a href="#" class="group">
                                 <div class="relative rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-blue-100 dark:from-blue-900/40 to-cyan-100 dark:to-cyan-900/40 aspect-video flex items-center justify-center">
@@ -46,9 +46,9 @@
 
             <!-- Browse by Subject -->
             @if ($subjects->count() > 0)
-                <div class="mb-16">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Browse by Subject</h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <div class="mb-12 sm:mb-16">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Browse by Subject</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
                         @foreach ($subjects as $subject)
                             <a href="#" class="group p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-400 bg-white dark:bg-gray-800 transition-all">
                                 <div class="text-center">
@@ -65,9 +65,9 @@
 
             <!-- Recent Papers -->
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Recent Papers</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Recent Papers</h2>
                 @if ($recentPapers->count() > 0)
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
                         @foreach ($recentPapers as $paper)
                             <a href="#" class="group p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md dark:hover:shadow-lg transition-all">
                                 <div class="flex items-start gap-3 mb-3">

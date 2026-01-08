@@ -40,12 +40,46 @@
                 </a>
 
                 @auth
+                    <!-- Chatrooms Main -->
                     <a href="{{ route('chatrooms.index') }}"
                         class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('chatrooms.*') || request()->routeIs('chatroom.*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                         <i
                             class="bx bx-message-square-dots mr-3 text-lg {{ request()->routeIs('chatrooms.*') || request()->routeIs('chatroom.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                         Chatrooms
                     </a>
+
+                    <!-- Chatroom Sub-items (Nested with smaller indent) -->
+                    <div class="ml-6 space-y-0.5 border-l border-gray-200 dark:border-gray-700 pl-2">
+                        <a href="{{ route('chatrooms.index', ['filter' => 'invites']) }}"
+                            class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request('filter') === 'invites' ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                            <i class="bx bx-envelope mr-2 text-base"></i>
+                            Invites
+                        </a>
+                        
+                        <a href="{{ route('chatrooms.my') }}"
+                            class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request()->routeIs('chatrooms.my') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                            <i class="bx bx-chat mr-2 text-base"></i>
+                            My Rooms
+                        </a>
+                        
+                        <a href="{{ route('chatrooms.index', ['filter' => 'poetry-slams']) }}"
+                            class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request('filter') === 'poetry-slams' ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                            <i class="bx bx-microphone mr-2 text-base"></i>
+                            Poetry Slams
+                        </a>
+                        
+                        <a href="{{ route('chatrooms.index', ['filter' => 'book-clubs']) }}"
+                            class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request('filter') === 'book-clubs' ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                            <i class="bx bx-book mr-2 text-base"></i>
+                            Book Clubs
+                        </a>
+                        
+                        <a href="{{ route('chatrooms.index', ['filter' => 'author-qa']) }}"
+                            class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ request('filter') === 'author-qa' ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                            <i class="bx bx-help-circle mr-2 text-base"></i>
+                            Author Q&A
+                        </a>
+                    </div>
                 @endauth
 
                 <a href="{{ route('creators.index') }}"

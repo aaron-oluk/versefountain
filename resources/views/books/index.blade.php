@@ -5,20 +5,30 @@
 
 @section('content')
     <div class="max-w-7xl mx-auto">
-        <!-- Header with Create Button -->
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Library</h1>
-                <p class="text-gray-600 dark:text-gray-400 mt-1">Discover and share literary works</p>
+        <!-- Header -->
+        <div class="mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Library</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1">Discover and share literary works</p>
+                </div>
+                @auth
+                    <!-- Desktop Create Button -->
+                    <a href="{{ url('/books/create') }}"
+                       class="hidden sm:inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap">
+                        <i class="bx bx-plus text-lg mr-1"></i>
+                        Add Book
+                    </a>
+                @endauth
             </div>
-            @auth
-                <a href="{{ url('/books/create') }}"
-                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="bx bx-plus text-lg mr-1"></i>
-                    Add Book
-                </a>
-            @endauth
         </div>
+
+        @auth
+        <!-- Mobile FAB -->
+        <a href="{{ url('/books/create') }}" class="sm:hidden fixed bottom-20 right-4 z-40 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110">
+            <i class="bx bx-plus text-2xl"></i>
+        </a>
+        @endauth
 
         <!-- Filter Bar -->
         <div class="flex flex-wrap items-center gap-3 mb-6">

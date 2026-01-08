@@ -28,14 +28,14 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Cover Image
                         </label>
-                        <div class="flex items-center space-x-4">
-                            <div id="cover-preview" class="w-32 h-48 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <div id="cover-preview" class="w-32 h-48 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden flex-shrink-0">
                                 <i class="bx bx-image text-4xl text-gray-400 dark:text-gray-500"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 w-full sm:w-auto">
                                 <input type="file" id="cover-input" accept="image/*" class="hidden">
                                 <button type="button" id="upload-cover-btn"
-                                    class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                    class="w-full sm:w-auto px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                                     Choose File
                                 </button>
                                 <input type="hidden" name="coverImage" id="cover-url">
@@ -95,17 +95,17 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex justify-between items-center pt-4">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                             <i class="bx bx-info-circle"></i> Books require admin approval before being published
                         </p>
-                        <div class="flex space-x-3">
+                        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                             <a href="{{ route('books.index') }}"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                                class="w-full sm:w-auto text-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
                                 Cancel
                             </a>
                             <button type="submit"
-                                class="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                                 Add Book
                             </button>
                         </div>

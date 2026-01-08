@@ -13,14 +13,22 @@
                         <p class="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-2xl">Discover poetry readings, workshops, and literary events</p>
                     </div>
                     @auth
+                        <!-- Desktop Create Button -->
                         <a href="{{ url('/events/create') }}"
-                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                           class="hidden sm:inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap">
                             <i class="bx bx-plus text-lg mr-1"></i>
                             Create Event
                         </a>
                     @endauth
                 </div>
             </div>
+
+            @auth
+            <!-- Mobile FAB -->
+            <a href="{{ url('/events/create') }}" class="sm:hidden fixed bottom-20 right-4 z-40 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110">
+                <i class="bx bx-plus text-2xl"></i>
+            </a>
+            @endauth
 
             <!-- Search and Filter Section -->
             <div class="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-sm mb-8">

@@ -6,73 +6,8 @@
 @section('content')
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <!-- Left Sidebar - Browse -->
-            <div class="lg:col-span-1 space-y-6">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Browse</h2>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Filter by Topic</p>
-                    
-                    <nav class="space-y-2">
-                        @auth
-                        <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
-                            <div class="flex items-center gap-3">
-                                <i class='bx bx-envelope text-xl'></i>
-                                <span class="text-sm font-medium">Invites</span>
-                            </div>
-                            @if(count($pendingInvites) > 0)
-                                <span class="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">{{ count($pendingInvites) }}</span>
-                            @endif
-                        </a>
-                        @endauth
-                        
-                        <a href="{{ route('chatrooms.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
-                            <i class='bx bx-conversation text-xl'></i>
-                            <span class="text-sm font-medium">All Discussions</span>
-                        </a>
-                        
-                        @auth
-                        <a href="{{ route('chatrooms.my') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
-                            <i class='bx bx-chat text-xl'></i>
-                            <span class="text-sm font-medium">My Rooms</span>
-                        </a>
-                        @endauth
-                        
-                        <a href="#poetry-slams" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
-                            <i class='bx bx-microphone text-xl'></i>
-                            <span class="text-sm font-medium">Poetry Slams</span>
-                        </a>
-                        
-                        <a href="#book-clubs" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
-                            <i class='bx bx-book text-xl'></i>
-                            <span class="text-sm font-medium">Book Clubs</span>
-                        </a>
-                        
-                        <a href="#author-qa" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
-                            <i class='bx bx-help-circle text-xl'></i>
-                            <span class="text-sm font-medium">Author Q&A</span>
-                        </a>
-                    </nav>
-                    
-                    @auth
-                    @if(count($myCommunities) > 0)
-                        <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-3">My Communities</h3>
-                            <div class="space-y-2">
-                                @foreach($myCommunities as $community)
-                                    <a href="{{ route('chatroom.show', $community) }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span class="truncate">{{ $community->name }}</span>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-                    @endauth
-                </div>
-            </div>
-
-            <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content - Now spans 2 columns -->
             <div class="lg:col-span-2 space-y-6">
                 @auth
                 @if(count($pendingInvites) > 0)

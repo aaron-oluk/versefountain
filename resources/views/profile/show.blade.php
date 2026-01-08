@@ -67,25 +67,25 @@
                 <!-- Profile Tabs -->
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 mb-4 sm:mb-6"
                     data-tabs>
-                    <div class="border-b border-gray-200 dark:border-gray-800">
-                        <nav class="flex overflow-x-auto scrollbar-hide -mb-px" role="tablist">
+                    <div class="p-2">
+                        <nav class="flex overflow-x-auto scrollbar-hide gap-2" role="tablist">
                             <button data-tab="overview" role="tab" aria-selected="true"
-                                class="tab-btn flex-1 sm:flex-none px-3 sm:px-5 py-3 text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 whitespace-nowrap transition-colors">
+                                class="tab-btn flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-lg whitespace-nowrap transition-all">
                                 <i class="bx bx-grid-alt mr-1.5 text-sm sm:text-base"></i>
                                 Overview
                             </button>
                             <button data-tab="bookshelf" role="tab" aria-selected="false"
-                                class="tab-btn flex-1 sm:flex-none px-3 sm:px-5 py-3 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap transition-colors">
+                                class="tab-btn flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg whitespace-nowrap transition-all">
                                 <i class="bx bx-book-open mr-1.5 text-sm sm:text-base"></i>
                                 Bookshelf
                             </button>
                             <button data-tab="comments" role="tab" aria-selected="false"
-                                class="tab-btn flex-1 sm:flex-none px-3 sm:px-5 py-3 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap transition-colors">
+                                class="tab-btn flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg whitespace-nowrap transition-all">
                                 <i class="bx bx-comment mr-1.5 text-sm sm:text-base"></i>
                                 Comments
                             </button>
                             <button data-tab="favorites" role="tab" aria-selected="false"
-                                class="tab-btn flex-1 sm:flex-none px-3 sm:px-5 py-3 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap transition-colors">
+                                class="tab-btn flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg whitespace-nowrap transition-all">
                                 <i class="bx bx-heart mr-1.5 text-sm sm:text-base"></i>
                                 Favorites
                             </button>

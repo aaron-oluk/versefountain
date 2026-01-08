@@ -90,12 +90,12 @@
         @endif
 
         <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-6">
-            <nav class="flex -mb-px">
-                <button class="px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 transition-colors" data-tab="poems">
+        <div class="p-2 mb-6">
+            <nav class="flex gap-2">
+                <button class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 transition-all" data-tab="poems">
                     Poems
                 </button>
-                <button class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 transition-colors" data-tab="books">
+                <button class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all" data-tab="books">
                     Books
                 </button>
             </nav>

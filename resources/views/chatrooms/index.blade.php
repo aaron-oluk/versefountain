@@ -5,22 +5,32 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto">
-    <!-- Header with Create Button -->
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Explore Chatrooms</h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Join conversations with fellow readers and writers.</p>
+    <!-- Header -->
+    <div class="mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Explore Chatrooms</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Join conversations with fellow readers and writers.</p>
+            </div>
+            @auth
+            <!-- Desktop Create Button -->
+            <a href="{{ route('chatrooms.create') }}" class="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap">
+                <i class="bx bx-plus text-lg"></i>
+                Create Room
+            </a>
+            @endauth
         </div>
-        @auth
-        <a href="{{ route('chatrooms.create') }}" class="px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-            <i class="bx bx-plus text-lg"></i>
-            Create Room
-        </a>
-        @endauth
     </div>
 
+    @auth
+    <!-- Mobile FAB -->
+    <a href="{{ route('chatrooms.create') }}" class="sm:hidden fixed bottom-20 right-4 z-40 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110">
+        <i class="bx bx-plus text-2xl"></i>
+    </a>
+    @endauth
+
     <!-- Filter Tabs -->
-    <div class="flex items-center gap-4 mb-6">
+    <div class="flex items-center gap-2 mb-6 flex-wrap">
         <a href="{{ route('chatrooms.index') }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ !request('filter') ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
             All Rooms
         </a>
@@ -31,7 +41,19 @@
                 <span class="ml-1 px-1.5 py-0.5 bg-white/20 rounded text-xs">{{ $userChatrooms->count() }}</span>
             @endif
         </a>
+        <a href="{{ route('chatrooms.index', ['filter' => 'invites']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'invites' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            Invites
+        </a>
         @endauth
+        <a href="{{ route('chatrooms.index', ['filter' => 'poetry-slams']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'poetry-slams' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            Poetry Slams
+        </a>
+        <a href="{{ route('chatrooms.index', ['filter' => 'book-clubs']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'book-clubs' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            Book Clubs
+        </a>
+        <a href="{{ route('chatrooms.index', ['filter' => 'author-qa']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'author-qa' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            Author Q&A
+        </a>
     </div>
 
     <!-- Search -->
