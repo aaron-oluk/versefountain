@@ -111,4 +111,30 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'poet_followers', 'poet_id', 'follower_id');
     }
+
+    /**
+     * Check if the user is a creator (has published content).
+     */
+    public function isCreator(): bool
+    {
+        return $this->poems()->exists() 
+            || $this->uploadedBooks()->exists() 
+            || $this->createdEvents()->exists();
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if the user has an active subscription.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->activeSubscription()->exists();
+    }
 }

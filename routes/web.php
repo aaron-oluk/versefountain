@@ -129,6 +129,9 @@ Route::middleware('auth')->group(function () {
     // Subscription
     Route::get('/subscription', [SubscriptionController::class, 'showPlans'])->name('subscription');
 
+    // Community
+    Route::get('/community', [PageController::class, 'community'])->name('community');
+
     // Creator Profile
     Route::get('/creators/{user}', [UserController::class, 'showCreator'])->name('profile.creator');
 

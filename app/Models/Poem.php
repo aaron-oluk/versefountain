@@ -34,6 +34,14 @@ class Poem extends Model
     }
 
     /**
+     * Get the user (alias for author) of the poem.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
      * Get the user interactions (likes and ratings) for the poem.
      */
     public function userInteractions()
