@@ -4,7 +4,7 @@ import './bootstrap';
 (function () {
     // Check for saved dark mode preference or default to light mode
     const darkMode = localStorage.getItem('dark-mode');
-    if (darkMode === 'enabled' || (!darkMode && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    if (darkMode === 'enabled') {
         document.documentElement.classList.add('dark');
     }
 
