@@ -1,27 +1,42 @@
 import './bootstrap';
 
+// Dark Mode Toggle
+(function () {
+    // Check for saved dark mode preference or default to light mode
+    const darkMode = localStorage.getItem('dark-mode');
+    if (darkMode === 'enabled' || (!darkMode && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+
+    // Toggle dark mode function
+    window.toggleDarkMode = function () {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('dark-mode', isDark ? 'enabled' : 'disabled');
+    };
+})();
+
 // Global utilities
 window.utils = {
     // Format date to relative time
     formatDate(dateString) {
         if (!dateString) return 'Unknown date';
-        
+
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return 'Invalid date';
-        
+
         const now = new Date();
         const diffTime = Math.abs(now.getTime() - date.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 1) return 'Yesterday';
         if (diffDays < 7) return `${diffDays} days ago`;
         if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
         if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-        
-        return date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
+
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
         });
     },
 
@@ -41,15 +56,14 @@ window.utils = {
     // Show toast notification
     showToast(message, type = 'success') {
         const toast = document.createElement('div');
-        toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-md ${
-            type === 'success' ? 'bg-green-500 text-white' :
-            type === 'error' ? 'bg-red-500 text-white' :
-            'bg-blue-500 text-white'
-        }`;
+        toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-md ${type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                    'bg-blue-500 text-white'
+            }`;
         toast.textContent = message;
-        
+
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.remove();
         }, 3000);
@@ -85,7 +99,7 @@ window.utils = {
 };
 
 // Global event listeners
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Auto-hide flash messages
     const flashMessages = document.querySelectorAll('.bg-green-50, .bg-red-50');
     flashMessages.forEach(message => {
@@ -97,10 +111,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle form submissions
-    document.addEventListener('submit', function(event) {
+    document.addEventListener('submit', function (event) {
         const form = event.target;
         const submitButton = form.querySelector('button[type="submit"]');
-        
+
         if (submitButton) {
             submitButton.disabled = true;
             submitButton.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Processing...';
@@ -108,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle confirmation dialogs
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         if (event.target.matches('[data-confirm]')) {
             const message = event.target.getAttribute('data-confirm');
             if (!confirm(message)) {
@@ -125,7 +139,7 @@ window.csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribu
 // Add CSRF token to all AJAX requests
 if (window.csrfToken) {
     const originalFetch = window.fetch;
-    window.fetch = function(url, options = {}) {
+    window.fetch = function (url, options = {}) {
         if (options.method && options.method !== 'GET') {
             options.headers = {
                 ...options.headers,
@@ -163,21 +177,19 @@ class FlashMessage {
 
         // Create new message
         this.messageElement = document.createElement('div');
-        this.messageElement.className = `p-4 rounded-md flex items-center justify-between ${
-            type === 'success' 
-                ? 'bg-blue-50 border border-blue-200 text-blue-800' 
+        this.messageElement.className = `p-4 rounded-md flex items-center justify-between ${type === 'success'
+                ? 'bg-blue-50 border border-blue-200 text-blue-800'
                 : 'bg-red-50 border border-red-200 text-red-800'
-        }`;
-        
+            }`;
+
         this.messageElement.innerHTML = `
             <div class="flex items-center space-x-2">
                 <i class="bx ${type === 'success' ? 'bx-check-circle' : 'bx-error-circle'} text-lg"></i>
                 <span class="text-sm font-normal">${message}</span>
             </div>
-            <button onclick="this.parentElement.remove()" class="ml-4 ${
-                type === 'success' 
-                    ? 'text-blue-600 hover:text-blue-800' 
-                    : 'text-red-600 hover:text-red-800'
+            <button onclick="this.parentElement.remove()" class="ml-4 ${type === 'success'
+                ? 'text-blue-600 hover:text-blue-800'
+                : 'text-red-600 hover:text-red-800'
             }">
                 <i class="bx bx-x text-lg"></i>
             </button>
@@ -221,7 +233,7 @@ class PoemDetail {
         this.poemUrl = options.poemUrl || window.location.href;
         this.apiBaseUrl = options.apiBaseUrl || '/api/poems';
         this.isAuthenticated = options.isAuthenticated || false;
-        
+
         this.init();
     }
 
@@ -272,7 +284,7 @@ class PoemDetail {
 
         // Close share menu on outside click
         document.addEventListener('click', (e) => {
-            if (this.showShareMenu && !this.container.querySelector('[data-share-menu]')?.contains(e.target) && 
+            if (this.showShareMenu && !this.container.querySelector('[data-share-menu]')?.contains(e.target) &&
                 !this.container.querySelector('[data-share-toggle]')?.contains(e.target)) {
                 this.toggleShareMenu();
             }
@@ -313,7 +325,7 @@ class PoemDetail {
         const likeIcon = likeBtn?.querySelector('i');
 
         if (likeBtn) {
-            likeBtn.className = likeBtn.className.replace(/text-(red|gray)-500/g, '') + 
+            likeBtn.className = likeBtn.className.replace(/text-(red|gray)-500/g, '') +
                 (this.isLiked ? ' text-red-500' : ' text-gray-500 hover:text-red-500');
         }
 
@@ -367,11 +379,11 @@ class PoemDetail {
             if (btn && icon) {
                 const isActive = this.currentRating >= i;
                 icon.className = isActive ? 'bx bxs-star text-xs' : 'bx bx-star text-xs';
-                btn.className = btn.className.replace(/text-(yellow|gray)-[0-9]+/g, '') + 
+                btn.className = btn.className.replace(/text-(yellow|gray)-[0-9]+/g, '') +
                     (isActive ? ' text-yellow-500' : ' text-gray-400 hover:text-yellow-400');
             }
         }
-        
+
         // Update rating display text
         const ratingDisplay = this.container.querySelector('[data-rating-display]');
         if (ratingDisplay && this.avgRating !== undefined && this.ratingCount !== undefined) {
@@ -487,7 +499,7 @@ class PoemForm {
         this.showPreview = !this.showPreview;
         const previewSection = this.form.querySelector('[data-preview-section]');
         const previewBtn = this.form.querySelector('[data-preview-toggle]');
-        
+
         if (previewSection) {
             previewSection.style.display = this.showPreview ? 'block' : 'none';
         }
@@ -500,7 +512,7 @@ class PoemForm {
         if (this.showPreview) {
             const previewTitle = previewSection?.querySelector('[data-preview-title]');
             const previewContent = previewSection?.querySelector('[data-preview-content]');
-            
+
             if (previewTitle && this.titleInput) {
                 previewTitle.textContent = this.titleInput.value || 'Untitled';
             }
@@ -515,7 +527,7 @@ class PoemForm {
         if (lengthDisplay && this.contentInput) {
             const length = this.contentInput.value.length;
             lengthDisplay.textContent = length;
-            
+
             // Update color if approaching limit
             if (length > 9000) {
                 lengthDisplay.classList.add('text-red-600');
@@ -728,12 +740,12 @@ class Modal {
         this.show = true;
         const backdrop = this.modal.querySelector('[data-modal-backdrop]');
         const content = this.modal.querySelector('[data-modal-content]');
-        
+
         if (backdrop) backdrop.style.display = 'block';
         if (content) content.style.display = 'block';
         this.modal.style.display = 'block';
         document.body.classList.add('overflow-y-hidden');
-        
+
         // Focus first element
         setTimeout(() => {
             const firstFocusable = this.getFocusables()[0];
@@ -745,7 +757,7 @@ class Modal {
         this.show = false;
         const backdrop = this.modal.querySelector('[data-modal-backdrop]');
         const content = this.modal.querySelector('[data-modal-content]');
-        
+
         if (backdrop) backdrop.style.display = 'none';
         if (content) content.style.display = 'none';
         this.modal.style.display = 'none';
@@ -827,7 +839,7 @@ class Dropdown {
 }
 
 // Initialize components on DOM ready
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Initialize FlashMessage
     window.flashMessage = new FlashMessage();
 

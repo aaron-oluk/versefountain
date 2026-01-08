@@ -1,14 +1,15 @@
 <!-- Desktop Sidebar Navigation -->
-<div class="hidden md:flex md:flex-col md:w-56 md:fixed md:inset-y-0 md:bg-white md:border-r md:border-gray-200 md:z-30">
+<div
+    class="hidden md:flex md:flex-col md:w-56 md:fixed md:inset-y-0 md:bg-white dark:md:bg-gray-900 md:border-r md:border-gray-200 dark:md:border-gray-800 md:z-30">
     <!-- Logo -->
-    <div class="px-5 py-5 border-b border-gray-100">
+    <div class="px-5 py-5 border-b border-gray-100 dark:border-gray-800">
         <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
             <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <i class="bx bx-book-open text-white text-base"></i>
             </div>
             <div>
-                <span class="text-base font-bold text-gray-900">VerseFountain</span>
-                <p class="text-[10px] text-gray-500 -mt-0.5">Your Reading Sanctuary</p>
+                <span class="text-base font-bold text-gray-900 dark:text-white">VerseFountain</span>
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 -mt-0.5">Your Reading Sanctuary</p>
             </div>
         </a>
     </div>
@@ -17,35 +18,47 @@
     <div class="flex-1 flex flex-col min-h-0 overflow-y-auto sidebar-scroll">
         <nav class="flex-1 px-3 py-4">
             <div class="space-y-0.5">
-                <a href="{{ auth()->check() ? route('dashboard') : url('/') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('dashboard') || request()->is('/') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                    <i class="bx bx-home-alt mr-3 text-lg {{ request()->routeIs('dashboard') || request()->is('/') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                <a href="{{ auth()->check() ? route('dashboard') : url('/') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('dashboard') || request()->is('/') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                    <i
+                        class="bx bx-home-alt mr-3 text-lg {{ request()->routeIs('dashboard') || request()->is('/') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                     Home
                 </a>
 
-                <a href="{{ route('books.index') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('books.*') && !request()->routeIs('books.read') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                    <i class="bx bx-library mr-3 text-lg {{ request()->routeIs('books.*') && !request()->routeIs('books.read') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                <a href="{{ route('books.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('books.*') && !request()->routeIs('books.read') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                    <i
+                        class="bx bx-library mr-3 text-lg {{ request()->routeIs('books.*') && !request()->routeIs('books.read') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                     Library
                 </a>
 
-                <a href="{{ route('poetry.index') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('poetry.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                    <i class="bx bx-pen mr-3 text-lg {{ request()->routeIs('poetry.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                <a href="{{ route('poetry.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('poetry.*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                    <i
+                        class="bx bx-pen mr-3 text-lg {{ request()->routeIs('poetry.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                     Poetry
                 </a>
 
                 @auth
-                    <a href="{{ route('chatrooms.index') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('chatrooms.*') || request()->routeIs('chatroom.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                        <i class="bx bx-message-square-dots mr-3 text-lg {{ request()->routeIs('chatrooms.*') || request()->routeIs('chatroom.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                    <a href="{{ route('chatrooms.index') }}"
+                        class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('chatrooms.*') || request()->routeIs('chatroom.*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                        <i
+                            class="bx bx-message-square-dots mr-3 text-lg {{ request()->routeIs('chatrooms.*') || request()->routeIs('chatroom.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                         Chatrooms
                     </a>
                 @endauth
 
-                <a href="{{ route('creators.index') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('creators.*') || request()->routeIs('profile.creator') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                    <i class="bx bx-user-circle mr-3 text-lg {{ request()->routeIs('creators.*') || request()->routeIs('profile.creator') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                <a href="{{ route('creators.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('creators.*') || request()->routeIs('profile.creator') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                    <i
+                        class="bx bx-user-circle mr-3 text-lg {{ request()->routeIs('creators.*') || request()->routeIs('profile.creator') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                     Creators
                 </a>
 
-                <a href="{{ route('events.index') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('events.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50' }}">
-                    <i class="bx bx-calendar-event mr-3 text-lg {{ request()->routeIs('events.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                <a href="{{ route('events.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('events.*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                    <i
+                        class="bx bx-calendar-event mr-3 text-lg {{ request()->routeIs('events.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                     Events
                 </a>
             </div>
@@ -55,27 +68,35 @@
         <div class="px-3 pb-4 mt-auto">
             @auth
                 <!-- Settings -->
-                <a href="{{ route('settings.index') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50 transition-colors mb-3 {{ request()->routeIs('settings.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                    <i class="bx bx-cog mr-3 text-lg {{ request()->routeIs('settings.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                <a href="{{ route('settings.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors mb-3 {{ request()->routeIs('settings.*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : '' }}">
+                    <i
+                        class="bx bx-cog mr-3 text-lg {{ request()->routeIs('settings.*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
                     Settings
                 </a>
 
                 <!-- User Profile -->
-                <a href="{{ route('profile') }}" class="flex items-center gap-3 px-3 py-2 border-t border-gray-100 pt-4 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div class="w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                        {{ strtoupper(substr(auth()->user()->first_name ?? auth()->user()->username ?? 'U', 0, 1)) }}
+                <a href="{{ route('profile') }}"
+                    class="flex items-center gap-3 px-3 py-2 border-t border-gray-100 dark:border-gray-800 pt-4 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                    <div
+                        class="w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                        {{ strtoupper(substr(auth()->user()->first_name ?? (auth()->user()->username ?? 'U'), 0, 1)) }}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->first_name ?? auth()->user()->username }}</p>
-                        <p class="text-xs text-gray-500 truncate">{{ auth()->user()->role === 'admin' ? 'Administrator' : 'Member' }}</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                            {{ auth()->user()->first_name ?? auth()->user()->username }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {{ auth()->user()->role === 'admin' ? 'Administrator' : 'Member' }}</p>
                     </div>
                 </a>
             @else
-                <div class="border-t border-gray-100 pt-4 space-y-2">
-                    <a href="{{ route('login') }}" class="flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+                <div class="border-t border-gray-100 dark:border-gray-800 pt-4 space-y-2">
+                    <a href="{{ route('login') }}"
+                        class="flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         Log In
                     </a>
-                    <a href="{{ route('register') }}" class="flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                    <a href="{{ route('register') }}"
+                        class="flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
                         Sign Up
                     </a>
                 </div>

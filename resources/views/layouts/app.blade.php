@@ -15,7 +15,7 @@
     </style>
     @yield('head')
 </head>
-<body class="antialiased bg-gray-50 overflow-x-hidden">
+<body @class(['antialiased', 'bg-gray-50', 'dark:bg-gray-950', 'overflow-x-hidden'])>
     @php
         $hideNavigation = request()->is('books/read*') || request()->is('poetry/read*');
     @endphp
@@ -25,7 +25,7 @@
         @include('partials.header')
     @endif
 
-    <main class="{{ !$hideNavigation ? 'md:pl-56 pt-14' : '' }} min-h-screen pb-20 md:pb-0 bg-gray-50">
+    <main class="{{ !$hideNavigation ? 'md:pl-56 pt-14' : '' }} min-h-screen pb-20 md:pb-0 bg-gray-50 dark:bg-gray-950">
         <div class="{{ !$hideNavigation ? 'px-4 sm:px-6 lg:px-8 py-6' : '' }}">
             @yield('content')
         </div>
