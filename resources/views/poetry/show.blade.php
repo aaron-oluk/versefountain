@@ -120,16 +120,12 @@
                             <!-- Rating -->
                             <div class="flex items-center space-x-1">
                                 @php
-                                    $userRating = 0;
-                                    if (auth()->check() && isset($poem->id) && $poem->id > 0) {
-                                        $userRatingInteraction = $poem->userInteractions->where('user_id', auth()->id())->first();
-                                        $userRating = $userRatingInteraction ? $userRatingInteraction->rating : 0;
-                                    }
+                                    $userRatingFromController = $userRating ?? 0;
                                 @endphp
                                 @for($i = 1; $i <= 5; $i++)
                                     <button data-rating="{{ $i }}"
-                                            class="transition-colors cursor-pointer {{ $userRating >= $i ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-400' }}">
-                                        <i class="{{ $userRating >= $i ? 'bx bxs-star' : 'bx bx-star' }} text-base"></i>
+                                            class="transition-colors cursor-pointer {{ $userRatingFromController >= $i ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-400' }}">
+                                        <i class="{{ $userRatingFromController >= $i ? 'bx bxs-star' : 'bx bx-star' }} text-base"></i>
                                     </button>
                                 @endfor
                                 @php

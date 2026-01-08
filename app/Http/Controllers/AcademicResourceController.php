@@ -70,7 +70,7 @@ class AcademicResourceController extends Controller
             ->distinct()
             ->pluck('subject');
 
-        return view('academics', compact('featuredResources', 'recentPapers', 'subjects'));
+        return view('academics.index', compact('featuredResources', 'recentPapers', 'subjects'));
     }
 
     /**

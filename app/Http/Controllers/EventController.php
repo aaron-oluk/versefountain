@@ -76,7 +76,7 @@ class EventController extends Controller
             ->distinct()
             ->pluck('category');
 
-        return view('events', compact('featuredEvents', 'upcomingEvents', 'categories'));
+        return view('events.index', compact('featuredEvents', 'upcomingEvents', 'categories'));
     }
 
     /**

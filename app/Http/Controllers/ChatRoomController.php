@@ -33,7 +33,7 @@ class ChatRoomController extends Controller
             $chatrooms = $userChatrooms->load('createdBy')->loadCount('members');
         }
 
-        return view('chatrooms', compact('chatrooms', 'userChatrooms', 'pendingRequests'));
+        return view('chatrooms.index', compact('chatrooms', 'userChatrooms', 'pendingRequests'));
     }
 
     public function index(Request $request)
@@ -319,7 +319,7 @@ class ChatRoomController extends Controller
             ->pluck('chat_room_id')
             ->toArray();
 
-        return view('chatrooms', compact('chatrooms', 'userChatrooms', 'pendingRequests'));
+        return view('chatrooms.index', compact('chatrooms', 'userChatrooms', 'pendingRequests'));
     }
 
     /**

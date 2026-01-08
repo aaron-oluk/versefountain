@@ -258,6 +258,8 @@ class PoemDetail {
         this.apiBaseUrl = options.apiBaseUrl || '/api/poems';
         this.isAuthenticated = options.isAuthenticated || false;
 
+        this.csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || window.csrfToken;
+
         this.init();
     }
 
@@ -326,7 +328,7 @@ class PoemDetail {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': window.csrfToken,
+                    'X-CSRF-TOKEN': this.csrfToken,
                     'Accept': 'application/json'
                 },
                 credentials: 'same-origin'
@@ -373,7 +375,7 @@ class PoemDetail {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': window.csrfToken,
+                    'X-CSRF-TOKEN': this.csrfToken,
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({ rating }),
@@ -458,7 +460,7 @@ class PoemDetail {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': window.csrfToken,
+                    'X-CSRF-TOKEN': this.csrfToken,
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({ content: commentText }),

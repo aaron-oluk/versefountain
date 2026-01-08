@@ -21,7 +21,7 @@ class PoemController extends Controller
             ->latest()
             ->paginate(12);
 
-        return view('poetry', compact('poems'));
+        return view('poetry.index', compact('poems'));
     }
 
     /**
@@ -162,25 +162,21 @@ class PoemController extends Controller
         } else {
             // Load relationships for real poems
             if ($poem->id > 0) {
-                $userId = Auth::id();
-                // Eager load user interactions and check like status in single query
-                $poem->load(['author', 'comments.user', 'userInteractions' => function ($query) use ($userId) {
-                    if ($userId) {
-                        $query->where('user_id', $userId);
-                    }
-                }]);
+                $poem->load(['author', 'comments.user', 'userInteractions']);
             }
         }
         
-        // Check if current user has liked this poem using eager loaded relationship
+        // Compute user-specific interaction state
+        $userRating = 0;
         $isLiked = false;
+
         if (Auth::check() && isset($poem->id) && $poem->id > 0 && $poem->userInteractions) {
-            $isLiked = $poem->userInteractions->contains(function ($interaction) {
-                return $interaction->type === 'like';
-            });
+            $userInteraction = $poem->userInteractions->firstWhere('user_id', Auth::id());
+            $isLiked = (bool) ($userInteraction->liked ?? false);
+            $userRating = (int) ($userInteraction->rating ?? 0);
         }
 
-        return view('poetry.show', compact('poem', 'isLiked'));
+        return view('poetry.show', compact('poem', 'isLiked', 'userRating'));
     }
 
     /**

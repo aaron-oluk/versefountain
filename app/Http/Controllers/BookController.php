@@ -83,7 +83,7 @@ class BookController extends Controller
         $trendingBooks = Book::where('approved', true)->latest()->take(3)->get();
         $genres = Book::where('approved', true)->whereNotNull('genre')->distinct()->pluck('genre');
 
-        return view('books', compact('allBooks', 'trendingBooks', 'genres', 'genre', 'sort'));
+        return view('books.index', compact('allBooks', 'trendingBooks', 'genres', 'genre', 'sort'));
     }
 
     /**
