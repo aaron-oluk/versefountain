@@ -15,6 +15,7 @@ class ChatRoom extends Model
         'description',
         'created_by_id', // Updated to snake_case
         'is_private',    // Updated to snake_case
+        'category',
     ];
 
     protected $casts = [

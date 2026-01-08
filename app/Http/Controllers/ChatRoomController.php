@@ -146,12 +146,14 @@ class ChatRoomController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_private' => 'boolean',
+            'category' => 'nullable|string|in:general,poetry_slams,book_clubs,author_qa',
         ]);
 
         $chatRoom = ChatRoom::create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'] ?? null,
             'is_private' => $validatedData['is_private'] ?? false,
+            'category' => $validatedData['category'] ?? 'general',
             'created_by_id' => $user->id,
         ]);
 

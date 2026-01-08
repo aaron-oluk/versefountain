@@ -27,6 +27,16 @@
             <textarea name="description" rows="3" class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="What is this room about?"></textarea>
         </div>
 
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+            <select name="category" class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                <option value="general">General</option>
+                <option value="poetry_slams">Poetry Slams</option>
+                <option value="book_clubs">Book Clubs</option>
+                <option value="author_qa">Author Q&A</option>
+            </select>
+        </div>
+
         <div class="flex items-center gap-2">
             <input id="is_private" name="is_private" type="checkbox" value="1" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
             <label for="is_private" class="text-sm text-gray-700 dark:text-gray-300">Make this room private</label>
