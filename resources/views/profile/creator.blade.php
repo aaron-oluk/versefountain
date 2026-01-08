@@ -2,14 +2,7 @@
 
 @section('title', ($creator->first_name ?? $creator->username) . ' - Creator Profile - VerseFountain')
 
-@php
-    $pageTitle = 'Creator Profile';
-    $publishedBooks = \App\Models\Book::where('uploadedById', $creator->id)->where('approved', true)->get();
-    $creatorPoems = $poems ?? $creator->poems()->where('approved', true)->latest()->paginate(12);
-    $followerCount = $creator->followers_count ?? $creator->followers()->count();
-    $followingCount = $creator->following()->count();
-    $isFollowing = $isFollowing ?? (auth()->check() ? auth()->user()->following()->where('poet_id', $creator->id)->exists() : false);
-@endphp
+@php $pageTitle = 'Creator Profile'; @endphp
 
 @section('content')
 <div class="min-h-screen bg-gray-50">
@@ -81,7 +74,7 @@
                 <span class="text-gray-500">Following</span>
             </div>
             <div>
-                <span class="font-bold text-gray-900">{{ $creatorPoems->total() }}</span>
+                <span class="font-bold text-gray-900">{{ $poems->total() }}</span>
                 <span class="text-gray-500">Poems</span>
             </div>
             <div>
@@ -115,9 +108,9 @@
             <div class="lg:col-span-2">
                 <!-- Poems Tab -->
                 <div id="poems-tab">
-                    @if($creatorPoems->count() > 0)
+                    @if($poems->count() > 0)
                         <div class="space-y-4">
-                            @foreach($creatorPoems as $poem)
+                            @foreach($poems as $poem)
                             <a href="{{ route('poetry.show', $poem->id) }}" class="block bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $poem->title }}</h3>
                                 <p class="text-gray-600 text-sm mb-3 line-clamp-3">{{ Str::limit(strip_tags($poem->content), 200) }}</p>
@@ -138,7 +131,7 @@
 
                         <!-- Pagination -->
                         <div class="mt-6">
-                            {{ $creatorPoems->links() }}
+                            {{ $poems->links() }}
                         </div>
                     @else
                         <div class="bg-white rounded-xl border border-gray-200 p-12 text-center">

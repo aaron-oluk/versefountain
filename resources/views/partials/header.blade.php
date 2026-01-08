@@ -32,14 +32,14 @@
                 </button>
 
                 <!-- User Dropdown -->
-                <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" class="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+                <div class="relative" data-dropdown>
+                    <button data-dropdown-toggle class="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors">
                         <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
                             {{ strtoupper(substr(auth()->user()->first_name ?? auth()->user()->username ?? 'U', 0, 1)) }}
                         </div>
                         <i class="bx bx-chevron-down text-gray-400"></i>
                     </button>
-                    <div x-show="open" @click.away="open = false" x-cloak
+                    <div data-dropdown-menu style="display: none;"
                          class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                         <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                             <i class="bx bx-user mr-2"></i> Profile

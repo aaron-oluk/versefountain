@@ -158,15 +158,21 @@ class UserController extends Controller
             ->find($user->id);
 
         $poems = $user->poems()->where('approved', true)->latest()->paginate(12);
+        $publishedBooks = \App\Models\Book::where('uploadedById', $user->id)->where('approved', true)->get();
+        $followerCount = $creator->followers_count;
+        $followingCount = $user->following()->count();
         $isFollowing = Auth::check()
             ? Auth::user()->following()->where('poet_id', $user->id)->exists()
             : false;
 
-        return view('profile.creator', [
-            'creator' => $creator,
-            'poems' => $poems,
-            'isFollowing' => $isFollowing,
-        ]);
+        return view('profile.creator', compact(
+            'creator',
+            'poems',
+            'publishedBooks',
+            'followerCount',
+            'followingCount',
+            'isFollowing'
+        ));
     }
 
     /**

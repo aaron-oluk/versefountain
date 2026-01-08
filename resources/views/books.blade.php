@@ -2,28 +2,7 @@
 
 @section('title', 'Library - VerseFountain')
 
-@php
-    $pageTitle = 'Library';
-    $genre = request('genre');
-    $sort = request('sort', 'latest');
-
-    // Build main query with conditional genre filter
-    $query = \App\Models\Book::where('approved', true)
-        ->when($genre && $genre !== 'all', fn($q) => $q->where('genre', $genre));
-
-    // Apply sorting
-    match ($sort) {
-        'title' => $query->orderBy('title', 'asc'),
-        'oldest' => $query->oldest(),
-        default => $query->latest(),
-    };
-
-    $allBooks = $query->paginate(12)->withQueryString();
-
-    // Get trending books and genres in a single pass using raw query
-    $trendingBooks = \App\Models\Book::where('approved', true)->latest()->take(3)->get();
-    $genres = \App\Models\Book::where('approved', true)->whereNotNull('genre')->distinct()->pluck('genre');
-@endphp
+@php $pageTitle = 'Library'; @endphp
 
 @section('content')
     <div class="max-w-7xl mx-auto">

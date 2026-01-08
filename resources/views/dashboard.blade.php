@@ -2,27 +2,7 @@
 
 @section('title', 'Dashboard - VerseFountain')
 
-@php
-    $user = auth()->user();
-    $upcomingEvents = \App\Models\Event::where('date', '>', now())->orderBy('date', 'asc')->take(3)->get();
-    $recommendedBooks = \App\Models\Book::where('approved', true)->latest()->take(4)->get();
-    $liveChatrooms = \App\Models\ChatRoom::withCount('members')->latest()->take(2)->get();
-    $trendingPoems = \App\Models\Poem::where('approved', true)->withCount('userInteractions')->orderBy('user_interactions_count', 'desc')->take(2)->get();
-    $featuredBook = \App\Models\Book::where('approved', true)->inRandomOrder()->first();
-    $followedCreators = $user->following()->with('poems')->latest()->take(2)->get();
-
-    // Time-based greeting
-    $hour = now()->hour;
-    if ($hour < 12) {
-        $greeting = 'Good morning';
-    } elseif ($hour < 17) {
-        $greeting = 'Good afternoon';
-    } else {
-        $greeting = 'Good evening';
-    }
-
-    $pageTitle = 'Dashboard';
-@endphp
+@php $pageTitle = 'Dashboard'; @endphp
 
 @section('content')
 <div class="max-w-7xl mx-auto">

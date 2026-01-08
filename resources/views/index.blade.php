@@ -2,13 +2,7 @@
 
 @section('title', 'Welcome - VerseFountain')
 
-@php
-    $user = auth()->user();
-    $trendingBooks = \App\Models\Book::where('approved', true)->latest()->take(4)->get();
-    $upcomingEvents = \App\Models\Event::where('date', '>', now())->orderBy('date', 'asc')->take(3)->get();
-    $liveChatrooms = \App\Models\ChatRoom::with('members')->latest()->take(2)->get();
-    $trendingPoems = \App\Models\Poem::latest()->take(5)->get();
-@endphp
+@php $pageTitle = 'Home'; @endphp
 
 @section('content')
 <div class="min-h-screen bg-gray-50">

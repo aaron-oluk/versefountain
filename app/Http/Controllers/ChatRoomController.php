@@ -13,9 +13,16 @@ class ChatRoomController extends Controller
     /**
      * Display the chatrooms listing page.
      */
-    public function list()
+    public function list(Request $request)
     {
-        return view('chatrooms');
+        $chatrooms = ChatRoom::withCount('members')->with('createdBy')->latest()->get();
+        $userChatrooms = Auth::user()->chatRooms ?? collect();
+
+        if ($request->get('filter') === 'my-rooms') {
+            $chatrooms = $userChatrooms->load('createdBy')->loadCount('members');
+        }
+
+        return view('chatrooms', compact('chatrooms', 'userChatrooms'));
     }
 
     public function index(Request $request)

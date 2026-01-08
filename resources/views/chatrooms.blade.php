@@ -2,11 +2,7 @@
 
 @section('title', 'Chatrooms - VerseFountain')
 
-@php
-    $pageTitle = 'Chatrooms';
-    $chatrooms = \App\Models\ChatRoom::withCount('members')->with('createdBy')->latest()->get();
-    $userChatrooms = auth()->user()->chatRooms ?? collect();
-@endphp
+@php $pageTitle = 'Chatrooms'; @endphp
 
 @section('content')
 <div class="max-w-5xl mx-auto">

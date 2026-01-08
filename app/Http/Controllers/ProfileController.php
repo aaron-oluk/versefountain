@@ -17,7 +17,35 @@ class ProfileController extends Controller
      */
     public function dashboard(): View
     {
-        return view('dashboard');
+        $user = Auth::user();
+        $upcomingEvents = \App\Models\Event::where('date', '>', now())->orderBy('date', 'asc')->take(3)->get();
+        $recommendedBooks = \App\Models\Book::where('approved', true)->latest()->take(4)->get();
+        $liveChatrooms = \App\Models\ChatRoom::withCount('members')->latest()->take(2)->get();
+        $trendingPoems = \App\Models\Poem::where('approved', true)
+            ->withCount('userInteractions')
+            ->orderBy('user_interactions_count', 'desc')
+            ->take(2)
+            ->get();
+        $featuredBook = \App\Models\Book::where('approved', true)->inRandomOrder()->first();
+        $followedCreators = $user->following()->with('poems')->latest()->take(2)->get();
+
+        $hour = now()->hour;
+        $greeting = match (true) {
+            $hour < 12 => 'Good morning',
+            $hour < 17 => 'Good afternoon',
+            default => 'Good evening',
+        };
+
+        return view('dashboard', compact(
+            'user',
+            'upcomingEvents',
+            'recommendedBooks',
+            'liveChatrooms',
+            'trendingPoems',
+            'featuredBook',
+            'followedCreators',
+            'greeting'
+        ));
     }
 
     /**
@@ -50,9 +78,25 @@ class ProfileController extends Controller
      */
     public function show(Request $request): View
     {
-        return view('profile.show', [
-            'user' => $request->user(),
-        ]);
+        $user = $request->user();
+        $booksRead = 42; // TODO: implement actual tracking
+        $following = $user->following()->count();
+        $discussions = 85; // TODO: implement actual tracking
+        $rank = 'Scribe Lvl. 5'; // TODO: implement actual ranking
+        $currentlyReading = \App\Models\Book::where('approved', true)->first();
+        $trendingBooks = \App\Models\Book::where('approved', true)->take(3)->get();
+        $followedCreators = $user->following()->take(3)->get();
+
+        return view('profile.show', compact(
+            'user',
+            'booksRead',
+            'following',
+            'discussions',
+            'rank',
+            'currentlyReading',
+            'trendingBooks',
+            'followedCreators'
+        ));
     }
 
     /**

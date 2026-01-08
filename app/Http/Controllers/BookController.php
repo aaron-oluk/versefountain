@@ -64,24 +64,26 @@ class BookController extends Controller
         }
 
         // Otherwise, return Blade view for web requests
-        // Get featured books (4 most recent) - reuse base query with eager loading
-        $featuredBooks = (clone $query)->with('uploadedBy')
-            ->latest()
-            ->take(4)
-            ->get();
+        $genre = $request->get('genre');
+        $sort = $request->get('sort', 'latest');
 
-        // Get recent books (paginated) with eager loading
-        $recentBooks = $query->with('uploadedBy')
-            ->latest()
-            ->paginate(12);
+        // Apply genre filter
+        if ($genre && $genre !== 'all') {
+            $query->where('genre', $genre);
+        }
 
-        // Get unique genres for category counts - optimize with pluck directly
-        $genres = Book::where('approved', true)
-            ->whereNotNull('genre')
-            ->distinct()
-            ->pluck('genre');
+        // Apply sorting
+        match ($sort) {
+            'title' => $query->orderBy('title', 'asc'),
+            'oldest' => $query->oldest(),
+            default => $query->latest(),
+        };
 
-        return view('books', compact('featuredBooks', 'recentBooks', 'genres'));
+        $allBooks = $query->paginate(12)->withQueryString();
+        $trendingBooks = Book::where('approved', true)->latest()->take(3)->get();
+        $genres = Book::where('approved', true)->whereNotNull('genre')->distinct()->pluck('genre');
+
+        return view('books', compact('allBooks', 'trendingBooks', 'genres', 'genre', 'sort'));
     }
 
     /**
