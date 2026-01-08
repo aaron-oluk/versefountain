@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Profile - VerseFountain')
-
-@php $pageTitle = 'My Profile'; @endphp
+@section('pageTitle', 'My Profile')
 
 @section('content')
 <div class="flex gap-6 max-w-6xl mx-auto">

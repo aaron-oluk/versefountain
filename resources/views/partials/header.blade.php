@@ -1,13 +1,9 @@
-@php
-    $pageTitle = $pageTitle ?? 'Dashboard';
-@endphp
-
 <!-- Top Header Bar -->
 <header class="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 md:left-56 z-40">
     <div class="px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
         <!-- Page Title -->
         <div class="flex items-center">
-            <h1 class="text-base font-semibold text-gray-900">{{ $pageTitle }}</h1>
+            <h1 class="text-base font-semibold text-gray-900">@yield('pageTitle', 'Dashboard')</h1>
         </div>
 
         <!-- Search Bar (Centered) -->

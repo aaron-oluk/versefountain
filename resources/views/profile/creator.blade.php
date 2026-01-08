@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('title', ($creator->first_name ?? $creator->username) . ' - Creator Profile - VerseFountain')
-
-@php $pageTitle = 'Creator Profile'; @endphp
+@section('pageTitle', 'Creator Profile')
 
 @section('content')
 <div class="min-h-screen bg-gray-50">

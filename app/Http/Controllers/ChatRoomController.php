@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ChatRoom;
+use App\Models\ChatRoomInvitation;
+use App\Models\User;
 use App\Events\UserJoinedChatRoom;
 use App\Events\UserLeftChatRoom;
 use Illuminate\Support\Facades\Auth;
@@ -29,12 +31,12 @@ class ChatRoomController extends Controller
     {
         $query = ChatRoom::query()->withCount('members');
 
-        if ($request->has('isPrivate')) {
-            $request->validate(['isPrivate' => 'boolean']);
-            $query->where('isPrivate', $request->boolean('isPrivate'));
+        if ($request->has('is_private')) {
+            $request->validate(['is_private' => 'boolean']);
+            $query->where('is_private', $request->boolean('is_private'));
         } else {
             if (!Auth::check()) {
-                $query->where('isPrivate', false);
+                $query->where('is_private', false);
             }
         }
 
@@ -57,16 +59,19 @@ class ChatRoomController extends Controller
     {
         // Load relationships
         $chatroom->load('members', 'messages.user');
-        
-        if ($chatroom->isPrivate) {
+
+        if ($chatroom->is_private) {
             $user = Auth::user();
             // Use eager loaded relationship instead of separate query
             if (!$user || !$chatroom->members->contains('id', $user->id)) {
                 abort(403, 'Forbidden. You are not a member of this private chat room.');
             }
         }
-        
-        return view('chatroom', ['chatroom' => $chatroom]);
+
+        $isMember = Auth::check() && $chatroom->members->contains('id', Auth::id());
+        $messages = $chatroom->messages()->with('user')->latest()->take(50)->get()->reverse();
+
+        return view('chatroom', compact('chatroom', 'isMember', 'messages'));
     }
 
     public function apiShow(ChatRoom $room)
@@ -74,7 +79,7 @@ class ChatRoomController extends Controller
         // Load relationships for API response
         $room->load('members');
         
-        if ($room->isPrivate) {
+        if ($room->is_private) {
             $user = Auth::user();
             // Use eager loaded relationship instead of separate query
             if (!$user || !$room->members->contains('id', $user->id)) {
@@ -94,12 +99,14 @@ class ChatRoomController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'isPrivate' => 'boolean',
+            'is_private' => 'boolean',
         ]);
 
         $chatRoom = ChatRoom::create([
-            ...$validatedData,
-            'created_by_id' => $user->id
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'] ?? null,
+            'is_private' => $validatedData['is_private'] ?? false,
+            'created_by_id' => $user->id,
         ]);
 
         $chatRoom->members()->attach($user->id, ['joinedAt' => now()]);
@@ -126,7 +133,7 @@ class ChatRoomController extends Controller
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        if ($room->isPrivate) {
+        if ($room->is_private) {
             if ($room->created_by_id !== $user->id && $user->role !== 'admin') {
                 return response()->json(['message' => 'Forbidden. You cannot join this private chat room without an invitation or admin privileges.'], 403);
             }

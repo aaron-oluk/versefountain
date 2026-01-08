@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Chatrooms - VerseFountain')
-
-@php $pageTitle = 'Chatrooms'; @endphp
+@section('pageTitle', 'Chatrooms')
 
 @section('content')
 <div class="max-w-5xl mx-auto">

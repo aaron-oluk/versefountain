@@ -17,7 +17,7 @@ class ChatMessageController extends Controller
     public function index(Request $request, ChatRoom $chatroom)
     {
         // Check if user is authorized to view messages in this room (especially if private)
-        if ($chatroom->isPrivate) {
+        if ($chatroom->is_private) {
             $user = Auth::user();
             // Load members once and check in memory
             $chatroom->load('members');

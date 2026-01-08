@@ -17,13 +17,12 @@
 </head>
 <body class="antialiased bg-gray-50 overflow-x-hidden">
     @php
-        $pageTitle = $pageTitle ?? 'Dashboard';
         $hideNavigation = request()->is('books/read*') || request()->is('poetry/read*');
     @endphp
 
     @if(!$hideNavigation)
         @include('partials.sidebar')
-        @include('partials.header', ['pageTitle' => $pageTitle])
+        @include('partials.header')
     @endif
 
     <main class="{{ !$hideNavigation ? 'md:pl-56 pt-14' : '' }} min-h-screen pb-20 md:pb-0 bg-gray-50">

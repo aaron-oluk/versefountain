@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->text('content');
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
-            $table->boolean('isVideo')->default(false);
-            $table->string('videoUrl')->nullable();
+            $table->boolean('is_video')->default(false);
             $table->boolean('approved')->default(true); // Default to true based on latest doc
+            $table->string('video_url')->nullable();
+            $table->string('video_thumbnail')->nullable();
             $table->timestamps(); // Adds updated_at
         });
     }
