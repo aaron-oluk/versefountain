@@ -23,5 +23,6 @@ yarn-error.log
 /.zed
 .DS_Store
 /.cursor
+/.claude
 package-lock.json
 composer.lock
