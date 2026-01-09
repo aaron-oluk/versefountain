@@ -155,13 +155,13 @@
                 </div>
                 <form method="GET" class="flex flex-wrap items-center gap-2 sm:gap-3">
                     <select name="status" onchange="this.form.submit()"
-                        class="text-xs sm:text-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        class="text-xs sm:text-sm border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 dark:hover:border-gray-600 transition-colors cursor-pointer font-medium appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 20 20%27%3E%3Cpath stroke=%27%236B7280%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%271.5%27 d=%27m6 8 4 4 4-4%27/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[center_right_0.5rem] bg-no-repeat">
                         <option value="all" {{ $statusFilter === 'all' ? 'selected' : '' }}>All statuses</option>
                         <option value="pending" {{ $statusFilter === 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="approved" {{ $statusFilter === 'approved' ? 'selected' : '' }}>Approved</option>
                     </select>
                     <select name="type" onchange="this.form.submit()"
-                        class="text-xs sm:text-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        class="text-xs sm:text-sm border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 dark:hover:border-gray-600 transition-colors cursor-pointer font-medium appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 20 20%27%3E%3Cpath stroke=%27%236B7280%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%271.5%27 d=%27m6 8 4 4 4-4%27/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[center_right_0.5rem] bg-no-repeat">
                         <option value="all" {{ $typeFilter === 'all' ? 'selected' : '' }}>All types</option>
                         <option value="book" {{ $typeFilter === 'book' ? 'selected' : '' }}>Books</option>
                         <option value="poem" {{ $typeFilter === 'poem' ? 'selected' : '' }}>Poems</option>
@@ -193,7 +193,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($contentItems->take(8) as $item)
+                        @forelse($contentItems as $item)
                             <tr
                                 class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="py-3 px-3 sm:px-4">
@@ -243,28 +243,16 @@
                                         @endif
 
                                         @if ($item['type'] === 'book')
-                                            <form method="POST"
-                                                action="{{ route('api.admin.books.delete', $item['model']) }}"
-                                                onsubmit="return confirm('Delete this book?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button
-                                                    class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-xs sm:text-sm font-semibold">Delete</button>
-                                            </form>
+                                            <button onclick="deleteItem('{{ route('api.admin.books.delete', $item['model']) }}', this.closest('tr'))"
+                                                class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-xs sm:text-sm font-semibold">Delete</button>
                                             <a href="{{ route('books.show', $item['model']) }}"
                                                 class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
                                                 title="View">
                                                 <i class="bx bx-show text-lg"></i>
                                             </a>
                                         @else
-                                            <form method="POST"
-                                                action="{{ route('api.admin.poems.delete', $item['model']) }}"
-                                                onsubmit="return confirm('Delete this poem?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button
-                                                    class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-xs sm:text-sm font-semibold">Delete</button>
-                                            </form>
+                                            <button onclick="deleteItem('{{ route('api.admin.poems.delete', $item['model']) }}', this.closest('tr'))"
+                                                class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-xs sm:text-sm font-semibold">Delete</button>
                                             <a href="{{ route('api.poems.show', $item['model']) }}"
                                                 class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
                                                 title="View">
@@ -284,6 +272,108 @@
                     </tbody>
                 </table>
             </div>
+
+            @if($contentItems->hasPages())
+                <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+                    {{ $contentItems->appends(['status' => $statusFilter, 'type' => $typeFilter])->links() }}
+                </div>
+            @endif
         </div>
     </div>
+@endsection
+
+@section('scripts')
+<script>
+function deleteItem(url, rowElement) {
+    showConfirmToast('Are you sure you want to delete this item?', function() {
+        performDelete(url, rowElement);
+    });
+}
+
+function performDelete(url, rowElement) {
+    fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success || data.message) {
+            rowElement.style.transition = 'opacity 0.3s ease-out';
+            rowElement.style.opacity = '0';
+            setTimeout(() => {
+                rowElement.remove();
+            }, 300);
+            showToast('Item deleted successfully', 'success');
+        } else {
+            showToast(data.message || 'Failed to delete item', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred while deleting', 'error');
+    });
+}
+
+function showConfirmToast(message, onConfirm) {
+    const toastContainer = document.createElement('div');
+    toastContainer.className = 'fixed bottom-20 right-4 bg-amber-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 flex items-center gap-4 animate-slide-in';
+    
+    toastContainer.innerHTML = `
+        <div class="flex items-center gap-3 flex-1">
+            <i class="bx bx-info-circle text-lg flex-shrink-0"></i>
+            <span class="text-sm font-medium">${message}</span>
+        </div>
+        <div class="flex gap-2 flex-shrink-0">
+            <button onclick="this.closest('[data-toast]').remove(); ${onConfirm.toString()}()" class="px-4 py-1.5 bg-white/20 hover:bg-white/30 rounded text-xs font-semibold transition-colors whitespace-nowrap">Confirm</button>
+            <button onclick="this.closest('[data-toast]').remove()" class="px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded text-xs font-semibold transition-colors whitespace-nowrap">Cancel</button>
+        </div>
+    `;
+    toastContainer.setAttribute('data-toast', 'true');
+    
+    document.body.appendChild(toastContainer);
+}
+
+function showToast(message, type = 'info', duration = 3000) {
+    const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+    const icon = type === 'success' ? 'bx-check-circle' : type === 'error' ? 'bx-error-circle' : 'bx-bell';
+    
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-20 right-4 ${bgColor} text-white px-6 py-4 rounded-lg shadow-lg z-50 flex items-center gap-3 animate-slide-in`;
+    toast.setAttribute('data-toast', 'true');
+    
+    toast.innerHTML = `
+        <i class="bx ${icon} text-lg flex-shrink-0"></i>
+        <span class="text-sm font-medium">${message}</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s ease-out';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slide-in {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    .animate-slide-in {
+        animation: slide-in 0.3s ease-out;
+    }
+`;
+document.head.appendChild(style);
+</script>
 @endsection

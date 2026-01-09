@@ -34,9 +34,9 @@
 
     @if(!$hideNavigation)
         @include('partials.mobile-nav')
-        @if(!$isAdminPage)
+        {{-- @if(!$isAdminPage)
             @include('partials.footer')
-        @endif
+        @endif --}}
     @endif
 
     @yield('scripts')

@@ -45,7 +45,7 @@
                 <form action="{{ route('books.index') }}" method="GET" id="sortForm">
                     <input type="hidden" name="genre" value="{{ $genre }}">
                     <select name="sort" onchange="document.getElementById('sortForm').submit()"
-                        class="text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600 dark:text-gray-300">
+                        class="text-sm bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white hover:border-gray-300 dark:hover:border-gray-600 transition-colors cursor-pointer font-medium appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 20 20%27%3E%3Cpath stroke=%27%236B7280%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%271.5%27 d=%27m6 8 4 4 4-4%27/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[center_right_0.5rem] bg-no-repeat">
                         <option value="latest" {{ $sort === 'latest' ? 'selected' : '' }}>Sort: Newest</option>
                         <option value="oldest" {{ $sort === 'oldest' ? 'selected' : '' }}>Sort: Oldest</option>
                         <option value="title" {{ $sort === 'title' ? 'selected' : '' }}>Sort: A-Z</option>

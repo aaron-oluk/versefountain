@@ -24,7 +24,7 @@
             </div>
             <div class="flex gap-2">
                 <select name="sort" onchange="this.form.submit()"
-                        class="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                        class="px-4 py-2.5 pr-10 text-sm border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 dark:hover:border-gray-600 transition-colors cursor-pointer font-medium appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 20 20%27%3E%3Cpath stroke=%27%236B7280%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%271.5%27 d=%27m6 8 4 4 4-4%27/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[center_right_0.5rem] bg-no-repeat">
                     <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Most Popular</option>
                     <option value="most_poems" {{ request('sort') == 'most_poems' ? 'selected' : '' }}>Most Poems</option>
                     <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>

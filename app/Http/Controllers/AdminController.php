@@ -35,6 +35,7 @@ class AdminController extends Controller
 
         $status = $request->query('status', 'all');
         $type = $request->query('type', 'all');
+        $perPage = 15;
 
         $applyStatus = function ($query) use ($status) {
             if ($status === 'pending') {
@@ -52,7 +53,6 @@ class AdminController extends Controller
 
             $contentItems = $contentItems->concat(
                 $booksQuery->latest()
-                    ->take(20)
                     ->get()
                     ->map(function ($book) {
                         return [
@@ -74,7 +74,6 @@ class AdminController extends Controller
 
             $contentItems = $contentItems->concat(
                 $poemsQuery->latest()
-                    ->take(20)
                     ->get()
                     ->map(function ($poem) {
                         return [
@@ -94,6 +93,16 @@ class AdminController extends Controller
             ->sortByDesc('created_at')
             ->values();
 
+        // Paginate the collection
+        $currentPage = $request->query('page', 1);
+        $contentItemsPaginated = new \Illuminate\Pagination\LengthAwarePaginator(
+            $contentItems->forPage($currentPage, $perPage),
+            $contentItems->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         $activeChatrooms = \App\Models\ChatRoom::withCount('members')
             ->orderByDesc('members_count')
             ->take(5)
@@ -112,7 +121,7 @@ class AdminController extends Controller
 
         return view('admin.dashboard', [
             'stats' => $stats,
-            'contentItems' => $contentItems,
+            'contentItems' => $contentItemsPaginated,
             'statusFilter' => $status,
             'typeFilter' => $type,
             'activeChatrooms' => $activeChatrooms,
