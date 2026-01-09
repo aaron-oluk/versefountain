@@ -49,7 +49,7 @@
                                         class="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                                         Read Now
                                     </a>
-                                    <a href="{{ route('books.show', $featuredBook) }}"
+                                    <a href="{{ route('books.show', $featuredBook->uuid) }}"
                                         class="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-50 dark:bg-gray-800 text-blue-600 dark:text-blue-400 text-xs sm:text-sm font-medium rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1.5">
                                         <i class="bx bx-info-circle text-sm sm:text-base"></i>
                                         Details
@@ -73,7 +73,7 @@
                     @if ($recommendedBooks->count() > 0)
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                             @foreach ($recommendedBooks as $book)
-                                <a href="{{ route('books.show', $book->id) }}" class="flex-shrink-0 group">
+                                <a href="{{ route('books.show', $book->uuid) }}" class="flex-shrink-0 group">
                                     <div
                                         class="w-full aspect-[2/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-lg mb-2 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                                         @if ($book->coverImage)
@@ -111,7 +111,7 @@
                                 All</a>
                         </div>
                         @forelse($trendingPoems as $poem)
-                            <a href="{{ route('poetry.show', $poem->id) }}"
+                            <a href="{{ route('poetry.show', $poem->uuid) }}"
                                 class="flex items-start gap-3 {{ !$loop->last ? 'mb-3 pb-3 sm:mb-4 sm:pb-4 border-b border-gray-100 dark:border-gray-800' : '' }} hover:bg-gray-50 dark:hover:bg-gray-800 -mx-2 px-2 py-2 rounded-lg transition-colors">
                                 <div
                                     class="w-9 h-9 sm:w-10 sm:h-10 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">

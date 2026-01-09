@@ -84,11 +84,13 @@
 
         <!-- Tabs -->
         <div class="mb-6">
-            <nav class="flex gap-2 border-b border-gray-200 dark:border-gray-800">
-                <button class="px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 transition-all" data-tab="poems">
+            <nav class="flex gap-2">
+                <button class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 dark:bg-blue-500 rounded-lg transition-all hover:bg-blue-700 dark:hover:bg-blue-600" data-tab="poems">
+                    <i class="bx bx-pen mr-1.5"></i>
                     Poems
                 </button>
-                <button class="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent transition-all" data-tab="books">
+                <button class="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all" data-tab="books">
+                    <i class="bx bx-book mr-1.5"></i>
                     Books
                 </button>
             </nav>
@@ -246,11 +248,11 @@ document.querySelectorAll('[data-tab]').forEach(tab => {
 
         // Update tab styles
         document.querySelectorAll('[data-tab]').forEach(t => {
-            t.classList.remove('text-blue-600', 'dark:text-blue-400', 'border-blue-600', 'dark:border-blue-400');
-            t.classList.add('text-gray-600', 'dark:text-gray-400', 'border-transparent');
+            t.classList.remove('bg-blue-600', 'dark:bg-blue-500', 'text-white', 'hover:bg-blue-700', 'dark:hover:bg-blue-600');
+            t.classList.add('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-white', 'hover:bg-gray-100', 'dark:hover:bg-gray-800');
         });
-        this.classList.remove('text-gray-600', 'dark:text-gray-400', 'border-transparent');
-        this.classList.add('text-blue-600', 'dark:text-blue-400', 'border-blue-600', 'dark:border-blue-400');
+        this.classList.remove('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-white', 'hover:bg-gray-100', 'dark:hover:bg-gray-800');
+        this.classList.add('bg-blue-600', 'dark:bg-blue-500', 'text-white', 'hover:bg-blue-700', 'dark:hover:bg-blue-600');
 
         // Show/hide content
         document.getElementById('poems-tab').classList.toggle('hidden', tabName !== 'poems');

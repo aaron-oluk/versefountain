@@ -3,14 +3,14 @@
 @section('title', ($poem->title ?? 'Poem') . ' - VerseFountain')
 
 @section('content')
-    <div class="min-h-screen bg-stone-50 dark:bg-gray-900" id="poetry-show-container">
+    <div class="min-h-screen bg-gray-50 dark:bg-gray-900" id="poetry-show-container">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <!-- Back Button -->
             <div class="mb-6">
-                <a href="{{ route('poetry.index') }}"
-                    class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm font-normal">
+                <a href="{{ url()->previous() ?? route('poetry.index') }}"
+                    class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition-colors">
                     <i class="bx bx-arrow-back text-base mr-1"></i>
-                    Back to poems
+                    Back
                 </a>
             </div>
 

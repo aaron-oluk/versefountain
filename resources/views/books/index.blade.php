@@ -63,28 +63,28 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     @foreach($trendingBooks as $index => $book)
-                        <a href="{{ route('books.show', $book->id) }}"
-                            class="bg-white rounded-xl border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
-                            <div class="h-48 bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden">
+                        <a href="{{ route('books.show', $book->uuid) }}"
+                            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden group hover:shadow-md transition-shadow">
+                            <div class="h-48 bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
                                 @if($book->coverImage)
                                     <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
                                     <div
-                                        class="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800 flex items-center justify-center">
-                                        <i class="bx bx-book text-5xl text-white/30"></i>
+                                        class="absolute inset-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                        <i class="bx bx-book text-5xl text-gray-400 dark:text-gray-600"></i>
                                     </div>
                                 @endif
                                 @if($index === 0)
                                     <span
-                                        class="absolute top-3 left-3 px-2.5 py-1 bg-blue-600 text-white text-[10px] font-semibold rounded-full uppercase">Editor's
+                                        class="absolute top-3 left-3 px-2.5 py-1 bg-blue-600 text-white text-[10px] font-semibold rounded-lg uppercase">Editor's
                                         Pick</span>
                                 @elseif($index === 1)
                                     <span
-                                        class="absolute top-3 left-3 px-2.5 py-1 bg-purple-600 text-white text-[10px] font-semibold rounded-full uppercase">Popular</span>
+                                        class="absolute top-3 left-3 px-2.5 py-1 bg-blue-600 text-white text-[10px] font-semibold rounded-lg uppercase">Popular</span>
                                 @else
                                     <span
-                                        class="absolute top-3 left-3 px-2.5 py-1 bg-green-600 text-white text-[10px] font-semibold rounded-full uppercase">New
+                                        class="absolute top-3 left-3 px-2.5 py-1 bg-blue-600 text-white text-[10px] font-semibold rounded-lg uppercase">New
                                         Release</span>
                                 @endif
                             </div>
@@ -108,9 +108,9 @@
             @if($allBooks->count() > 0)
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     @foreach($allBooks as $book)
-                        <a href="{{ route('books.show', $book->id) }}"
-                            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden group hover:shadow-md transition-shadow">
-                            <div class="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 relative overflow-hidden">
+                        <a href="{{ route('books.show', $book->uuid) }}"
+                            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden group hover:shadow-md transition-shadow">
+                            <div class="aspect-[3/4] bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
                                 @if($book->coverImage)
                                     <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
