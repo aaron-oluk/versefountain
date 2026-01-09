@@ -8,8 +8,10 @@
         <!-- Clean Header -->
         <div class="border-b border-gray-200 dark:border-gray-800 py-6 sm:py-8">
             <div class="px-4 sm:px-6 lg:px-8">
-                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Academic Resources</h1>
-                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Discover research papers, learning guides, and educational materials</p>
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Academic Resources
+                </h1>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Discover research papers, learning guides,
+                    and educational materials</p>
             </div>
         </div>
 
@@ -30,11 +32,15 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                         @foreach ($featuredResources as $resource)
                             <a href="#" class="group">
-                                <div class="relative rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-blue-100 dark:from-blue-900/40 to-cyan-100 dark:to-cyan-900/40 aspect-video flex items-center justify-center">
+                                <div
+                                    class="relative rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-blue-100 dark:from-blue-900/40 to-cyan-100 dark:to-cyan-900/40 aspect-video flex items-center justify-center">
                                     <i class="bx bx-book text-6xl text-blue-600 dark:text-blue-400 opacity-60"></i>
                                 </div>
-                                <h3 class="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-sm">{{ $resource->title }}</h3>
-                                <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">{{ $resource->subject ?? 'Academic' }}</p>
+                                <h3
+                                    class="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-sm">
+                                    {{ $resource->title }}</h3>
+                                <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                                    {{ $resource->subject ?? 'Academic' }}</p>
                                 <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
                                     <span>{{ $resource->created_at->format('M d, Y') }}</span>
                                 </div>
@@ -47,15 +53,21 @@
             <!-- Browse by Subject -->
             @if ($subjects->count() > 0)
                 <div class="mb-12 sm:mb-16">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Browse by Subject</h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Browse by Subject
+                    </h2>
+                    <div
+                        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
                         @foreach ($subjects as $subject)
-                            <a href="#" class="group p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-400 bg-white dark:bg-gray-800 transition-all">
+                            <a href="#"
+                                class="group p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-400 bg-white dark:bg-gray-800 transition-all">
                                 <div class="text-center">
-                                    <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mx-auto mb-2 group-hover:bg-blue-100 dark:group-hover:bg-blue-800/40 transition-colors">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mx-auto mb-2 group-hover:bg-blue-100 dark:group-hover:bg-blue-800/40 transition-colors">
                                         <i class="bx bx-book-bookmark text-lg text-blue-600 dark:text-blue-400"></i>
                                     </div>
-                                    <p class="text-xs font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">{{ $subject }}</p>
+                                    <p
+                                        class="text-xs font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                                        {{ $subject }}</p>
                                 </div>
                             </a>
                         @endforeach
@@ -69,19 +81,27 @@
                 @if ($recentPapers->count() > 0)
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
                         @foreach ($recentPapers as $paper)
-                            <a href="#" class="group p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md dark:hover:shadow-lg transition-all">
+                            <a href="#"
+                                class="group p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md dark:hover:shadow-lg transition-all">
                                 <div class="flex items-start gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 dark:group-hover:bg-purple-800/40 transition-colors">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 dark:group-hover:bg-purple-800/40 transition-colors">
                                         <i class="bx bx-file-pdf text-lg text-purple-600 dark:text-purple-400"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-sm">{{ $paper->title }}</h3>
+                                        <h3
+                                            class="font-semibold text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-sm">
+                                            {{ $paper->title }}</h3>
                                     </div>
                                 </div>
-                                <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">{{ $paper->subject ?? 'General' }}</p>
-                                <p class="text-xs text-gray-700 dark:text-gray-300 mb-3 line-clamp-2">{{ $paper->description ?? 'No description available' }}</p>
-                                <div class="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
-                                    <span class="text-xs text-gray-500 dark:text-gray-500">{{ $paper->created_at->format('M d, Y') }}</span>
+                                <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">{{ $paper->subject ?? 'General' }}
+                                </p>
+                                <p class="text-xs text-gray-700 dark:text-gray-300 mb-3 line-clamp-2">
+                                    {{ $paper->description ?? 'No description available' }}</p>
+                                <div
+                                    class="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
+                                    <span
+                                        class="text-xs text-gray-500 dark:text-gray-500">{{ $paper->created_at->format('M d, Y') }}</span>
                                     <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">Download</span>
                                 </div>
                             </a>
@@ -93,7 +113,8 @@
                         {{ $recentPapers->links() }}
                     </div>
                 @else
-                    <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-800">
+                    <div
+                        class="text-center py-16 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-800">
                         <i class="bx bx-file text-6xl text-gray-300 dark:text-gray-600 mb-4 block"></i>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">No papers found</h3>
                         <p class="text-gray-600 dark:text-gray-400">Try adjusting your search</p>
@@ -101,37 +122,5 @@
                 @endif
             </div>
         </div>
-
-        <!-- Footer -->
-        <footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-            <div class="px-4 sm:px-6 lg:px-8 py-12">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
-                    <div>
-                        <h3 class="font-semibold text-gray-900 dark:text-white mb-3">About VerseFountain</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Your premier platform for literature, poetry, and academic excellence. Connect with readers and writers worldwide.</p>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Quick Links</h3>
-                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                            <li><a href="{{ route('books.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Library</a></li>
-                            <li><a href="{{ route('poetry.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Poetry</a></li>
-                            <li><a href="{{ route('events.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Events</a></li>
-                            <li><a href="{{ route('subscription') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Premium</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Legal</h3>
-                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                            <li><a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy Policy</a></li>
-                            <li><a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Terms of Service</a></li>
-                            <li><a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Refund & Cancellation</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="border-t border-gray-200 dark:border-gray-800 pt-8">
-                    <p class="text-sm text-gray-600 dark:text-gray-400 text-center">© 2026 VerseFountain. All rights reserved.</p>
-                </div>
-            </div>
-        </footer>
     </div>
 @endsection

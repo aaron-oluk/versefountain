@@ -30,12 +30,36 @@
             </button>
 
             @auth
-                <!-- Notifications -->
-                <button
-                    class="relative p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                    <i class="bx bx-bell text-xl"></i>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
+                <!-- Notifications Dropdown -->
+                <div class="relative" data-notifications-dropdown>
+                    <button data-notifications-toggle
+                        class="relative p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                        <i class="bx bx-bell text-xl"></i>
+                        <span id="notifications-badge" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full hidden"></span>
+                    </button>
+                    <div id="notifications-menu" style="display: none;"
+                        class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-hidden flex flex-col">
+                        <!-- Header -->
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                            <button id="mark-all-read" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                                Mark all as read
+                            </button>
+                        </div>
+                        <!-- Notifications List -->
+                        <div id="notifications-list" class="overflow-y-auto flex-1">
+                            <div class="px-4 py-8 text-center">
+                                <i class="bx bx-loader-alt bx-spin text-2xl text-gray-400"></i>
+                            </div>
+                        </div>
+                        <!-- Footer -->
+                        <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                            <p class="text-xs text-center text-gray-500 dark:text-gray-400">
+                                <span id="unread-count">0</span> unread notifications
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- User Dropdown -->
                 <div class="relative" data-dropdown>

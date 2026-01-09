@@ -27,6 +27,14 @@ class Book extends Model
     ];
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
+    /**
      * Boot the model and generate UUID on creation.
      */
     protected static function boot()
@@ -41,18 +49,10 @@ class Book extends Model
     }
 
     /**
-     * Get the route key for the model.
-     */
-    public function getRouteKeyName()
-    {
-        return 'uuid';
-    }
-
-    /**
      * Get the user who uploaded the book.
      */
     public function uploadedBy()
     {
-        return $this->belongsTo(User::class, 'uploadedById');
+        return $this->belongsTo(User::class, 'uploaded_by_id');
     }
 }

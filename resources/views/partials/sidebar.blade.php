@@ -119,12 +119,53 @@
                     Resources
                 </a>
 
-                <a href="{{ route('subscription') }}"
-                    class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('subscription') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
-                    <i
-                        class="bx bx-diamond mr-3 text-lg {{ request()->routeIs('subscription') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
-                    Subscription
-                </a>
+                @if(!auth()->check() || auth()->user()->role !== 'admin')
+                    <a href="{{ route('subscription') }}"
+                        class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('subscription') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                        <i
+                            class="bx bx-diamond mr-3 text-lg {{ request()->routeIs('subscription') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
+                        Subscription
+                    </a>
+                @endif
+
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <!-- Admin Section -->
+                        <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                            <p class="px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Admin</p>
+
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                                <i class="bx bx-tachometer mr-3 text-lg {{ request()->routeIs('admin.dashboard') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
+                                Dashboard
+                            </a>
+
+                            <a href="{{ route('admin.users') }}"
+                                class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.users*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                                <i class="bx bx-user mr-3 text-lg {{ request()->routeIs('admin.users*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
+                                Users
+                            </a>
+
+                            <a href="{{ route('admin.subscriptions') }}"
+                                class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.subscriptions*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                                <i class="bx bx-credit-card mr-3 text-lg {{ request()->routeIs('admin.subscriptions*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
+                                Subscriptions
+                            </a>
+
+                            <a href="{{ route('admin.finances') }}"
+                                class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.finances*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                                <i class="bx bx-dollar-circle mr-3 text-lg {{ request()->routeIs('admin.finances*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
+                                Finances
+                            </a>
+
+                            <a href="{{ route('admin.reports') }}"
+                                class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.reports*') ? 'bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                                <i class="bx bx-bar-chart-alt-2 mr-3 text-lg {{ request()->routeIs('admin.reports*') ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}"></i>
+                                Reports & Analytics
+                            </a>
+                        </div>
+                    @endif
+                @endauth
             </div>
         </nav>
 

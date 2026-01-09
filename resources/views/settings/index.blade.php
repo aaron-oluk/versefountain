@@ -13,24 +13,26 @@
 
     <!-- Settings Navigation Tabs -->
     <div class="mb-6 sm:mb-8">
-        <div class="border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
-            <nav class="-mb-px flex space-x-4 sm:space-x-8 whitespace-nowrap">
+        <div class="overflow-x-auto">
+            <nav class="flex space-x-2 sm:space-x-4 whitespace-nowrap">
                 <button onclick="switchTab('profile')" id="profile-tab"
-                    class="settings-tab border-b-2 border-blue-600 text-blue-600 dark:text-blue-400 py-3 px-1 text-xs sm:text-sm font-medium">
+                    class="settings-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 transition-colors">
                     Profile
                 </button>
                 <button onclick="switchTab('password')" id="password-tab"
-                    class="settings-tab border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 py-3 px-1 text-xs sm:text-sm font-medium">
+                    class="settings-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                     Password
                 </button>
-                <button onclick="switchTab('billing')" id="billing-tab"
-                    class="settings-tab border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 py-3 px-1 text-xs sm:text-sm font-medium">
-                    Billing
-                </button>
-                <button onclick="switchTab('danger')" id="danger-tab"
-                    class="settings-tab border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 py-3 px-1 text-xs sm:text-sm font-medium">
-                    Danger Zone
-                </button>
+                @if(auth()->user()->role !== 'admin')
+                    <button onclick="switchTab('billing')" id="billing-tab"
+                        class="settings-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        Billing
+                    </button>
+                    <button onclick="switchTab('danger')" id="danger-tab"
+                        class="settings-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        Danger Zone
+                    </button>
+                @endif
             </nav>
         </div>
     </div>
@@ -158,91 +160,95 @@
         </div>
     </div>
 
-    <!-- Billing Tab -->
-    <div id="billing-content" class="settings-content hidden">
-        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
-            <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="bx bx-credit-card text-lg text-gray-600 dark:text-gray-400"></i>
-                    <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Subscription & Billing</h2>
-                </div>
-                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Manage your subscription plan and billing information.</p>
-            </div>
-            <div class="p-4 sm:p-6">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg mb-6">
-                    <div>
-                        <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Current Plan</p>
-                        <p class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Free Plan</p>
-                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Upgrade to access premium features and support</p>
+    @if(auth()->user()->role !== 'admin')
+        <!-- Billing Tab -->
+        <div id="billing-content" class="settings-content hidden">
+            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+                <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="bx bx-credit-card text-lg text-gray-600 dark:text-gray-400"></i>
+                        <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Subscription & Billing</h2>
                     </div>
-                    <a href="{{ route('subscription') }}" class="px-4 py-2 bg-blue-600 text-white text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition-colors font-medium whitespace-nowrap">
-                        Upgrade Plan
-                    </a>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Manage your subscription plan and billing information.</p>
                 </div>
-
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4">Billing History</h3>
-                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                        <div class="p-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
-                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">No billing history yet</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Danger Zone Tab -->
-    <div id="danger-content" class="settings-content hidden">
-        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-red-200 dark:border-red-900/30 overflow-hidden">
-            <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/20">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="bx bx-error text-lg text-red-600 dark:text-red-400"></i>
-                    <h2 class="text-base sm:text-lg font-semibold text-red-900 dark:text-red-300">Danger Zone</h2>
-                </div>
-                <p class="text-xs sm:text-sm text-red-700 dark:text-red-300">Irreversible and destructive actions. Please proceed with caution.</p>
-            </div>
-            <div class="p-4 sm:p-6">
-                <div class="p-4 sm:p-5 border border-red-200 dark:border-red-900/30 rounded-lg bg-red-50 dark:bg-red-900/10">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg mb-6">
                         <div>
-                            <h3 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Delete Account</h3>
-                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Permanently delete your account and all associated data. This cannot be undone.</p>
+                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Current Plan</p>
+                            <p class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Free Plan</p>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Upgrade to access premium features and support</p>
                         </div>
-                        <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white text-xs sm:text-sm rounded-lg hover:bg-red-700 transition-colors font-medium whitespace-nowrap">
-                            Delete Account
-                        </button>
+                        <a href="{{ route('subscription') }}" class="px-4 py-2 bg-blue-600 text-white text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition-colors font-medium whitespace-nowrap">
+                            Upgrade Plan
+                        </a>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4">Billing History</h3>
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                            <div class="p-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">No billing history yet</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <!-- Danger Zone Tab -->
+        <div id="danger-content" class="settings-content hidden">
+            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-red-200 dark:border-red-900/30 overflow-hidden">
+                <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/20">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="bx bx-error text-lg text-red-600 dark:text-red-400"></i>
+                        <h2 class="text-base sm:text-lg font-semibold text-red-900 dark:text-red-300">Danger Zone</h2>
+                    </div>
+                    <p class="text-xs sm:text-sm text-red-700 dark:text-red-300">Irreversible and destructive actions. Please proceed with caution.</p>
+                </div>
+                <div class="p-4 sm:p-6">
+                    <div class="p-4 sm:p-5 border border-red-200 dark:border-red-900/30 rounded-lg bg-red-50 dark:bg-red-900/10">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div>
+                                <h3 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Delete Account</h3>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Permanently delete your account and all associated data. This cannot be undone.</p>
+                            </div>
+                            <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white text-xs sm:text-sm rounded-lg hover:bg-red-700 transition-colors font-medium whitespace-nowrap">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl max-w-md w-full p-4 sm:p-6 border border-gray-100 dark:border-gray-800">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Delete Account</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.</p>
-        <form action="{{ route('profile.destroy') }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <div class="mb-4">
-                <label for="delete_password" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Enter your password to confirm</label>
-                <input type="password" name="password" id="delete_password" required
-                       class="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-red-500 focus:ring-1 focus:ring-red-500">
-            </div>
-            <div class="flex justify-end space-x-3">
-                <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                    Cancel
-                </button>
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white text-xs sm:text-sm rounded-lg hover:bg-red-700 transition-colors font-medium">
-                    Delete Account
-                </button>
-            </div>
-        </form>
+@if(auth()->user()->role !== 'admin')
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl max-w-md w-full p-4 sm:p-6 border border-gray-100 dark:border-gray-800">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Delete Account</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.</p>
+            <form action="{{ route('profile.destroy') }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="mb-4">
+                    <label for="delete_password" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Enter your password to confirm</label>
+                    <input type="password" name="password" id="delete_password" required
+                           class="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-red-500 focus:ring-1 focus:ring-red-500">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white text-xs sm:text-sm rounded-lg hover:bg-red-700 transition-colors font-medium">
+                        Delete Account
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+@endif
 
 @endsection
 
@@ -251,13 +257,14 @@
 function switchTab(tab) {
     // Update tab buttons
     document.querySelectorAll('.settings-tab').forEach(btn => {
-        btn.classList.remove('border-blue-600', 'text-blue-600', 'dark:text-blue-400');
-        btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+        btn.classList.remove('bg-blue-100', 'dark:bg-blue-900/30', 'text-blue-600', 'dark:text-blue-400');
+        btn.classList.add('text-gray-500', 'dark:text-gray-400');
     });
-    
-    document.getElementById(tab + '-tab').classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
-    document.getElementById(tab + '-tab').classList.add('border-blue-600', 'text-blue-600', 'dark:text-blue-400');
-    
+
+    const activeTab = document.getElementById(tab + '-tab');
+    activeTab.classList.remove('text-gray-500', 'dark:text-gray-400');
+    activeTab.classList.add('bg-blue-100', 'dark:bg-blue-900/30', 'text-blue-600', 'dark:text-blue-400');
+
     // Update content
     document.querySelectorAll('.settings-content').forEach(content => {
         content.classList.add('hidden');
@@ -266,11 +273,13 @@ function switchTab(tab) {
 }
 
 function confirmDelete() {
-    document.getElementById('deleteModal').classList.remove('hidden');
+    const modal = document.getElementById('deleteModal');
+    if (modal) modal.classList.remove('hidden');
 }
 
 function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
+    const modal = document.getElementById('deleteModal');
+    if (modal) modal.classList.add('hidden');
 }
 </script>
 @endsection

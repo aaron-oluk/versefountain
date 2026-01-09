@@ -128,8 +128,17 @@ Route::middleware('auth')->group(function () {
     // Tickets
     Route::get('/tickets', [TicketController::class, 'list'])->name('tickets.index');
 
-    // Admin
+    // Admin Pages
     Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'usersPage'])->name('admin.users');
+    Route::get('/admin/subscriptions', [AdminController::class, 'subscriptionsPage'])->name('admin.subscriptions');
+    Route::get('/admin/finances', [AdminController::class, 'financesPage'])->name('admin.finances');
+    Route::get('/admin/reports', [AdminController::class, 'reportsPage'])->name('admin.reports');
+
+    // Notifications API
+    Route::get('/api/notifications', [AdminController::class, 'getNotifications'])->name('api.notifications');
+    Route::post('/api/notifications/{id}/read', [AdminController::class, 'markNotificationRead'])->name('api.notifications.read');
+    Route::post('/api/notifications/read-all', [AdminController::class, 'markAllNotificationsRead'])->name('api.notifications.read-all');
 
     // Creator Studio
     Route::get('/creator-studio/submit', [PoemController::class, 'submit'])->name('poetry.submit');

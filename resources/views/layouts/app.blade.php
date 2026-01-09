@@ -18,6 +18,7 @@
 <body @class(['antialiased', 'bg-gray-50', 'dark:bg-gray-950', 'overflow-x-hidden'])>
     @php
         $hideNavigation = request()->is('books/read*') || request()->is('poetry/read*');
+        $isAdminPage = request()->is('admin*') || request()->is('admin-dashboard*');
     @endphp
 
     @if(!$hideNavigation)
@@ -33,6 +34,9 @@
 
     @if(!$hideNavigation)
         @include('partials.mobile-nav')
+        @if(!$isAdminPage)
+            @include('partials.footer')
+        @endif
     @endif
 
     @yield('scripts')

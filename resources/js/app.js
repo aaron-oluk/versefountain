@@ -1574,6 +1574,235 @@ window.EventManager = EventManager;
 window.AcademicResourceManager = AcademicResourceManager;
 window.CRUDFormHandler = CRUDFormHandler;
 
+// Notifications System
+class NotificationsDropdown {
+    constructor() {
+        this.dropdown = document.querySelector('[data-notifications-dropdown]');
+        this.toggle = document.querySelector('[data-notifications-toggle]');
+        this.menu = document.getElementById('notifications-menu');
+        this.list = document.getElementById('notifications-list');
+        this.badge = document.getElementById('notifications-badge');
+        this.unreadCountEl = document.getElementById('unread-count');
+        this.markAllReadBtn = document.getElementById('mark-all-read');
+        this.isOpen = false;
+        this.notifications = [];
+        this.unreadCount = 0;
+
+        if (this.dropdown) {
+            this.init();
+        }
+    }
+
+    init() {
+        // Toggle dropdown
+        if (this.toggle) {
+            this.toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleDropdown();
+            });
+        }
+
+        // Mark all as read
+        if (this.markAllReadBtn) {
+            this.markAllReadBtn.addEventListener('click', () => this.markAllAsRead());
+        }
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (this.isOpen && !this.dropdown.contains(e.target)) {
+                this.closeDropdown();
+            }
+        });
+
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isOpen) {
+                this.closeDropdown();
+            }
+        });
+
+        // Fetch notifications on load
+        this.fetchNotifications();
+
+        // Poll for new notifications every 30 seconds
+        setInterval(() => this.fetchNotifications(), 30000);
+    }
+
+    toggleDropdown() {
+        this.isOpen = !this.isOpen;
+        if (this.menu) {
+            this.menu.style.display = this.isOpen ? 'flex' : 'none';
+        }
+        if (this.isOpen) {
+            this.fetchNotifications();
+        }
+    }
+
+    closeDropdown() {
+        this.isOpen = false;
+        if (this.menu) {
+            this.menu.style.display = 'none';
+        }
+    }
+
+    async fetchNotifications() {
+        try {
+            const response = await fetch('/api/notifications?limit=10', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': window.csrfToken
+                },
+                credentials: 'same-origin'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.notifications = data.notifications || [];
+                this.unreadCount = data.unread_count || 0;
+                this.render();
+            }
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    }
+
+    render() {
+        // Update badge
+        if (this.badge) {
+            if (this.unreadCount > 0) {
+                this.badge.classList.remove('hidden');
+            } else {
+                this.badge.classList.add('hidden');
+            }
+        }
+
+        // Update unread count text
+        if (this.unreadCountEl) {
+            this.unreadCountEl.textContent = this.unreadCount;
+        }
+
+        // Render notifications list
+        if (this.list) {
+            if (this.notifications.length === 0) {
+                this.list.innerHTML = `
+                    <div class="px-4 py-8 text-center">
+                        <i class="bx bx-bell-off text-3xl text-gray-300 dark:text-gray-600 mb-2"></i>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">No notifications yet</p>
+                    </div>
+                `;
+            } else {
+                this.list.innerHTML = this.notifications.map(notification => this.renderNotification(notification)).join('');
+
+                // Add click handlers for marking as read
+                this.list.querySelectorAll('[data-notification-id]').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const id = el.dataset.notificationId;
+                        this.markAsRead(id);
+                        if (el.dataset.notificationLink) {
+                            window.location.href = el.dataset.notificationLink;
+                        }
+                    });
+                });
+            }
+        }
+    }
+
+    renderNotification(notification) {
+        const isUnread = !notification.read_at;
+        const timeAgo = this.formatTimeAgo(new Date(notification.created_at));
+        const iconBgColors = {
+            blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
+            green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400',
+            red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400',
+            amber: 'bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400',
+            purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+        };
+        const iconBgClass = iconBgColors[notification.icon_bg_color] || iconBgColors.blue;
+
+        return `
+            <div
+                data-notification-id="${notification.id}"
+                data-notification-link="${notification.link || ''}"
+                class="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${isUnread ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}"
+            >
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 w-9 h-9 ${iconBgClass} rounded-full flex items-center justify-center">
+                        <i class="bx ${notification.icon || 'bx-bell'} text-lg"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white ${isUnread ? '' : 'font-normal'}">${notification.title}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${notification.message}</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">${timeAgo}</p>
+                    </div>
+                    ${isUnread ? '<span class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>' : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    formatTimeAgo(date) {
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+
+        if (diffInSeconds < 60) return 'just now';
+        if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + 'm ago';
+        if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + 'h ago';
+        if (diffInSeconds < 604800) return Math.floor(diffInSeconds / 86400) + 'd ago';
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    async markAsRead(id) {
+        try {
+            await fetch(`/api/notifications/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': window.csrfToken
+                },
+                credentials: 'same-origin'
+            });
+
+            // Update local state
+            const notification = this.notifications.find(n => n.id == id);
+            if (notification && !notification.read_at) {
+                notification.read_at = new Date().toISOString();
+                this.unreadCount = Math.max(0, this.unreadCount - 1);
+                this.render();
+            }
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    }
+
+    async markAllAsRead() {
+        try {
+            await fetch('/api/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': window.csrfToken
+                },
+                credentials: 'same-origin'
+            });
+
+            // Update local state
+            this.notifications.forEach(n => n.read_at = new Date().toISOString());
+            this.unreadCount = 0;
+            this.render();
+        } catch (error) {
+            console.error('Error marking all notifications as read:', error);
+        }
+    }
+}
+
+// Initialize notifications on DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+    new NotificationsDropdown();
+});
+
+// Export for global use
+window.NotificationsDropdown = NotificationsDropdown;
+
 // Auto-initialize PoemDetail when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     const poemContainer = document.querySelector('[data-poem-detail]');

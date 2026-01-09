@@ -45,11 +45,11 @@
                                     class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-3 sm:mb-4 leading-relaxed line-clamp-2">
                                     {{ Str::limit($featuredBook->description, 120) }}</p>
                                 <div class="flex gap-2">
-                                    <a href="{{ route('books.read', $featuredBook->id) }}"
+                                    <a href="{{ route('books.read', $featuredBook) }}"
                                         class="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                                         Read Now
                                     </a>
-                                    <a href="{{ route('books.show', $featuredBook->id) }}"
+                                    <a href="{{ route('books.show', $featuredBook) }}"
                                         class="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-50 dark:bg-gray-800 text-blue-600 dark:text-blue-400 text-xs sm:text-sm font-medium rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1.5">
                                         <i class="bx bx-info-circle text-sm sm:text-base"></i>
                                         Details
