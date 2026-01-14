@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Event extends Model
 {
@@ -22,6 +23,7 @@ class Event extends Model
         'is_free',      // Updated to snake_case
         'created_by_id', // Updated to snake_case
         'category',
+        'uuid',
     ];
 
     protected $casts = [
@@ -30,6 +32,28 @@ class Event extends Model
         'is_free' => 'boolean',      // Updated to snake_case
         'ticket_price' => 'integer', // Updated to snake_case
     ];
+
+    /**
+     * Boot the model and generate UUID on creation.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 
     /**
      * Get the user who created the event.

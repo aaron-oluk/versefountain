@@ -13,6 +13,31 @@ use Illuminate\Validation\Rule;
 class TicketController extends Controller
 {
     /**
+     * Display the tickets page.
+     */
+    public function list()
+    {
+        $user = Auth::user();
+        
+        // Get user's tickets with event details
+        $userTickets = Ticket::with('event')
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        // Separate upcoming and past tickets
+        $upcomingTickets = $userTickets->filter(function ($ticket) {
+            return $ticket->event && $ticket->event->date > now();
+        });
+        
+        $pastTickets = $userTickets->filter(function ($ticket) {
+            return $ticket->event && $ticket->event->date <= now();
+        });
+        
+        return view('tickets', compact('upcomingTickets', 'pastTickets'));
+    }
+
+    /**
      * Display a listing of the tickets for a specific event.
      */
     public function index(Request $request, Event $event = null)
@@ -55,8 +80,11 @@ class TicketController extends Controller
             return response()->json(['message' => 'Event not found.'], 404);
         }
 
+        // Check if event is free (either is_free flag or ticket_price is 0)
+        $isEventFree = $event->is_free || $event->ticket_price == 0;
+
         // If event is not free, a payment_id must be provided and valid
-        if (!$event->isFree && !isset($validatedData['payment_id'])) {
+        if (!$isEventFree && !isset($validatedData['payment_id'])) {
             return response()->json(['message' => 'Payment ID is required for paid events.'], 400);
         }
         // Further check: if payment_id is provided, ensure it's for this user and event and is completed
@@ -92,10 +120,10 @@ class TicketController extends Controller
         $ticket = Ticket::create([
             'event_id' => $event->id,
             'user_id' => $user->id,
-            'ticketCode' => $ticketCode,
+            'ticketCode' => $ticketCode,  // Column name in database is camelCase
             'payment_id' => $validatedData['payment_id'] ?? null,
-            'status' => 'active',
-            'isRefunded' => false,
+            'status' => 'confirmed',  // Use 'confirmed' status for successfully registered tickets
+            'isRefunded' => false,  // Column name in database is camelCase
         ]);
 
         return response()->json($ticket, 201);

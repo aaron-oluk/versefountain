@@ -10,83 +10,116 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     @yield('head')
 </head>
 
-<body class="antialiased bg-gray-100 montserrat">
-    <div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <!-- <div class="sm:mx-auto sm:w-full sm:max-w-md">
-            <h2 class="text-center text-3xl font-light text-gray-800 tracking-wide">
-                VerseFountain
-            </h2>
-        </div> -->
+<body class="antialiased bg-white dark:bg-gray-900">
+    <div class="min-h-screen flex">
+        <!-- Left Section - Auth Form -->
+        <div class="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="w-full max-w-md">
+                @yield('auth-content')
+            </div>
+        </div>
 
-        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-5xl">
-            <div class="bg-white shadow-sm rounded-md py-8 px-4 sm:px-10">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Left Column - Auth Form -->
-                    <div>
-                        @yield('auth-content')
-                    </div>
-
-                    <!-- Right Column - Hero Section -->
-                    <div class="hidden md:flex flex-col justify-center">
-                        <div class="text-center mb-6">
-                            <h2 class="text-3xl font-light text-gray-800 mb-4 tracking-wide">
-                                Discover the World of Poetry
-                            </h2>
-                            <p class="text-gray-600 max-w-md mx-auto leading-relaxed font-light">
-                                Join our community of readers and writers. Share your poetry, discover new books, and
-                                connect with like-minded literature enthusiasts.
-                            </p>
+        <!-- Right Section - Feature Promotion -->
+        @if(request()->routeIs('login'))
+        <div class="hidden lg:flex lg:flex-1 bg-white dark:bg-gray-800 items-center justify-center px-12">
+            <div class="max-w-md">
+                <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-4">Discover the World of Poetry</h2>
+                <p class="text-base text-gray-600 dark:text-gray-400 mb-8">
+                    Join our community of readers and writers. Share your poetry, discover new books, and connect with like-minded literature enthusiasts.
+                </p>
+                <div class="space-y-4">
+                    <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6 hover:shadow-md dark:hover:shadow-lg transition-shadow">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="bx bx-edit text-2xl text-gray-600 dark:text-gray-300"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Share Your Poetry</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Publish your poems in text or video format</p>
+                            </div>
                         </div>
-
-                        <div class="flex flex-col space-y-4">
-                            <a href="/poetry">
-                                <div class="flex items-center bg-gray-50 rounded-md p-4 sm:p-6 transition-colors">
-                                    <div class="w-10 h-10 bg-gray-100 flex items-center justify-center mr-4">
-                                        <i class="bx bx-edit text-xl text-gray-600"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-normal text-gray-800">Share Your Poetry</h3>
-                                        <p class="text-sm text-gray-600 font-light">Publish your poems in text or video
-                                            format</p>
-                                    </div>
-                                </div>
-                            </a>
-
-                            <a href="{{ route('chatrooms.index') }}">
-                                <div class="flex items-center bg-gray-50 rounded-md p-4 sm:p-6 transition-colors">
-                                    <div class="w-10 h-10 bg-gray-100 flex items-center justify-center mr-4">
-                                        <i class="bx bx-message-dots text-xl text-gray-600"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-normal text-gray-800">Engage in Chat Rooms</h3>
-                                        <p class="text-sm text-gray-600 font-light">Discuss literature with fellow
-                                            enthusiasts</p>
-                                    </div>
-                                </div>
-                            </a>
-
-                            <a href="/books">
-                                <div class="flex items-center bg-gray-50 rounded-md p-4 sm:p-6 transition-colors">
-                                    <div class="w-10 h-10 bg-gray-100 flex items-center justify-center mr-4">
-                                        <i class="bx bx-book text-xl text-gray-600"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-normal text-gray-800">Explore Books</h3>
-                                        <p class="text-sm text-gray-600 font-light">Access our vast collection of eBooks
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6 hover:shadow-md dark:hover:shadow-lg transition-shadow">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="bx bx-message-dots text-2xl text-gray-600 dark:text-gray-300"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Engage in Chat Rooms</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Discuss literature with fellow enthusiasts</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6 hover:shadow-md dark:hover:shadow-lg transition-shadow">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="bx bx-book text-2xl text-gray-600 dark:text-gray-300"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Explore Books</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Access our vast collection of eBooks</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        @elseif(request()->routeIs('register'))
+        <!-- Register page - Dark blue background with buttons -->
+        <div class="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800 relative overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1920&q=80');"></div>
+            <div class="absolute inset-0 bg-black opacity-20"></div>
+            <div class="relative z-10 flex flex-col justify-center px-12 text-white">
+                <h2 class="text-4xl font-semibold mb-4">Discover. Discuss. Connect.</h2>
+                <p class="text-lg mb-8 opacity-90">
+                    Access thousands of poems, join exclusive chatrooms, and support your favorite creators directly. Your next favorite verse is waiting.
+                </p>
+                <div class="flex gap-3">
+                    <a href="/books" class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-book"></i>
+                        E-Library
+                    </a>
+                    <a href="{{ route('chatrooms.index') }}" class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-message-dots"></i>
+                        Community
+                    </a>
+                    <a href="/poetry" class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-check-circle"></i>
+                        Creators
+                    </a>
+                </div>
+            </div>
+        </div>
+        @else
+        <!-- For other auth pages (password reset, etc.) -->
+        <div class="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800 relative overflow-hidden">
+            <div class="absolute inset-0 bg-black opacity-20"></div>
+            <div class="relative z-10 flex flex-col justify-center px-12 text-white">
+                <h2 class="text-4xl font-semibold mb-4">Discover. Discuss. Connect.</h2>
+                <p class="text-lg mb-8 opacity-90">
+                    Access thousands of poems, join exclusive chatrooms, and support your favorite creators directly. Your next favorite verse is waiting.
+                </p>
+                <div class="flex gap-3">
+                    <button class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-book"></i>
+                        E-Library
+                    </button>
+                    <button class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-message-dots"></i>
+                        Community
+                    </button>
+                    <button class="px-4 py-2 border-2 border-white rounded-lg text-sm font-medium hover:bg-white hover:text-blue-900 transition-colors flex items-center gap-2">
+                        <i class="bx bx-check-circle"></i>
+                        Creators
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 
     @yield('scripts')

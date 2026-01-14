@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid', 36)->unique();
             $table->string('title');
             $table->text('description')->nullable();
             $table->timestamp('date');

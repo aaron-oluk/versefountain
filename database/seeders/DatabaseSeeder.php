@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\ChatRoom;
+use App\Models\Poem;
+use App\Models\Book;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,13 +18,16 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'first_name' => 'Test User',
+            'last_name' => 'Example',
             'email' => 'test@example.com',
+            'password' => 'password',
         ]);
 
-        // Seed chatrooms
+        // Seed poems and books
         $this->call([
-            ChatRoomSeeder::class,
+            PoemSeeder::class,
+            BookSeeder::class,
         ]);
     }
 }

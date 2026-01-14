@@ -11,6 +11,50 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     /**
+     * Display a listing of creators/poets.
+     */
+    public function index(Request $request)
+    {
+        $query = User::withCount(['poems' => fn($q) => $q->where('approved', true), 'followers']);
+
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('username', 'like', "%{$search}%")
+                    ->orWhere('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('has_poems')) {
+            $query->has('poems');
+        }
+
+        // Sort options
+        $sort = $request->get('sort', 'popular');
+        switch ($sort) {
+            case 'newest':
+                $query->latest();
+                break;
+            case 'most_poems':
+                $query->orderBy('poems_count', 'desc');
+                break;
+            case 'popular':
+            default:
+                $query->orderBy('followers_count', 'desc');
+                break;
+        }
+
+        $creators = $query->paginate(12)->withQueryString();
+
+        if ($request->wantsJson()) {
+            return response()->json($creators);
+        }
+
+        return view('creators.index', compact('creators'));
+    }
+
+    /**
      * Retrieve a list of "featured" poets.
      * (Logic for "featured" can be customized, e.g., most followers, active users)
      */
@@ -103,5 +147,46 @@ class UserController extends Controller
 
         $isFollowing = $currentUser->following()->where('poet_id', $user->id)->exists();
         return response()->json(['isFollowing' => $isFollowing]);
+    }
+
+    /**
+     * Display a creator's profile page.
+     */
+    public function showCreator(User $user)
+    {
+        $creator = User::withCount(['poems' => fn($q) => $q->where('approved', true), 'followers'])
+            ->find($user->id);
+
+        $poems = $user->poems()->where('approved', true)->latest()->paginate(12);
+        $publishedBooks = \App\Models\Book::where('uploaded_by_id', $user->id)->where('approved', true)->get();
+        $followerCount = $creator->followers_count;
+        $followingCount = $user->following()->count();
+        $isFollowing = Auth::check()
+            ? Auth::user()->following()->where('poet_id', $user->id)->exists()
+            : false;
+
+        return view('profile.creator', compact(
+            'creator',
+            'poems',
+            'publishedBooks',
+            'followerCount',
+            'followingCount',
+            'isFollowing'
+        ));
+    }
+
+    /**
+     * Get current authenticated user data (API).
+     */
+    public function currentUser()
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'user_id' => $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'role' => $user->role,
+        ]);
     }
 }

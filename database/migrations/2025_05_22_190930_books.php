@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid', 36)->unique();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('coverImage')->nullable();
+            $table->longText('coverImage')->nullable();
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
             $table->string('genre')->nullable();
-            $table->foreignId('uploadedById')->nullable()->constrained('users')->onDelete('set null');
-            $table->boolean('approved')->default(false);
-            $table->timestamps(); // Adds created_at and updated_at
+            $table->string('status')->default('unpublished');
+            $table->foreignId('uploaded_by_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->boolean('approved')->default(true);
+            $table->timestamps();
         });
     }
 

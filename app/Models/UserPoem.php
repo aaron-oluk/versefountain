@@ -13,12 +13,13 @@ class UserPoem extends Model
     protected $fillable = [
         'user_id',
         'poem_id',
-        'type', // 'like', 'rating'
-        'rating', // 1-5 for rating type
+        'liked',
+        'rating',
     ];
 
     protected $casts = [
         'rating' => 'integer',
+        'liked' => 'boolean',
     ];
 
     /**

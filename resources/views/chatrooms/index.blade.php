@@ -1,0 +1,329 @@
+@extends('layouts.app')
+
+@section('title', 'Chatrooms - VerseFountain')
+@section('pageTitle', 'Chatrooms')
+
+@section('content')
+<div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Explore Chatrooms</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Join conversations with fellow readers and writers.</p>
+            </div>
+            @auth
+            <!-- Desktop Create Button -->
+            <a href="{{ route('chatrooms.create') }}" class="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap">
+                <i class="bx bx-plus text-lg"></i>
+                Create Room
+            </a>
+            @endauth
+        </div>
+    </div>
+
+    @auth
+    <!-- Mobile FAB -->
+    <a href="{{ route('chatrooms.create') }}" class="sm:hidden fixed bottom-20 right-4 z-40 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110">
+        <i class="bx bx-plus text-2xl"></i>
+    </a>
+    @endauth
+
+    <!-- Filter Tabs -->
+    <div class="flex items-center gap-2 mb-6 flex-wrap">
+        <a href="{{ route('chatrooms.index') }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ !request('filter') ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            All Rooms
+        </a>
+        @auth
+        <a href="{{ route('chatrooms.index', ['filter' => 'my-rooms']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'my-rooms' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            My Rooms
+            @if($userChatrooms->count() > 0)
+                <span class="ml-1 px-1.5 py-0.5 bg-white/20 rounded text-xs">{{ $userChatrooms->count() }}</span>
+            @endif
+        </a>
+        <a href="{{ route('chatrooms.index', ['filter' => 'invites']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'invites' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            Invites
+        </a>
+        @endauth
+        <a href="{{ route('chatrooms.index', ['filter' => 'poetry-slams']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'poetry-slams' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            Poetry Slams
+        </a>
+        <a href="{{ route('chatrooms.index', ['filter' => 'book-clubs']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'book-clubs' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            Book Clubs
+        </a>
+        <a href="{{ route('chatrooms.index', ['filter' => 'author-qa']) }}" class="px-4 py-2 text-sm font-medium rounded-lg {{ request('filter') === 'author-qa' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700' }} transition-colors">
+            Author Q&A
+        </a>
+    </div>
+
+    <!-- Search -->
+    <div class="mb-6">
+        <div class="relative">
+            <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+            <input type="text" id="searchRooms" placeholder="Search chatrooms..."
+                   class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+        </div>
+    </div>
+
+    <!-- Room Cards -->
+    <div class="space-y-4" id="roomsList">
+        @forelse($chatrooms as $room)
+        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md dark:hover:shadow-lg transition-shadow room-card" data-name="{{ strtolower($room->name) }}">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+                @if($room->is_private)
+                    <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-[10px] font-semibold rounded-full uppercase">Private</span>
+                @else
+                    <span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-semibold rounded-full uppercase">Public</span>
+                @endif
+                <span class="flex items-center gap-1 text-[10px] text-green-600 dark:text-green-400">
+                    <span class="w-1.5 h-1.5 bg-green-500 dark:bg-green-400 rounded-full"></span>
+                    {{ $room->members_count }} members
+                </span>
+            </div>
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">{{ $room->name }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">{{ $room->description ?? 'Join the conversation!' }}</p>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                    <span>Created by</span>
+                    <a href="{{ route('profile.creator', $room->createdBy->id ?? 1) }}" class="font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                        {{ $room->createdBy->first_name ?? $room->createdBy->username ?? 'Unknown' }}
+                    </a>
+                </div>
+                @php
+                    $isMember = $userChatrooms->contains('id', $room->id);
+                    $isPending = in_array($room->id, $pendingRequests ?? []);
+                @endphp
+                @if($isMember)
+                    <a href="{{ route('chatroom.show', $room->id) }}" class="px-4 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                        Enter Room
+                    </a>
+                @elseif($isPending)
+                    <button class="px-4 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
+                        Request Pending
+                    </button>
+                @else
+                    <button data-private="{{ $room->is_private ? '1' : '0' }}" onclick="joinRoom({{ $room->id }}, this)" class="px-4 py-1.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        {{ $room->is_private ? 'Request Access' : 'Join Room' }}
+                    </button>
+                @endif
+            </div>
+        </div>
+        @empty
+        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <i class="bx bx-message-square-dots text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No chatrooms yet</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">Be the first to create a chatroom!</p>
+            @auth
+            <button onclick="openCreateRoomModal()" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                Create Room
+            </button>
+            @endauth
+        </div>
+        @endforelse
+    </div>
+</div>
+
+<!-- Create Room Modal -->
+<div id="createRoomModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Create New Chatroom</h3>
+        <form id="createRoomForm">
+            <div class="space-y-4">
+                <div>
+                    <label for="roomName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Room Name</label>
+                    <input type="text" id="roomName" name="name" required
+                           class="w-full px-4 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="roomDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                    <textarea id="roomDescription" name="description" rows="3"
+                              class="w-full px-4 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"></textarea>
+                </div>
+                <div>
+                    <label for="roomCategory" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+                    <select id="roomCategory" name="category" class="w-full px-4 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        <option value="general">General</option>
+                        <option value="poetry_slams">Poetry Slams</option>
+                        <option value="book_clubs">Book Clubs</option>
+                        <option value="author_qa">Author Q&A</option>
+                    </select>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="isPrivate" name="is_private" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <label for="isPrivate" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Make this room private</label>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" onclick="closeCreateRoomModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Create Room
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Join Request Modal -->
+<div id="joinRequestModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Request to Join</h3>
+        <form id="joinRequestForm">
+            <div class="space-y-4">
+                <div>
+                    <label for="joinMessage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Add a note for the host (optional)</label>
+                    <textarea id="joinMessage" name="message" rows="3" placeholder="Tell the host why you'd like to join..."
+                              class="w-full px-4 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" onclick="closeJoinRequestModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Send Request
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+// Search functionality
+document.getElementById('searchRooms').addEventListener('input', function(e) {
+    const search = e.target.value.toLowerCase();
+    document.querySelectorAll('.room-card').forEach(card => {
+        const name = card.dataset.name;
+        card.style.display = name.includes(search) ? 'block' : 'none';
+    });
+});
+
+// Create room modal
+function openCreateRoomModal() {
+    document.getElementById('createRoomModal').classList.remove('hidden');
+}
+
+function closeCreateRoomModal() {
+    document.getElementById('createRoomModal').classList.add('hidden');
+}
+
+// Join request modal
+let currentJoinRoomId = null;
+let currentJoinButton = null;
+
+function openJoinRequestModal(roomId, button) {
+    currentJoinRoomId = roomId;
+    currentJoinButton = button;
+    document.getElementById('joinMessage').value = '';
+    document.getElementById('joinRequestModal').classList.remove('hidden');
+}
+
+function closeJoinRequestModal() {
+    document.getElementById('joinRequestModal').classList.add('hidden');
+    currentJoinRoomId = null;
+    currentJoinButton = null;
+}
+
+// Create room form
+document.getElementById('createRoomForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = {
+        name: document.getElementById('roomName').value,
+        description: document.getElementById('roomDescription').value,
+        category: document.getElementById('roomCategory').value,
+        is_private: document.getElementById('isPrivate').checked
+    };
+
+    fetch('/api/chat/rooms', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.id) {
+            window.location.href = `/chat/rooms/${data.id}`;
+        } else {
+            alert(data.message || 'Failed to create room');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to create room');
+    });
+});
+
+// Join request form
+document.getElementById('joinRequestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentJoinRoomId || !currentJoinButton) return;
+    
+    const message = document.getElementById('joinMessage').value;
+    
+    fetch(`/api/chat/rooms/${currentJoinRoomId}/join-request`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            currentJoinButton.textContent = 'Request Pending';
+            currentJoinButton.disabled = true;
+            currentJoinButton.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
+            currentJoinButton.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+            closeJoinRequestModal();
+        } else {
+            alert('Failed to send request');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to send request');
+    });
+});
+
+// Join room
+function joinRoom(roomId, button) {
+    const isPrivate = button.dataset.private === '1';
+
+    if (isPrivate) {
+        openJoinRequestModal(roomId, button);
+        return;
+    }
+
+    fetch(`/api/chat/rooms/${roomId}/join`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message && data.message.includes('success')) {
+            button.textContent = 'Enter Room';
+            button.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
+            button.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+            button.onclick = () => window.location.href = `/chat/rooms/${roomId}`;
+        } else {
+            alert(data.message || 'Failed to join room');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to join room');
+    });
+}
+</script>
+@endsection
