@@ -194,17 +194,6 @@
                             {{ auth()->user()->role === 'admin' ? 'Administrator' : 'Member' }}</p>
                     </div>
                 </a>
-            @else
-                <div class="border-t border-gray-100 dark:border-gray-800 pt-4 space-y-2">
-                    <a href="{{ route('login') }}"
-                        class="flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        Log In
-                    </a>
-                    <a href="{{ route('register') }}"
-                        class="flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
-                        Sign Up
-                    </a>
-                </div>
             @endauth
         </div>
     </div>

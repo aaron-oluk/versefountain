@@ -197,9 +197,12 @@
                     class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 dark:border-gray-800">
                     <div class="flex items-center justify-between mb-3 sm:mb-4">
                         <h2 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Live Chatrooms</h2>
-                        <span
-                            class="text-2xs sm:text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">{{ $liveChatrooms->count() }}
-                            Active</span>
+                        @if($liveChatrooms->count() > 0)
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-2xs sm:text-xs font-semibold rounded-full">
+                                <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+                                {{ $liveChatrooms->count() }} Active
+                            </span>
+                        @endif
                     </div>
                     <div class="space-y-3 sm:space-y-4">
                         @forelse($liveChatrooms as $chatroom)
@@ -235,8 +238,13 @@
                                 </div>
                             </a>
                         @empty
-                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center py-4">No active
-                                chatrooms.</p>
+                            <div class="text-center py-6">
+                                <i class="bx bx-message-dots text-2xl sm:text-3xl text-gray-300 dark:text-gray-600 mb-2"></i>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-2">No active chatrooms</p>
+                                <a href="{{ route('chatrooms.create') }}" class="inline-block text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                                    Start a chatroom →
+                                </a>
+                            </div>
                         @endforelse
                     </div>
                     <a href="{{ route('chatrooms.index') }}"

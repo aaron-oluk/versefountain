@@ -87,44 +87,33 @@
                     </a>
                 </div>
             </div>
-            @else
-            <!-- Call to Action for Guests -->
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-xl p-6 sm:p-8 text-center shadow-md">
-                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2 sm:mb-3">Join Our Community</h2>
-                <p class="text-sm sm:text-base lg:text-lg text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto">Connect with fellow poetry enthusiasts, discover new authors, and participate in literary events.</p>
-                <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="{{ route('register') }}" class="bg-white text-blue-600 px-6 sm:px-8 py-2.5 sm:py-3 text-sm font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-sm">
-                        Get Started
-                    </a>
-                    <a href="{{ route('login') }}" class="bg-white/20 text-white border-2 border-white/50 px-6 sm:px-8 py-2.5 sm:py-3 text-sm font-semibold rounded-lg hover:bg-white/30 transition-colors">
-                        Sign In
-                    </a>
-                </div>
-            </div>
-                    </a>
-                </div>
-            </div>
             @endauth
 
             <!-- Recommended for You -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4 sm:mb-6">
                     <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Recommended for You</h2>
-                    <a href="/books" class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold whitespace-nowrap">View All →</a>
+                    <a href="{{ route('books.index') }}" class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold whitespace-nowrap">View All →</a>
                 </div>
                 <div class="flex gap-3 sm:gap-4 overflow-x-auto pb-2">
                     @forelse($trendingBooks as $book)
-                    <div class="flex-shrink-0 w-28 sm:w-32 group cursor-pointer">
+                    <a href="{{ route('books.show', $book->uuid) }}" class="flex-shrink-0 w-28 sm:w-32 group">
                         <div class="w-28 sm:w-32 h-40 sm:h-48 bg-gradient-to-br from-gray-200 dark:from-gray-700 to-gray-300 dark:to-gray-800 rounded-lg flex items-center justify-center mb-2 sm:mb-3 overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                            @if($book->coverImage ?? false)
-                                <img src="{{ $book->coverImage }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform">
+                            @if($book->coverImage)
+                                @if(str_starts_with($book->coverImage, 'data:image') || str_starts_with($book->coverImage, 'http'))
+                                    <img src="{{ $book->coverImage }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform">
+                                @else
+                                    <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform">
+                                @endif
                             @else
-                                <i class="bx bx-book text-3xl sm:text-4xl text-gray-400 dark:text-gray-500"></i>
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <i class="bx bx-book text-3xl sm:text-4xl text-gray-400 dark:text-gray-500"></i>
+                                </div>
                             @endif
                         </div>
-                        <h3 class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400">{{ $book->title }}</h3>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 truncate">{{ $book->author }}</p>
-                    </div>
+                        <h3 class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $book->title }}</h3>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 truncate">{{ $book->author ?? 'Unknown Author' }}</p>
+                    </a>
                     @empty
                     <div class="flex-shrink-0 w-28 sm:w-32">
                         <div class="w-28 sm:w-32 h-40 sm:h-48 bg-gray-100 dark:bg-gray-700 rounded-lg flex flex-col items-center justify-center mb-2 sm:mb-3 border-2 border-dashed border-gray-300 dark:border-gray-600">
@@ -133,12 +122,14 @@
                         </div>
                     </div>
                     @endforelse
+                    @if($trendingBooks->count() > 0)
                     <div class="flex-shrink-0 w-28 sm:w-32">
-                        <a href="/books" class="w-28 sm:w-32 h-40 sm:h-48 bg-gray-100 dark:bg-gray-700 rounded-lg flex flex-col items-center justify-center mb-2 sm:mb-3 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 hover:border-blue-400 dark:hover:border-blue-400 transition-colors group cursor-pointer">
+                        <a href="{{ route('books.index') }}" class="w-28 sm:w-32 h-40 sm:h-48 bg-gray-100 dark:bg-gray-700 rounded-lg flex flex-col items-center justify-center mb-2 sm:mb-3 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 hover:border-blue-400 dark:hover:border-blue-400 transition-colors group cursor-pointer">
                             <i class="bx bx-plus text-3xl sm:text-4xl text-gray-400 dark:text-gray-500 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"></i>
-                            <span class="text-xs text-gray-600 dark:text-gray-400 text-center px-2 group-hover:text-blue-600 dark:group-hover:text-blue-400">Discover</span>
+                            <span class="text-xs text-gray-600 dark:text-gray-400 text-center px-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Discover</span>
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
 
@@ -173,25 +164,38 @@
                 @endif
             </div>
 
-            <!-- Creator Updates -->
+            <!-- Creator Updates (only for authenticated users) -->
+            @auth
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4 sm:mb-6">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Creator Updates</h2>
-                    <a href="/poetry" class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold whitespace-nowrap">View All →</a>
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Following</h2>
+                    <a href="{{ route('creators.index') }}" class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold whitespace-nowrap">View All →</a>
                 </div>
-                <div class="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
-                        <span class="text-white text-xs sm:text-sm font-semibold">SK</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1 sm:mb-2 flex-wrap">
-                            <span class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Sarah Kay</span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">15m ago</span>
+                <div class="space-y-3 sm:space-y-4">
+                    @forelse($followedCreators ?? [] as $creator)
+                        <a href="{{ route('profile.creator', $creator->id) }}" class="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                                <span class="text-white text-xs sm:text-sm font-semibold">{{ strtoupper(substr($creator->first_name ?? $creator->username, 0, 2)) }}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1 sm:mb-2 flex-wrap">
+                                    <span class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">{{ $creator->first_name ?? $creator->username }} {{ $creator->last_name ?? '' }}</span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $creator->poems->count() }} {{ Str::plural('poem', $creator->poems->count()) }}</p>
+                            </div>
+                        </a>
+                    @empty
+                        <div class="text-center py-6 sm:py-8">
+                            <i class="bx bx-user text-3xl sm:text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-2">You're not following any creators yet</p>
+                            <a href="{{ route('creators.index') }}" class="inline-block text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                                Discover creators →
+                            </a>
                         </div>
-                        <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 line-clamp-2">Just finished the draft for my new collection. Can't wait to share it with you all!</p>
-                    </div>
+                    @endforelse
                 </div>
             </div>
+            @endauth
         </main>
 
         <!-- Right Sidebar -->
@@ -225,25 +229,18 @@
                     </a>
                 </div>
             </div>
-            @else
-            <!-- Sign Up Prompt for Guests -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-4 sm:p-6 border border-gray-200 dark:border-gray-700 text-center">
-                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="bx bx-user-plus text-2xl sm:text-3xl text-blue-600 dark:text-blue-400"></i>
-                </div>
-                <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Join VerseFountain</h2>
-                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">Start your reading journey today</p>
-                <a href="{{ route('register') }}" class="block w-full px-4 py-2 sm:py-2.5 bg-blue-600 dark:bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors shadow-sm">
-                    Sign Up Free
-                </a>
-            </div>
             @endauth
 
             <!-- Live Chatrooms -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-md p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4 sm:mb-6">
                     <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Live Chatrooms</h2>
-                    <span class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-semibold">{{ $liveChatrooms->count() }} Active</span>
+                    @if($liveChatrooms->count() > 0)
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold rounded-full">
+                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+                            {{ $liveChatrooms->count() }} Active
+                        </span>
+                    @endif
                 </div>
                 @if($liveChatrooms->count() > 0)
                 <div class="space-y-3 sm:space-y-4">
@@ -270,8 +267,17 @@
                 </a>
                 @else
                 <div class="text-center py-6 sm:py-8">
-                    <i class="bx bx-message-dots text-3xl sm:text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
-                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">No active chatrooms</p>
+                    <i class="bx bx-message-dots text-3xl sm:text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-2">No active chatrooms</p>
+                    @auth
+                        <a href="{{ route('chatrooms.create') }}" class="inline-block text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                            Start a chatroom →
+                        </a>
+                    @else
+                        <a href="{{ route('register') }}" class="inline-block text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                            Join to participate →
+                        </a>
+                    @endauth
                 </div>
                 @endif
             </div>
@@ -304,8 +310,11 @@
                 </a>
                 @else
                 <div class="text-center py-6 sm:py-8">
-                    <i class="bx bx-calendar text-3xl sm:text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
-                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">No upcoming events</p>
+                    <i class="bx bx-calendar text-3xl sm:text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-2">No upcoming events</p>
+                    <a href="{{ route('events.index') }}" class="inline-block text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                        Browse all events →
+                    </a>
                 </div>
                 @endif
             </div>
