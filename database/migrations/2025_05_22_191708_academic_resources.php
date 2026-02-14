@@ -18,9 +18,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('type'); // e.g., "study_guide", "video", "career_guide"
             $table->string('subject')->nullable();
-            $table->string('gradeLevel')->nullable();
+            $table->string('grade_level')->nullable();
             $table->string('language')->default('English');
-            $table->string('resourceUrl')->nullable();
+            $table->string('resource_url')->nullable();
             $table->timestamps();
         });
     }

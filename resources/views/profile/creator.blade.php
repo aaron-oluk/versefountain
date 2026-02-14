@@ -143,8 +143,8 @@
                             @foreach($publishedBooks as $book)
                             <a href="{{ route('books.show', $book) }}" class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-lg dark:hover:shadow-xl transition-all group">
                                 <div class="aspect-[3/4] bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
-                                    @if($book->coverImage)
-                                        <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    @if($book->cover_image)
+                                        <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                     @else
                                         <i class="bx bx-book text-4xl sm:text-5xl text-gray-300 dark:text-gray-700"></i>
                                     @endif
@@ -192,8 +192,8 @@
                     @php $featuredBook = $publishedBooks->first(); @endphp
                     <a href="{{ route('books.show', $featuredBook) }}" class="block group">
                         <div class="aspect-[3/4] bg-gray-100 dark:bg-gray-800 rounded-lg mb-3 overflow-hidden">
-                            @if($featuredBook->coverImage)
-                                <img src="{{ asset('storage/' . $featuredBook->coverImage) }}" alt="{{ $featuredBook->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            @if($featuredBook->cover_image)
+                                <img src="{{ asset('storage/' . $featuredBook->cover_image) }}" alt="{{ $featuredBook->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             @else
                                 <div class="w-full h-full flex items-center justify-center">
                                     <i class="bx bx-book text-4xl text-gray-300 dark:text-gray-700"></i>

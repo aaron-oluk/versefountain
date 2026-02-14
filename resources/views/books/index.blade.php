@@ -66,8 +66,8 @@
                         <a href="{{ route('books.show', $book->uuid) }}"
                             class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden group hover:shadow-md transition-shadow">
                             <div class="h-48 bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
-                                @if($book->coverImage)
-                                    <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}"
+                                @if($book->cover_image)
+                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
                                     <div
@@ -111,8 +111,8 @@
                         <a href="{{ route('books.show', $book->uuid) }}"
                             class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden group hover:shadow-md transition-shadow">
                             <div class="aspect-[3/4] bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
-                                @if($book->coverImage)
-                                    <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}"
+                                @if($book->cover_image)
+                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center">

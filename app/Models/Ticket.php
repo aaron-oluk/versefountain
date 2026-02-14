@@ -13,16 +13,16 @@ class Ticket extends Model
     protected $fillable = [
         'event_id',
         'user_id',
-        'purchaseDate',  // Actual column name in database (camelCase)
-        'ticketCode',    // Actual column name in database (camelCase)
+        'purchase_date',
+        'ticket_code',
         'status',
         'payment_id',
-        'isRefunded',    // Actual column name in database (camelCase)
+        'is_refunded',
     ];
 
     protected $casts = [
-        'purchaseDate' => 'datetime',  // Match actual column name
-        'isRefunded' => 'boolean',     // Match actual column name
+        'purchase_date' => 'datetime',
+        'is_refunded' => 'boolean',
     ];
 
     /**

@@ -117,14 +117,14 @@ class PaddleWebhookController extends Controller
     protected function handleTransactionCompleted(array $data)
     {
         $paddlePaymentId = $data['id'];
-        $paddleTransactionId = $data['checkout_id'] ?? null; // Or use `invoice_id` depending on Paddle version/type
+        $paddle_transaction_id = $data['checkout_id'] ?? null; // Or use `invoice_id` depending on Paddle version/type
         $status = 'completed';
         $amount = (int)($data['details']['totals']['total'] ?? 0); // Amount in cents/smallest unit
         $currency = $data['details']['totals']['currency_code'] ?? 'USD';
 
-        // Find the corresponding payment in your database using paddlePaymentId
+        // Find the corresponding payment in your database using paddle_payment_id
         // Or create a new one if it's the first notification for this payment
-        $payment = Payment::where('paddlePaymentId', $paddlePaymentId)->first();
+        $payment = Payment::where('paddle_payment_id', $paddlePaymentId)->first();
 
         if (!$payment) {
             // If payment record doesn't exist, it means it wasn't initiated from your app
@@ -136,7 +136,7 @@ class PaddleWebhookController extends Controller
 
         $payment->update([
             'status' => $status,
-            'paddleTransactionId' => $paddleTransactionId,
+            'paddle_transaction_id' => $paddle_transaction_id,
             'amount' => $amount, // Update amount in case of discrepancies
             'currency' => $currency,
         ]);
@@ -148,16 +148,16 @@ class PaddleWebhookController extends Controller
             Ticket::create([
                 'event_id' => $payment->event_id,
                 'user_id' => $payment->user_id,
-                'purchaseDate' => now(),
-                'ticketCode' => $ticketCode,
+                'purchase_date' => now(),
+                'ticket_code' => $ticketCode,
                 'status' => 'active',
                 'payment_id' => $payment->id,
-                'isRefunded' => false,
+                'is_refunded' => false,
             ]);
             Log::info("Ticket created for payment ID: {$payment->id}");
         } else {
             // Update existing ticket status if necessary
-            $ticket->update(['status' => 'active', 'isRefunded' => false]);
+            $ticket->update(['status' => 'active', 'is_refunded' => false]);
             Log::info("Existing ticket updated for payment ID: {$payment->id}");
         }
 
@@ -173,7 +173,7 @@ class PaddleWebhookController extends Controller
         $status = 'refunded';
         $refundReason = $data['payout_totals']['refund_reason'] ?? 'Refunded by Paddle webhook.';
 
-        $payment = Payment::where('paddlePaymentId', $paddlePaymentId)->first();
+        $payment = Payment::where('paddle_payment_id', $paddlePaymentId)->first();
 
         if (!$payment) {
             Log::warning("Paddle webhook: transaction.refunded for unknown payment ID: {$paddlePaymentId}");
@@ -182,11 +182,11 @@ class PaddleWebhookController extends Controller
 
         $payment->update([
             'status' => $status,
-            'refundReason' => $refundReason,
+            'refund_reason' => $refundReason,
         ]);
 
         // Update associated tickets
-        Ticket::where('payment_id', $payment->id)->update(['isRefunded' => true, 'status' => 'cancelled']);
+        Ticket::where('payment_id', $payment->id)->update(['is_refunded' => true, 'status' => 'cancelled']);
 
         Log::info("Payment ID {$payment->id} status updated to 'refunded'.");
     }

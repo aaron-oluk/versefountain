@@ -24,8 +24,8 @@
                         <div class="flex flex-col sm:flex-row">
                             <div
                                 class="sm:w-2/5 h-40 sm:h-auto relative overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30">
-                                @if ($featuredBook->coverImage)
-                                    <img src="{{ asset('storage/' . $featuredBook->coverImage) }}"
+                                @if ($featuredBook->cover_image)
+                                    <img src="{{ asset('storage/' . $featuredBook->cover_image) }}"
                                         alt="{{ $featuredBook->title }}" class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center">
@@ -76,8 +76,8 @@
                                 <a href="{{ route('books.show', $book->uuid) }}" class="flex-shrink-0 group">
                                     <div
                                         class="w-full aspect-[2/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-lg mb-2 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
-                                        @if ($book->coverImage)
-                                            <img src="{{ asset('storage/' . $book->coverImage) }}"
+                                        @if ($book->cover_image)
+                                            <img src="{{ asset('storage/' . $book->cover_image) }}"
                                                 alt="{{ $book->title }}" class="w-full h-full object-cover">
                                         @else
                                             <div class="w-full h-full flex items-center justify-center">

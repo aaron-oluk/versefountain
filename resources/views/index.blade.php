@@ -99,11 +99,11 @@
                     @forelse($trendingBooks as $book)
                     <a href="{{ route('books.show', $book->uuid) }}" class="flex-shrink-0 w-28 sm:w-32 group">
                         <div class="w-28 sm:w-32 h-40 sm:h-48 bg-gradient-to-br from-gray-200 dark:from-gray-700 to-gray-300 dark:to-gray-800 rounded-lg flex items-center justify-center mb-2 sm:mb-3 overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                            @if($book->coverImage)
-                                @if(str_starts_with($book->coverImage, 'data:image') || str_starts_with($book->coverImage, 'http'))
-                                    <img src="{{ $book->coverImage }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform">
+                            @if($book->cover_image)
+                                @if(str_starts_with($book->cover_image, 'data:image') || str_starts_with($book->cover_image, 'http'))
+                                    <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform">
                                 @else
-                                    <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform">
+                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform">
                                 @endif
                             @else
                                 <div class="w-full h-full flex items-center justify-center">

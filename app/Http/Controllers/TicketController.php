@@ -120,10 +120,10 @@ class TicketController extends Controller
         $ticket = Ticket::create([
             'event_id' => $event->id,
             'user_id' => $user->id,
-            'ticketCode' => $ticketCode,  // Column name in database is camelCase
+            'ticket_code' => $ticketCode,
             'payment_id' => $validatedData['payment_id'] ?? null,
-            'status' => 'confirmed',  // Use 'confirmed' status for successfully registered tickets
-            'isRefunded' => false,  // Column name in database is camelCase
+            'status' => 'confirmed',
+            'is_refunded' => false,
         ]);
 
         return response()->json($ticket, 201);
@@ -185,7 +185,7 @@ class TicketController extends Controller
 
         // If the ticket was paid for and not yet refunded, you might want to initiate a refund here.
         // This would involve calling a method on the PaymentController or a PaymentService.
-        // Example: if ($ticket->payment && !$ticket->isRefunded) { /* initiate refund logic */ }
+        // Example: if ($ticket->payment && !$ticket->is_refunded) { /* initiate refund logic */ }
 
         return response()->json($ticket);
     }

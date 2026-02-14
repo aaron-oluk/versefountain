@@ -27,11 +27,11 @@ class EventController extends Controller
         if ($request->boolean('upcoming')) {
             $query->where('date', '>', now());
         }
-        if ($request->boolean('isVirtual')) {
-            $query->where('isVirtual', true);
+        if ($request->boolean('is_virtual')) {
+            $query->where('is_virtual', true);
         }
-        if ($request->boolean('isFree')) {
-            $query->where('isFree', true);
+        if ($request->boolean('is_free')) {
+            $query->where('is_free', true);
         }
         if ($request->has('search') && $request->search) {
             $search = $request->search;
@@ -123,20 +123,20 @@ class EventController extends Controller
             'description' => 'nullable|string',
             'date' => 'required|date',
             'location' => 'required|string|max:255',
-            'ticketPrice' => 'nullable|integer|min:0',
+            'ticket_price' => 'nullable|integer|min:0',
             'organizer' => 'nullable|string|max:255',
-            'isVirtual' => 'boolean',
-            'streamUrl' => 'nullable|url|required_if:isVirtual,true',
-            'isFree' => 'boolean',
+            'is_virtual' => 'boolean',
+            'stream_url' => 'nullable|url|required_if:is_virtual,true',
+            'is_free' => 'boolean',
             'category' => ['nullable', 'string', Rule::in(['poetry', 'book_launch', 'workshop', 'lecture', 'general'])],
         ]);
 
         // Set created_by_id from authenticated user
         $validatedData['created_by_id'] = $user->id;
 
-        // Ensure isFree aligns with ticketPrice if not explicitly set
-        if (!isset($validatedData['isFree'])) {
-            $validatedData['isFree'] = ($validatedData['ticketPrice'] ?? 0) === 0;
+        // Ensure is_free aligns with ticket_price if not explicitly set
+        if (!isset($validatedData['is_free'])) {
+            $validatedData['is_free'] = ($validatedData['ticket_price'] ?? 0) === 0;
         }
 
         $event = Event::create($validatedData);
@@ -164,30 +164,30 @@ class EventController extends Controller
             'description' => 'sometimes|nullable|string',
             'date' => 'sometimes|required|date',
             'location' => 'sometimes|required|string|max:255',
-            'ticketPrice' => 'sometimes|nullable|integer|min:0',
+            'ticket_price' => 'sometimes|nullable|integer|min:0',
             'organizer' => 'sometimes|nullable|string|max:255',
-            'isVirtual' => 'sometimes|boolean',
-            'streamUrl' => 'nullable|url|required_if:isVirtual,true',
-            'isFree' => 'sometimes|boolean',
+            'is_virtual' => 'sometimes|boolean',
+            'stream_url' => 'nullable|url|required_if:is_virtual,true',
+            'is_free' => 'sometimes|boolean',
             'category' => ['sometimes', 'nullable', 'string', Rule::in(['poetry', 'book_launch', 'workshop', 'lecture', 'general'])],
         ]);
 
-        // Ensure isFree aligns with ticketPrice if both are updated
-        if (isset($validatedData['isFree']) && isset($validatedData['ticketPrice'])) {
-            if ($validatedData['isFree'] && $validatedData['ticketPrice'] > 0) {
+        // Ensure is_free aligns with ticket_price if both are updated
+        if (isset($validatedData['is_free']) && isset($validatedData['ticket_price'])) {
+            if ($validatedData['is_free'] && $validatedData['ticket_price'] > 0) {
                 return response()->json(['message' => 'Free event cannot have a ticket price greater than 0.'], 400);
             }
-            if (!$validatedData['isFree'] && ($validatedData['ticketPrice'] ?? 0) === 0) {
+            if (!$validatedData['is_free'] && ($validatedData['ticket_price'] ?? 0) === 0) {
                  return response()->json(['message' => 'Non-free event must have a ticket price greater than 0.'], 400);
             }
-        } elseif (isset($validatedData['isFree']) && !isset($validatedData['ticketPrice'])) {
-            // If only isFree is updated, ensure it aligns with current ticketPrice
-            if ($validatedData['isFree'] && $event->ticketPrice > 0) {
+        } elseif (isset($validatedData['is_free']) && !isset($validatedData['ticket_price'])) {
+            // If only is_free is updated, ensure it aligns with current ticket_price
+            if ($validatedData['is_free'] && $event->ticket_price > 0) {
                 return response()->json(['message' => 'Cannot set event as free if it has an existing ticket price.'], 400);
             }
-        } elseif (!isset($validatedData['isFree']) && isset($validatedData['ticketPrice'])) {
-            // If only ticketPrice is updated, ensure it aligns with current isFree
-            if (($validatedData['ticketPrice'] ?? 0) > 0 && $event->isFree) {
+        } elseif (!isset($validatedData['is_free']) && isset($validatedData['ticket_price'])) {
+            // If only ticket_price is updated, ensure it aligns with current is_free
+            if (($validatedData['ticket_price'] ?? 0) > 0 && $event->is_free) {
                 return response()->json(['message' => 'Cannot set ticket price if event is free.'], 400);
             }
         }

@@ -265,9 +265,9 @@ class AdminController extends Controller
 
         $validatedData = $request->validate([
             'status' => ['required', 'string', Rule::in(['pending', 'completed', 'refunded', 'failed'])],
-            'paddlePaymentId' => ['nullable', 'string'],
-            'paddleTransactionId' => ['nullable', 'string'],
-            'refundReason' => ['nullable', 'string'],
+            'paddle_payment_id' => ['nullable', 'string'],
+            'paddle_transaction_id' => ['nullable', 'string'],
+            'refund_reason' => ['nullable', 'string'],
         ]);
 
         $payment->update($validatedData);
@@ -289,20 +289,20 @@ class AdminController extends Controller
         }
 
         $request->validate([
-            'refundReason' => 'nullable|string',
+            'refund_reason' => 'nullable|string',
         ]);
 
         // --- Integration with Paddle (or other payment gateway) to actually process refund ---
         try {
             // Example: Call Paddle API to process refund
-            // PaddleService::processRefund($payment->paddlePaymentId, $request->refundReason);
+            // PaddleService::processRefund($payment->paddle_payment_id, $request->refund_reason);
 
             $payment->status = 'refunded';
-            $payment->refundReason = $request->refundReason ?? 'Admin initiated refund.';
+            $payment->refund_reason = $request->refund_reason ?? 'Admin initiated refund.';
             $payment->save();
 
             // Also update associated tickets to refunded status
-            Ticket::where('payment_id', $payment->id)->update(['isRefunded' => true, 'status' => 'cancelled']);
+            Ticket::where('payment_id', $payment->id)->update(['is_refunded' => true, 'status' => 'cancelled']);
 
             return response()->json($payment);
         } catch (\Exception $e) {

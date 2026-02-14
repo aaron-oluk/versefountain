@@ -1073,7 +1073,7 @@ class BookManager {
             }
 
             const data = await response.json();
-            return data.coverImage;
+            return data.cover_image;
         } catch (error) {
             console.error('Error uploading cover:', error);
             window.utils.showToast(error.message || 'Failed to upload cover', 'error');

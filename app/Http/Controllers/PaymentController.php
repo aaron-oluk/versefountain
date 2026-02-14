@@ -38,7 +38,7 @@ class PaymentController extends Controller
         }
 
         // Ensure the amount matches the event's ticket price, unless it's a flexible payment
-        if ($validatedData['amount'] !== $event->ticketPrice) {
+        if ($validatedData['amount'] !== $event->ticket_price) {
             return response()->json(['message' => 'Payment amount does not match event ticket price.'], 400);
         }
 
@@ -62,7 +62,7 @@ class PaymentController extends Controller
             $checkoutUrl = 'https://example.com/paddle/checkout/' . $payment->id; // Mock URL
             $paddlePaymentId = 'pp_mock_' . $payment->id; // Mock Paddle ID
 
-            $payment->paddlePaymentId = $paddlePaymentId;
+            $payment->paddle_payment_id = $paddlePaymentId;
             $payment->save();
 
             return response()->json([

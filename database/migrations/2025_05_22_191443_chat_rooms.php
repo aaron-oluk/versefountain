@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('set null');
             $table->boolean('is_private')->default(false);
-            $table->string('category')->default('general')->after('is_private');
+            $table->string('category')->default('general');
             $table->index('category');
             $table->timestamps();
         });

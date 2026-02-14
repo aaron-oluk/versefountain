@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ChatRoom;
 use App\Models\ChatRoomInvitation;
-use App\Models\ChatRoomJoinRequest;
+
 use App\Models\User;
 use App\Events\UserJoinedChatRoom;
 use App\Events\UserLeftChatRoom;
@@ -64,9 +64,10 @@ class ChatRoomController extends Controller
         $pendingRequests = [];
 
         if (Auth::check()) {
-            $pendingRequests = ChatRoomJoinRequest::where('user_id', Auth::id())
+            $pendingRequests = ChatRoomInvitation::where('user_id', Auth::id())
+                ->where('type', 'request')
                 ->where('status', 'pending')
-                ->pluck('chat_room_id')
+                ->pluck('room_id')
                 ->toArray();
         }
 
@@ -157,7 +158,7 @@ class ChatRoomController extends Controller
             'created_by_id' => $user->id,
         ]);
 
-        $chatRoom->members()->attach($user->id, ['joinedAt' => now()]);
+        $chatRoom->members()->attach($user->id, ['joined_at' => now()]);
 
         if ($request->wantsJson() || $request->expectsJson()) {
             return response()->json($chatRoom, 201);
@@ -199,7 +200,7 @@ class ChatRoomController extends Controller
             return response()->json(['message' => 'Already a member of this chat room.'], 200);
         }
 
-        $room->members()->attach($user->id, ['joinedAt' => now()]);
+        $room->members()->attach($user->id, ['joined_at' => now()]);
 
         // Broadcast the join event via WebSockets
         event(new UserJoinedChatRoom($user, $room));
@@ -255,8 +256,9 @@ class ChatRoomController extends Controller
         }
 
         // Check if there's already a pending request
-        $existingRequest = ChatRoomJoinRequest::where('user_id', $user->id)
-            ->where('chat_room_id', $room->id)
+        $existingRequest = ChatRoomInvitation::where('user_id', $user->id)
+            ->where('room_id', $room->id)
+            ->where('type', 'request')
             ->where('status', 'pending')
             ->first();
 
@@ -268,9 +270,10 @@ class ChatRoomController extends Controller
             'message' => 'nullable|string|max:500',
         ]);
 
-        $joinRequest = ChatRoomJoinRequest::create([
+        $joinRequest = ChatRoomInvitation::create([
             'user_id' => $user->id,
-            'chat_room_id' => $room->id,
+            'room_id' => $room->id,
+            'type' => 'request',
             'message' => $request->message,
         ]);
 
@@ -280,50 +283,50 @@ class ChatRoomController extends Controller
         ], 201);
     }
 
-    public function approveJoinRequest(ChatRoomJoinRequest $joinRequest)
+    public function approveJoinRequest(ChatRoomInvitation $chat_room_invitation)
     {
         $user = Auth::user();
-        $room = $joinRequest->chatRoom;
+        $room = $chat_room_invitation->room;
 
         // Check if user is the creator or admin
         if ($room->created_by_id !== $user->id && $user->role !== 'admin') {
             return response()->json(['message' => 'You do not have permission to approve requests.'], 403);
         }
 
-        if ($joinRequest->status !== 'pending') {
+        if ($chat_room_invitation->status !== 'pending') {
             return response()->json(['message' => 'This request has already been reviewed.'], 400);
         }
 
-        $joinRequest->approve($user->id);
+        $chat_room_invitation->approve($user->id);
 
         // Add user to chatroom
-        $room->members()->attach($joinRequest->user_id, ['joinedAt' => now()]);
+        $room->members()->attach($chat_room_invitation->user_id, ['joined_at' => now()]);
 
         return response()->json([
             'message' => 'Join request approved successfully.',
-            'request' => $joinRequest->fresh()->load(['user', 'reviewer']),
+            'request' => $chat_room_invitation->fresh()->load(['user', 'reviewer']),
         ]);
     }
 
-    public function rejectJoinRequest(ChatRoomJoinRequest $joinRequest)
+    public function rejectJoinRequest(ChatRoomInvitation $chat_room_invitation)
     {
         $user = Auth::user();
-        $room = $joinRequest->chatRoom;
+        $room = $chat_room_invitation->room;
 
         // Check if user is the creator or admin
         if ($room->created_by_id !== $user->id && $user->role !== 'admin') {
             return response()->json(['message' => 'You do not have permission to reject requests.'], 403);
         }
 
-        if ($joinRequest->status !== 'pending') {
+        if ($chat_room_invitation->status !== 'pending') {
             return response()->json(['message' => 'This request has already been reviewed.'], 400);
         }
 
-        $joinRequest->reject($user->id);
+        $chat_room_invitation->decline($user->id);
 
         return response()->json([
             'message' => 'Join request rejected.',
-            'request' => $joinRequest->fresh()->load(['user', 'reviewer']),
+            'request' => $chat_room_invitation->fresh()->load(['user', 'reviewer']),
         ]);
     }
 
@@ -336,7 +339,8 @@ class ChatRoomController extends Controller
             return response()->json(['message' => 'You do not have permission to view requests.'], 403);
         }
 
-        $requests = ChatRoomJoinRequest::where('chat_room_id', $room->id)
+        $requests = ChatRoomInvitation::where('room_id', $room->id)
+            ->where('type', 'request')
             ->where('status', 'pending')
             ->with('user')
             ->latest()
@@ -353,9 +357,10 @@ class ChatRoomController extends Controller
         $user = Auth::user();
         $chatrooms = $user->chatRooms()->withCount('members')->with('createdBy')->latest()->get();
         $userChatrooms = $chatrooms;
-        $pendingRequests = ChatRoomJoinRequest::where('user_id', $user->id)
+        $pendingRequests = ChatRoomInvitation::where('user_id', $user->id)
+            ->where('type', 'request')
             ->where('status', 'pending')
-            ->pluck('chat_room_id')
+            ->pluck('room_id')
             ->toArray();
 
         return view('chatrooms.index', compact('chatrooms', 'userChatrooms', 'pendingRequests'));
