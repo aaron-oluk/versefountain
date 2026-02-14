@@ -91,7 +91,7 @@
                                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-3 sm:mb-4 p-2 sm:p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                             <div class="flex items-center text-xs">
                                                 <span class="text-gray-500 dark:text-gray-400 mr-1.5">Ticket #:</span>
-                                                <span class="font-mono font-medium text-gray-900 dark:text-white truncate">{{ strtoupper(substr($ticket->ticketCode ?? 'N/A', 0, 8)) }}</span>
+                                                <span class="font-mono font-medium text-gray-900 dark:text-white truncate">{{ strtoupper(substr($ticket->ticket_code ?? 'N/A', 0, 8)) }}</span>
                                             </div>
                                             @if(!$ticket->event->is_free && $ticket->event->ticket_price > 0)
                                                 <div class="flex items-center text-xs">
@@ -199,7 +199,7 @@
                                         <div class="flex items-center gap-2 mt-2 sm:mt-3 p-2 sm:p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                             <div class="flex items-center text-xs">
                                                 <span class="text-gray-500 dark:text-gray-400 mr-1.5">Ticket #:</span>
-                                                <span class="font-mono font-medium text-gray-700 dark:text-gray-300 truncate">{{ strtoupper(substr($ticket->ticketCode ?? 'N/A', 0, 8)) }}</span>
+                                                <span class="font-mono font-medium text-gray-700 dark:text-gray-300 truncate">{{ strtoupper(substr($ticket->ticket_code ?? 'N/A', 0, 8)) }}</span>
                                             </div>
                                         </div>
                                     </div>

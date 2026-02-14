@@ -18,11 +18,11 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamp('date');
             $table->string('location');
-            $table->integer('ticketPrice')->default(0);
+            $table->integer('ticket_price')->default(0);
             $table->string('organizer')->nullable();
-            $table->boolean('isVirtual')->default(false);
-            $table->string('streamUrl')->nullable();
-            $table->boolean('isFree')->default(false);
+            $table->boolean('is_virtual')->default(false);
+            $table->string('stream_url')->nullable();
+            $table->boolean('is_free')->default(false);
             $table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('category')->default('general'); // e.g., 'poetry', 'book_launch'
             $table->timestamps();

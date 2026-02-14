@@ -28,9 +28,9 @@ class AcademicResourceController extends Controller
             $request->validate(['subject' => 'string']);
             $query->where('subject', $request->subject);
         }
-        if ($request->has('gradeLevel') && $request->gradeLevel) {
-            $request->validate(['gradeLevel' => 'string']);
-            $query->where('gradeLevel', $request->gradeLevel);
+        if ($request->has('grade_level') && $request->grade_level) {
+            $request->validate(['grade_level' => 'string']);
+            $query->where('grade_level', $request->grade_level);
         }
         if ($request->has('search') && $request->search) {
             $search = $request->search;
@@ -46,7 +46,7 @@ class AcademicResourceController extends Controller
             $limit = $request->input('limit', 10);
             $offset = $request->input('offset', 0);
 
-            $resources = $query->select('id', 'title', 'description', 'type', 'subject', 'gradeLevel', 'language', 'resourceUrl', 'created_at')
+            $resources = $query->select('id', 'title', 'description', 'type', 'subject', 'grade_level', 'language', 'resource_url', 'created_at')
                                ->offset($offset)
                                ->limit($limit)
                                ->get();
@@ -137,20 +137,20 @@ class AcademicResourceController extends Controller
         }
 
         // If resource has a file URL, redirect to it or serve the file
-        if ($resource->resourceUrl) {
+        if ($resource->resource_url) {
             // Check if it's a full URL (external) or a local file path
-            if (filter_var($resource->resourceUrl, FILTER_VALIDATE_URL)) {
+            if (filter_var($resource->resource_url, FILTER_VALIDATE_URL)) {
                 // External URL - redirect to it
-                return redirect($resource->resourceUrl);
+                return redirect($resource->resource_url);
             } else {
                 // Local file path - check if file exists and serve it
-                $filePath = storage_path('app/public/' . ltrim($resource->resourceUrl, '/'));
+                $filePath = storage_path('app/public/' . ltrim($resource->resource_url, '/'));
                 if (file_exists($filePath)) {
                     return response()->download($filePath);
                 }
                 
                 // Try public storage path
-                $publicPath = public_path('storage/' . ltrim($resource->resourceUrl, '/'));
+                $publicPath = public_path('storage/' . ltrim($resource->resource_url, '/'));
                 if (file_exists($publicPath)) {
                     return response()->download($publicPath);
                 }
@@ -189,9 +189,9 @@ class AcademicResourceController extends Controller
             'description' => 'nullable|string',
             'type' => ['required', 'string', Rule::in(['study_guide', 'video', 'career_guide', 'other'])], // Example types
             'subject' => 'nullable|string|max:255',
-            'gradeLevel' => 'nullable|string|max:255',
+            'grade_level' => 'nullable|string|max:255',
             'language' => 'nullable|string|max:255',
-            'resourceUrl' => 'nullable|url',
+            'resource_url' => 'nullable|url',
         ]);
 
         $resource = AcademicResource::create($validatedData);
@@ -220,7 +220,7 @@ class AcademicResourceController extends Controller
             
             // Update the resource with the file URL
             $academicResource->update([
-                'resourceUrl' => Storage::url($path)
+                'resource_url' => Storage::url($path)
             ]);
 
             return response()->json([

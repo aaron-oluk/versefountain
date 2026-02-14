@@ -307,10 +307,10 @@
         let currentEventId = null;
         let isEventFree = true;
 
-        function registerForEvent(eventId, eventTitle, isFree, price) {
+        function registerForEvent(eventId, eventTitle, is_free, price) {
             currentEventId = eventId;
-            // Event is free if isFree flag is true OR price is 0
-            isEventFree = isFree || price == 0;
+            // Event is free if is_free flag is true OR price is 0
+            isEventFree = is_free || price == 0;
             
             // Update modal content
             document.getElementById('modalEventTitle').textContent = eventTitle;

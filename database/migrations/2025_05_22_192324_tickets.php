@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamp('purchaseDate')->useCurrent();
-            $table->string('ticketCode')->unique();
+            $table->timestamp('purchase_date')->useCurrent();
+            $table->string('ticket_code')->unique();
             $table->string('status')->default('active'); // e.g., "active", "cancelled", "used"
             $table->foreignId('payment_id')->nullable()->constrained('payments')->onDelete('set null');
-            $table->boolean('isRefunded')->default(false);
-            $table->timestamps(); // Adds updated_at
+            $table->boolean('is_refunded')->default(false);
+            $table->timestamps();
         });
     }
 

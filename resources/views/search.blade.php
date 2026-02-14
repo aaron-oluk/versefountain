@@ -26,8 +26,8 @@
                     @foreach($books as $book)
                         <a href="{{ route('books.show', $book->id) }}" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
                             <div class="aspect-[3/4] bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                                @if($book->coverImage)
-                                    <img src="{{ asset('storage/' . $book->coverImage) }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
+                                @if($book->cover_image)
+                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
                                 @else
                                     <i class="bx bx-book text-4xl text-blue-300"></i>
                                 @endif

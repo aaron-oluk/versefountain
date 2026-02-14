@@ -214,9 +214,9 @@
             let currentEventId = null;
             let isEventFree = true;
 
-            function registerForEvent(eventId, eventTitle, isFree, price) {
+            function registerForEvent(eventId, eventTitle, is_free, price) {
                 currentEventId = eventId;
-                isEventFree = isFree || price == 0;
+                isEventFree = is_free || price == 0;
                 
                 document.getElementById('modalEventTitle').textContent = eventTitle;
                 document.getElementById('modalEventPrice').textContent = isEventFree ? 'Free Event' : `$${price}`;

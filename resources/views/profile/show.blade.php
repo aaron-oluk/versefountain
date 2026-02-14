@@ -109,8 +109,8 @@
                                     <div class="flex gap-3 sm:gap-4 bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4">
                                         <div
                                             class="w-16 h-24 sm:w-20 sm:h-28 bg-gray-200 dark:bg-gray-700 rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                            @if ($currentlyReading->coverImage)
-                                                <img src="{{ $currentlyReading->coverImage }}"
+                                            @if ($currentlyReading->cover_image)
+                                                <img src="{{ $currentlyReading->cover_image }}"
                                                     alt="{{ $currentlyReading->title }}"
                                                     class="w-full h-full object-cover">
                                             @else
@@ -170,8 +170,8 @@
                                             class="flex-shrink-0 w-24 sm:w-28 group">
                                             <div
                                                 class="w-24 sm:w-28 h-36 sm:h-40 bg-gray-200 dark:bg-gray-700 rounded-lg mb-2 flex items-center justify-center overflow-hidden group-hover:ring-2 ring-blue-500 transition-all">
-                                                @if ($book->coverImage)
-                                                    <img src="{{ $book->coverImage }}" alt="{{ $book->title }}"
+                                                @if ($book->cover_image)
+                                                    <img src="{{ $book->cover_image }}" alt="{{ $book->title }}"
                                                         class="w-full h-full object-cover">
                                                 @else
                                                     <i class="bx bx-book text-2xl sm:text-3xl text-gray-400"></i>

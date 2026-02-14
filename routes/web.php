@@ -212,8 +212,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/chat/rooms/{room}/membership', [ChatRoomController::class, 'getMembershipStatus'])->name('api.chat.rooms.membership');
     Route::post('/api/chat/rooms/{room}/join-request', [ChatRoomController::class, 'requestJoin'])->name('api.chat.rooms.join-request');
     Route::get('/api/chat/rooms/{room}/join-requests', [ChatRoomController::class, 'getPendingRequests'])->name('api.chat.rooms.join-requests');
-    Route::post('/api/chat/join-requests/{joinRequest}/approve', [ChatRoomController::class, 'approveJoinRequest'])->name('api.chat.join-requests.approve');
-    Route::post('/api/chat/join-requests/{joinRequest}/reject', [ChatRoomController::class, 'rejectJoinRequest'])->name('api.chat.join-requests.reject');
+    Route::post('/api/chat/join-requests/{chat_room_invitation}/approve', [ChatRoomController::class, 'approveJoinRequest'])->name('api.chat.join-requests.approve');
+    Route::post('/api/chat/join-requests/{chat_room_invitation}/reject', [ChatRoomController::class, 'rejectJoinRequest'])->name('api.chat.join-requests.reject');
 
     // Academic Resources
     Route::post('/api/academic-resources', [AcademicResourceController::class, 'store'])->name('api.academic-resources.store');

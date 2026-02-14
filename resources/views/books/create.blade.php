@@ -38,7 +38,7 @@
                                     class="w-full sm:w-auto px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                                     Choose File
                                 </button>
-                                <input type="hidden" name="coverImage" id="cover-url">
+                                <input type="hidden" name="cover_image" id="cover-url">
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">PNG, JPG, GIF up to 10MB</p>
                             </div>
                         </div>

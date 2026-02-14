@@ -18,9 +18,9 @@ return new class extends Migration
             $table->integer('amount');
             $table->string('currency')->default('USD');
             $table->string('status'); // e.g., "pending", "completed", "refunded", "failed"
-            $table->string('paddlepayment_id')->unique()->nullable();
-            $table->string('paddleTransactionId')->nullable();
-            $table->text('refundReason')->nullable();
+            $table->string('paddle_payment_id')->unique()->nullable();
+            $table->string('paddle_transaction_id')->nullable();
+            $table->text('refund_reason')->nullable();
             $table->timestamps();
         });
     }

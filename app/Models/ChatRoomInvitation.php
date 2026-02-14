@@ -15,11 +15,15 @@ class ChatRoomInvitation extends Model
         'invited_by',
         'type',
         'status',
+        'message',
+        'reviewed_at',
+        'reviewed_by',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
 
     public function room()
@@ -50,5 +54,33 @@ class ChatRoomInvitation extends Model
     public function scopeRequests($query)
     {
         return $query->where('type', 'request');
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function isPending()
+    {
+        return $this->status === 'pending';
+    }
+
+    public function approve($reviewerId)
+    {
+        $this->update([
+            'status' => 'accepted',
+            'reviewed_at' => now(),
+            'reviewed_by' => $reviewerId,
+        ]);
+    }
+
+    public function decline($reviewerId)
+    {
+        $this->update([
+            'status' => 'declined',
+            'reviewed_at' => now(),
+            'reviewed_by' => $reviewerId,
+        ]);
     }
 }

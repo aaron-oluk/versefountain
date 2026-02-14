@@ -16,8 +16,7 @@ return new class extends Migration
             $table->foreignId('comment_id')->constrained('poem_comments')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('reaction'); // e.g., "like", "love", "laugh", "angry"
-            $table->timestamp('createdAt')->useCurrent();
-            $table->timestamps(); // Adds updated_at
+            $table->timestamps();
         });
     }
 

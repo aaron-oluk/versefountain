@@ -92,11 +92,11 @@
                     <!-- Price & Virtual Event -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="ticketPrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label for="ticket_price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Ticket Price (USD)
                             </label>
-                            <input id="ticketPrice" 
-                                   name="ticketPrice" 
+                            <input id="ticket_price" 
+                                   name="ticket_price" 
                                    type="number" 
                                    min="0" 
                                    step="1"
@@ -111,11 +111,11 @@
                             </label>
                             <div class="flex items-center space-x-6">
                                 <label class="flex items-center">
-                                    <input type="radio" name="isVirtual" value="0" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                    <input type="radio" name="is_virtual" value="0" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
                                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">In-Person</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="radio" name="isVirtual" value="1" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                    <input type="radio" name="is_virtual" value="1" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
                                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Virtual</span>
                                 </label>
                             </div>
@@ -124,11 +124,11 @@
 
                     <!-- Stream URL (conditional) -->
                     <div id="streamUrlContainer" class="hidden">
-                        <label for="streamUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="stream_url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Stream URL <span class="text-red-500">*</span>
                         </label>
-                        <input id="streamUrl" 
-                               name="streamUrl" 
+                        <input id="stream_url" 
+                               name="stream_url" 
                                type="url" 
                                placeholder="https://..."
                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
@@ -181,12 +181,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const eventManager = new EventManager();
     
     // Toggle stream URL field based on event type
-    const isVirtualRadios = document.querySelectorAll('input[name="isVirtual"]');
+    const virtualRadios = document.querySelectorAll('input[name="is_virtual"]');
     const streamUrlContainer = document.getElementById('streamUrlContainer');
-    const streamUrlInput = document.getElementById('streamUrl');
+    const streamUrlInput = document.getElementById('stream_url');
     const locationInput = document.getElementById('location');
-    
-    isVirtualRadios.forEach(radio => {
+
+    virtualRadios.forEach(radio => {
         radio.addEventListener('change', function() {
             if (this.value === '1') {
                 streamUrlContainer.classList.remove('hidden');
@@ -204,14 +204,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form handler
     const formHandler = new CRUDFormHandler(form, {
         async onSubmit(formData) {
-            // Convert ticketPrice to integer
-            formData.ticketPrice = formData.ticketPrice ? parseInt(formData.ticketPrice) : 0;
+            // Convert ticket_price to integer
+            formData.ticket_price = formData.ticket_price ? parseInt(formData.ticket_price) : 0;
             
-            // Convert isVirtual to boolean
-            formData.isVirtual = formData.isVirtual === '1';
+            // Convert is_virtual to boolean
+            formData.is_virtual = formData.is_virtual === '1';
             
-            // Set isFree based on ticketPrice
-            formData.isFree = formData.ticketPrice === 0;
+            // Set is_free based on ticket_price
+            formData.is_free = formData.ticket_price === 0;
             
             // Combine date and time if both present
             if (formData.date && formData.time) {
@@ -219,9 +219,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             delete formData.time;
 
-            // Remove streamUrl if event is not virtual
-            if (!formData.isVirtual && formData.streamUrl) {
-                delete formData.streamUrl;
+            // Remove stream_url if event is not virtual
+            if (!formData.is_virtual && formData.stream_url) {
+                delete formData.stream_url;
             }
 
             // Create event

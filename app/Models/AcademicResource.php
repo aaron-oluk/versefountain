@@ -16,9 +16,9 @@ class AcademicResource extends Model
         'description',
         'type',
         'subject',
-        'gradeLevel',
+        'grade_level',
         'language',
-        'resourceUrl',
+        'resource_url',
         'uuid',
     ];
 
