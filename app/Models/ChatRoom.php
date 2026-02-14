@@ -15,6 +15,7 @@ class ChatRoom extends Model
         'description',
         'created_by_id', // Updated to snake_case
         'is_private',    // Updated to snake_case
+        'category',
     ];
 
     protected $casts = [
@@ -50,6 +51,30 @@ class ChatRoom extends Model
      */
     public function members()
     {
-        return $this->belongsToMany(User::class, 'user_chat_rooms', 'room_id', 'user_id'); // Updated to snake_case
+        return $this->belongsToMany(User::class, 'user_chat_rooms', 'room_id', 'user_id');
+    }
+
+    /**
+     * Get pending invitations for this chat room.
+     */
+    public function invitations()
+    {
+        return $this->hasMany(ChatRoomInvitation::class, 'room_id')->where('type', 'invitation');
+    }
+
+    /**
+     * Get pending access requests for this chat room.
+     */
+    public function accessRequests()
+    {
+        return $this->hasMany(ChatRoomInvitation::class, 'room_id')->where('type', 'request');
+    }
+
+    /**
+     * Get all invitations and requests for this chat room.
+     */
+    public function allInvitations()
+    {
+        return $this->hasMany(ChatRoomInvitation::class, 'room_id');
     }
 }

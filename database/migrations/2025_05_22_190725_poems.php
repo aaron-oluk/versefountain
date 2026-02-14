@@ -13,13 +13,18 @@ return new class extends Migration
     {
         Schema::create('poems', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid', 36)->unique();
             $table->string('title');
             $table->text('content');
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
-            $table->boolean('isVideo')->default(false);
-            $table->string('videoUrl')->nullable();
-            $table->boolean('approved')->default(true); // Default to true based on latest doc
-            $table->timestamps(); // Adds updated_at
+            $table->string('description')->nullable();
+            $table->string('cover_image')->nullable();
+            $table->string('status')->default('published');
+            $table->boolean('is_video')->default(false);
+            $table->boolean('approved')->default(true);
+            $table->string('video_url')->nullable();
+            $table->string('video_thumbnail')->nullable();
+            $table->timestamps();
         });
     }
 

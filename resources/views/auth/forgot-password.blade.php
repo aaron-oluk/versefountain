@@ -3,53 +3,67 @@
 @section('title', 'Forgot Password - VerseFountain')
 
 @section('auth-content')
-    <div class="bg-white rounded-md shadow-sm">
-        <div class="p-6">
-            <div class="mb-6">
-                <h3 class="text-xl font-semibold text-gray-900">Forgot Password</h3>
-                <p class="text-gray-600 mt-1">Enter your email address and we'll send you a link to reset your password.</p>
+<div class="bg-white rounded-lg shadow-sm">
+    <div class="p-8">
+        <!-- Icon -->
+        <div class="flex justify-center mb-6">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <i class="bx bx-refresh text-3xl text-blue-600"></i>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-2">Reset your password</h2>
+            <p class="text-sm text-gray-600">Don't worry, it happens. Please enter the email address linked to your account.</p>
+        </div>
+
+        <!-- Session Status -->
+        @if (session('status'))
+            <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p class="text-sm text-blue-800">{{ session('status') }}</p>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
+            @csrf
+
+            <!-- Email Address -->
+            <div class="space-y-2">
+                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                <div class="relative">
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus 
+                           class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none placeholder-gray-400"
+                           placeholder="name@versefountain.com">
+                    <i class="bx bx-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                @error('email')
+                    <p class="text-sm text-red-500">{{ $message }}</p>
+                @enderror
             </div>
 
-            <!-- Session Status -->
-            @if (session('status'))
-                <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-                    <p class="text-sm text-blue-800">{{ session('status') }}</p>
-                </div>
-            @endif
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="w-full bg-blue-600 text-white py-2.5 px-4 font-medium hover:bg-blue-700 transition-colors rounded-lg">
+                Send Reset Instructions
+            </button>
 
-            <form method="POST" action="{{ route('password.email') }}" class="space-y-4">
-                @csrf
+            <!-- Back to Login -->
+            <div class="text-center">
+                <a href="{{ route('login') }}" 
+                   class="text-sm text-gray-600 hover:text-gray-900 inline-flex items-center">
+                    <i class="bx bx-arrow-back mr-1"></i>
+                    Back to Log in
+                </a>
+            </div>
+        </form>
 
-                <!-- Email Address -->
-                <div class="space-y-2">
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-blue-600 focus:outline-none placeholder-gray-400"
-                           placeholder="Enter your email">
-                    @error('email')
-                        <p class="text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" 
-                        class="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors focus:outline-none">
-                    Send Password Reset Link
-                </button>
-
-                <!-- Back to Login -->
-                <div class="text-center">
-                    <a href="{{ route('login') }}" 
-                       class="text-sm text-blue-600 hover:text-blue-700 underline">
-                        Back to login
-                    </a>
-                </div>
-            </form>
-        </div>
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
-            <p class="text-center text-xs text-gray-600">
-                Remember your password? <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-700">Sign in here</a>
+        <!-- Help Link -->
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-600">
+                Need help? <a href="#" class="text-blue-600 hover:underline">Contact Support</a>
             </p>
         </div>
     </div>
+</div>
 @endsection

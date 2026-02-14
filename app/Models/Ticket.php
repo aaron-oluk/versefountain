@@ -11,18 +11,18 @@ class Ticket extends Model
     use HasFactory;
 
     protected $fillable = [
-        'event_id',      // Updated to snake_case
-        'user_id',       // Updated to snake_case
-        'purchase_date', // Updated to snake_case
-        'ticket_code',   // Updated to snake_case
+        'event_id',
+        'user_id',
+        'purchaseDate',  // Actual column name in database (camelCase)
+        'ticketCode',    // Actual column name in database (camelCase)
         'status',
-        'payment_id',    // Updated to snake_case
-        'is_refunded',   // Updated to snake_case
+        'payment_id',
+        'isRefunded',    // Actual column name in database (camelCase)
     ];
 
     protected $casts = [
-        'purchase_date' => 'datetime', // Updated to snake_case
-        'is_refunded' => 'boolean',    // Updated to snake_case
+        'purchaseDate' => 'datetime',  // Match actual column name
+        'isRefunded' => 'boolean',     // Match actual column name
     ];
 
     /**

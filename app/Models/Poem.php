@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Poem extends Model
 {
@@ -17,6 +18,7 @@ class Poem extends Model
         'is_video',  // Updated to snake_case
         'video_url', // Updated to snake_case
         'approved',
+        'uuid',
     ];
 
     protected $casts = [
@@ -26,11 +28,41 @@ class Poem extends Model
     ];
 
     /**
+     * Boot the model and generate UUID on creation.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
+    /**
      * Get the author of the poem.
      */
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id'); // Updated to snake_case
+    }
+
+    /**
+     * Get the user (alias for author) of the poem.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'author_id');
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Models\Book;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 class BookController extends Controller
 {
@@ -63,24 +64,26 @@ class BookController extends Controller
         }
 
         // Otherwise, return Blade view for web requests
-        // Get featured books (4 most recent) - reuse base query with eager loading
-        $featuredBooks = (clone $query)->with('uploadedBy')
-            ->latest()
-            ->take(4)
-            ->get();
+        $genre = $request->get('genre');
+        $sort = $request->get('sort', 'latest');
 
-        // Get recent books (paginated) with eager loading
-        $recentBooks = $query->with('uploadedBy')
-            ->latest()
-            ->paginate(12);
+        // Apply genre filter
+        if ($genre && $genre !== 'all') {
+            $query->where('genre', $genre);
+        }
 
-        // Get unique genres for category counts - optimize with pluck directly
-        $genres = Book::where('approved', true)
-            ->whereNotNull('genre')
-            ->distinct()
-            ->pluck('genre');
+        // Apply sorting
+        match ($sort) {
+            'title' => $query->orderBy('title', 'asc'),
+            'oldest' => $query->oldest(),
+            default => $query->latest(),
+        };
 
-        return view('books', compact('featuredBooks', 'recentBooks', 'genres'));
+        $allBooks = $query->paginate(12)->withQueryString();
+        $trendingBooks = Book::where('approved', true)->latest()->take(3)->get();
+        $genres = Book::where('approved', true)->whereNotNull('genre')->distinct()->pluck('genre');
+
+        return view('books.index', compact('allBooks', 'trendingBooks', 'genres', 'genre', 'sort'));
     }
 
     /**
@@ -96,61 +99,18 @@ class BookController extends Controller
     /**
      * Display the specified book (Blade view).
      */
-    public function showWeb($identifier)
+    public function showWeb(Book $book)
     {
-        // Hardcoded books data (matching books.blade.php)
-        $hardcodedBooks = [
-            'great-gatsby' => [
-                'title' => 'The Great Gatsby',
-                'author' => 'F. Scott Fitzgerald',
-                'genre' => 'Fiction',
-                'description' => 'A classic American novel set in the Jazz Age, exploring themes of wealth, love, and the American Dream through the eyes of Nick Carraway and his mysterious neighbor Jay Gatsby.',
-            ],
-            'midnight-library' => [
-                'title' => 'The Midnight Library',
-                'author' => 'Matt Haig',
-                'genre' => 'Fiction',
-                'description' => 'A thought-provoking novel about a library between life and death where every book represents a different life you could have lived.',
-            ],
-        ];
-
-        // Try to find by ID first
-        $book = null;
-        if (is_numeric($identifier)) {
-            $book = Book::find($identifier);
-        }
-
-        // If not found by ID, check hardcoded books
-        if (!$book && isset($hardcodedBooks[$identifier])) {
-            $bookData = $hardcodedBooks[$identifier];
-            $book = (object) [
-                'id' => 0,
-                'title' => $bookData['title'],
-                'author' => $bookData['author'],
-                'genre' => $bookData['genre'],
-                'description' => $bookData['description'],
-                'created_at' => now(),
-            ];
-        } else if (!$book) {
-            // Try to find by title in database
-            $title = str_replace('-', ' ', $identifier);
-            $title = ucwords($title);
-            $book = Book::where('title', 'like', '%' . $title . '%')->first();
-        }
-
-        // If still not found, create a basic mock
-        if (!$book) {
-            $book = (object) [
-                'id' => 0,
-                'title' => ucwords(str_replace('-', ' ', $identifier)),
-                'author' => 'Unknown',
-                'genre' => 'General',
-                'description' => 'This book is not yet available in our database.',
-                'created_at' => now(),
-            ];
-        }
-
+        $book->load('uploadedBy');
         return view('books.show', compact('book'));
+    }
+
+    /**
+     * Display book reading interface.
+     */
+    public function read(Book $book)
+    {
+        return view('books.read', ['book' => $book]);
     }
 
     /**
@@ -164,16 +124,19 @@ class BookController extends Controller
         }
 
         $request->validate([
-            'cover_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover_image' => 'required|string', // Accept base64 image data
         ]);
 
+        $coverImage = $request->input('cover_image');
+        
+        // If it's not a base64 string and a file was uploaded
         if ($request->hasFile('cover_image')) {
-            $path = $request->file('cover_image')->store('public/book_covers');
-            // Return the URL relative to your public storage
-            return response()->json(['coverImage' => Storage::url($path)]);
+            $file = $request->file('cover_image');
+            $coverImage = base64_encode(file_get_contents($file->getRealPath()));
         }
 
-        return response()->json(['message' => 'No image uploaded.'], 400);
+        // Return the base64 data
+        return response()->json(['coverImage' => $coverImage]);
     }
 
     /**
@@ -190,7 +153,7 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'coverImage' => 'nullable|url', // Expecting a URL from uploadCover endpoint
+            'coverImage' => 'nullable|string', // Accept base64 image data or URL
             'genre' => 'nullable|string|max:255',
         ]);
 
@@ -199,6 +162,12 @@ class BookController extends Controller
         // Clear cache to ensure fresh data
         Cache::flush(); // Clear all book caches
 
-        return response()->json($book, 201);
+        if ($request->wantsJson() || $request->expectsJson()) {
+            return response()->json($book, 201);
+        }
+
+        return redirect()
+            ->route('books.show', $book)
+            ->with('success', 'Book submitted and awaiting approval.');
     }
 }

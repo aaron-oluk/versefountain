@@ -11,7 +11,7 @@
         </div>
 
         <div class="bg-white rounded-md p-4 sm:p-6">
-            <form method="POST" action="/api/poems" id="poem-create-form" data-poem-form>
+            <form method="POST" action="{{ route('poetry.store') }}">
                 @csrf
                 
                 <div class="space-y-6">
